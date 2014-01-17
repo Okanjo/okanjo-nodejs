@@ -1,0 +1,22 @@
+{
+  "name": "okanjo",
+  "version": "1.0.0",
+  "description": "Okanjo JavaScript Software Development Kit",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Okanjo/okanjo-nodejs.git"
+  },
+  "keywords": [
+    "Okanjo",
+    "Ecommerce"
+  ],
+  "author": "Okanjo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Okanjo/okanjo-nodejs/issues"
+  }
+}
