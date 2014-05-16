@@ -4,6 +4,7 @@
 When stuff changes, it's described here.
 
 # 2014-05-16
+ * Use qs module instead of core querystring module for nested object support
  * Minor bug fixes
  * Added some function docs
 
