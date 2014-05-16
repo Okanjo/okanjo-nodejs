@@ -4,6 +4,7 @@
 When stuff changes, it's described here.
 
 # 2014-05-16
+ * Minor bug fixes
  * Added some function docs
 
 # 2014-01-21
