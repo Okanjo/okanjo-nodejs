@@ -3,6 +3,13 @@
 
 When stuff changes, it's described here.
 
+# 2014-05-28
+ * Added SDK constants to okanjo namespace
+ * Added jQuery-based serialization function (aka $.params) with modifications, which can be used for product variants
+ * Updated FileUpload helper to use Buffers instead of binary strings and getEntityBody returns a buffer with the binary content
+ * Refactored the HTTP provider stream function to handle the entity buffer generation as a callback
+ * Suppressed local/global unused definition references (IDEA inspections)
+
 # 2014-05-16
  * Use qs module instead of core querystring module for nested object support
  * Minor bug fixes
