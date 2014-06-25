@@ -5,7 +5,8 @@ When stuff changes, it's described here.
 
 # 2014-06-25
  * Added transaction constants
- * Bumped version to 0.1.7
+ * Added transaction routes for stores and users
+ * Bumped version to 0.1.8
 
 # 2014-05-28
  * Added serialize function to okanjo namespace
