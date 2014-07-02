@@ -1,6 +1,6 @@
 {
   "name": "okanjo",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Okanjo JavaScript Software Development Kit",
   "main": "./index.js",
   "scripts": {
