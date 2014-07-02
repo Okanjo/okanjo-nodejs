@@ -3,6 +3,10 @@
 
 When stuff changes, it's described here.
 
+# 2014-07-02
+ * Added option to use jQuery's $.param function for object serialization instead of the default qs module
+ * Bumped version to 0.1.9
+
 # 2014-06-25
  * Added transaction constants
  * Added transaction routes for stores and users
