@@ -5,7 +5,8 @@ When stuff changes, it's described here.
 
 # 2014-08-06
  * Added order status for pending refunds
- * Bumped version to 0.1.12
+ * Added sale refund route
+ * Bumped version to 0.1.13
 
 # 2014-07-03
  * Cleaned up a straggling error log
