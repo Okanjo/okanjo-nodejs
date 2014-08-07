@@ -3,6 +3,11 @@
 
 When stuff changes, it's described here.
 
+# 2014-08-07
+ * Added order status for pending disputes
+ * Added order item dispute route
+ * Bumped version to 0.1.14
+
 # 2014-08-06
  * Added order status for pending refunds
  * Added sale refund route
