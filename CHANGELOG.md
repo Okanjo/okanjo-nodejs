@@ -3,6 +3,10 @@
 
 When stuff changes, it's described here.
 
+# 2014-08-18
+ * Fixed a bug with getProductById using the incorrect route
+ * Bumped version to 0.1.15
+
 # 2014-08-07
  * Added order status for pending disputes
  * Added order item dispute route
