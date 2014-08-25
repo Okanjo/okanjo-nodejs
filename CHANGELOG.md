@@ -3,6 +3,10 @@
 
 When stuff changes, it's described here.
 
+# 2014-08-25
+ * Adjusted minimum item and purchase limits to $0.01 and $0.50, respectively.
+ * Bumped version to 0.1.17
+
 # 2014-08-18
  * Fixed a bug with getProductById using the incorrect route
  * Fixed a bug with HttpProvider.stream failed to execute requests without an entity body (GETs)
