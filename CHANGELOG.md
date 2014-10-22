@@ -4,7 +4,7 @@
 When stuff changes, it's described here.
 
 # 2014-10-22
- * Bumped version to 0.1.18
+ * Bumped version to 0.1.19
  * Added POST /stores route to add a new store
  * Added DELETE /stores/{id} route to disable an existing store
  * Added category tree route
