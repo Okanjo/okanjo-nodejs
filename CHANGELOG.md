@@ -3,6 +3,10 @@
 
 When stuff changes, it's described here.
 
+# 2014-11-07
+ * Added event routes for webhooks
+ * Bumped version to 0.1.20
+
 # 2014-10-22
  * Bumped version to 0.1.19
  * Added POST /stores route to add a new store
