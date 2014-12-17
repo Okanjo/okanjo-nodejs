@@ -1,2 +1,4 @@
 # No IDEA project
 .idea
+node_modules
+test/config.js
