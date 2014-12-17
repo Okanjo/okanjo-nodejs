@@ -3,6 +3,15 @@
 
 When stuff changes, it's described here.
 
+# 2014-12-08
+ * Added nexus AddressType
+ * Added productCategoryRelationshipType
+ * Added transaction types for sales tax
+ * Added userFlag constants
+ * Added store address management routes
+ * Fixed incorrect routes in user address management routes
+ * Bumped version to 0.1.22
+
 # 2014-11-07
  * Added event routes for webhooks
  * Added event constants
