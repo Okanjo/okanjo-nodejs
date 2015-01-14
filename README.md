@@ -171,7 +171,7 @@ var api = new okanjo.Client({
 api.on('log', function(level, message, args) {
     // You can filter out lower-level log events that you don't want to see
     // See okanjo.Client.LogLevel for options
-    if (level.level >= okanjo.Client.LogLevel.Debug) {
+    if (level.level >= okanjo.Client.LogLevel.Debug.level) {
         console.log('[' + (new Date()) + '] ' + level.name + ': ' + message, args);
     }
 });
