@@ -212,7 +212,7 @@ Global Commands:
  - .load ./file.js  -- Load a JS file into the console session
  - .exit            -- Quit and exit this process
 --------------------------
- > login()
+ > login()      // login using the credentials from the config.js file
 undefined
  > null
 { user_token: 'UTasdf12345...',
@@ -242,12 +242,10 @@ undefined
      meta: [] },
   notifications: [] }
 
+ > var storeId = session.user.stores[0].id    // the session global is set after calling login()
 undefined
 
- > var storeId = session.user.stores[0].id    // session is set after calling login()
-undefined
-
- > api.get       // <press tab for auto-completion or suggestions>
+ > api.get       // press <tab> for auto-completion or suggestions
 api.getBrands                      api.getBrandsByIdOrApiKey          api.getCategories                  api.getCategoryById                api.getCategoryTree                api.getCauseById                   api.getCauses
 api.getEventById                   api.getEventSubscriptions          api.getProductById                 api.getProducts                    api.getPromotionByCode             api.getRegionById                  api.getRegions
 api.getStoreAddressById            api.getStoreAddresses              api.getStoreById                   api.getStoreFeedback               api.getStoreFeedbackByOrderItemId  api.getStoreReturnPolicies         api.getStoreSaleById
@@ -256,7 +254,7 @@ api.getUserAddresses               api.getUserAuctionById             api.getUse
 api.getUserNotifications           api.getUserOrderById               api.getUserOrderItemById           api.getUserOrderItems              api.getUserOrders                  api.getUserTransactionById         api.getUserTransactions
 api.getVanityUriBySlug
 
- > api.getProd    // <press tab for auto-completion or suggestions>
+ > api.getProd    // press <tab> for auto-completion or suggestions
 api.getProductById  api.getProducts
 
  > depth = 1
@@ -278,7 +276,7 @@ api.getProductById  api.getProducts
  > .exit          // exit the console or use <Control+C> twice
 ```
 
-Check out the help usage for more things you can do with the console.
+Check out the `help()` usage for more things you can do with the console.
 
 
 More documentation coming soon... More to follow.
