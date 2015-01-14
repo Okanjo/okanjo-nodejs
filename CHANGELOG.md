@@ -3,6 +3,10 @@
 
 When stuff changes, it's described here.
 
+## 2015-01-14
+ * Added interactive console for working with the API in node
+ * Bumped version to 0.1.24
+
 ## 2014-12-31
  * Added store flags for tax and shipping
  * Added shipping transaction types
