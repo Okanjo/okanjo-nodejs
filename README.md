@@ -179,5 +179,106 @@ api.on('log', function(level, message, args) {
 ```
 
 
+### Interactive Console
+
+Sometimes, you don't want to write a script just to do a few things with the API, and just want to get things done. We have a simple interactive console that you can use exactly for this purpose.
+
+To use the console, first copy the file `test/config.default.js` to `test/config.js` and update it with your API / user credentials.
+
+Then simply run: `node test/console`
+
+You'll be greeted with the Okanjo Interactive Console list of globals and functions. Here's an example of what you can do:
+
+```js
+$ node test/console
+
+Okanjo Interactive Console
+--------------------------
+Globals Vars:
+ - okanjo  -- The Okanjo SDK
+ - config  -- The included configuration
+ - api     -- Okanjo API client instance using config
+ - last    -- The last api response.data passed into dump()
+ - error   -- The last api error passed into test()
+ - session -- The session context from calling login()
+ - depth   -- How deep to inspect objects (default: 2)
+Global Commands:
+ - login()          -- Login with the user1 from config, updates global session var
+ - dump(err,res)    -- Function for testing API calls, stores err,res in global error,last and inspects the response. e.g. api.getProducts().execute(test);
+ - debug(err,res)   -- Same as dump but does not store err,res globally
+ - inspect(...)     -- Inspects arguments given at current depth
+ - help()           -- Show this usage info again
+ - .save ./file.js  -- Save all the commands executed in this console session to file.js
+ - .load ./file.js  -- Load a JS file into the console session
+ - .exit            -- Quit and exit this process
+--------------------------
+ > login()
+undefined
+ > null
+{ user_token: 'UTasdf12345...',
+  user:
+   { id: '1234',
+     first_name: 'John',
+     last_name: 'Smith',
+     user_name: 'jsmith',
+     gender: 'male',
+     contact_email: 'support@okanjo.com',
+     current_zip: '53202',
+     birthday: '1984-05-30 00:00:00',
+     twitter_handle: null,
+     facebook_id: null,
+     avatar_media_id: null,
+     auth_level: '1',
+     flags: '0',
+     brand_id: '1',
+     card_uri: null,
+     card_nickname: null,
+     okanjo_account_id: 'ACasdf1234...',
+     balance_pending: '0.00',
+     balance_available: '0.00',
+     addresses: [ [Object] ],
+     stores: [ [Object] ],
+     causes: [],
+     meta: [] },
+  notifications: [] }
+
+undefined
+
+ > var storeId = session.user.stores[0].id    // session is set after calling login()
+undefined
+
+ > api.get       // <press tab for auto-completion or suggestions>
+api.getBrands                      api.getBrandsByIdOrApiKey          api.getCategories                  api.getCategoryById                api.getCategoryTree                api.getCauseById                   api.getCauses
+api.getEventById                   api.getEventSubscriptions          api.getProductById                 api.getProducts                    api.getPromotionByCode             api.getRegionById                  api.getRegions
+api.getStoreAddressById            api.getStoreAddresses              api.getStoreById                   api.getStoreFeedback               api.getStoreFeedbackByOrderItemId  api.getStoreReturnPolicies         api.getStoreSaleById
+api.getStoreSales                  api.getStoreTransactionById        api.getStoreTransactions           api.getStores                      api.getTagByName                   api.getTags                        api.getUserAddressById
+api.getUserAddresses               api.getUserAuctionById             api.getUserAuctions                api.getUserById                    api.getUserFeedback                api.getUserFeedbackByOrderItemId   api.getUserNotificationById
+api.getUserNotifications           api.getUserOrderById               api.getUserOrderItemById           api.getUserOrderItems              api.getUserOrders                  api.getUserTransactionById         api.getUserTransactions
+api.getVanityUriBySlug
+
+ > api.getProd    // <press tab for auto-completion or suggestions>
+api.getProductById  api.getProducts
+
+ > depth = 1
+1
+
+ > api.getProducts().where({ store_id: storeId, available: 1, type: okanjo.constants.productType.regular }).select('id,title,price').take(2).execute(dump)
+   undefined
+ > null
+   [ { id: '141888',
+       title: 'Test Product',
+       price: '10.00' },
+     { id: '141887',
+       title: 'Test Product 2',
+       price: '556.00' } ]
+
+ > last[0].title  // use the last variable to refer to the latest response.data object passed into the dump function
+'Test Product'
+
+ > .exit          // exit the console or use <Control+C> twice
+```
+
+Check out the help usage for more things you can do with the console.
+
 
 More documentation coming soon... More to follow.

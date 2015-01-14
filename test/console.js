@@ -117,7 +117,7 @@ function OkanjoConsoleHelper(context, setter) {
 
     // Build the inspect dump to the current context and expose it
     this.set('dump', function(err, res) {
-        self.set('err', err);
+        self.set('error', err);
         self.set('last', res.data);
         self.inspect(err, res ? res.data : null);
     });
@@ -142,6 +142,11 @@ function OkanjoConsoleHelper(context, setter) {
     this.set('okanjo', okanjo);
     this.set('api', api);
     this.set('config', config);
+
+    // Set them so they're not undefined
+    this.set('session', null);
+    this.set('last', null);
+    this.set('error', null);
 }
 
 OkanjoConsoleHelper.prototype = {
@@ -219,7 +224,6 @@ bindStuffToContext(context);
  * Rebind when .clear is run
  */
 term.on('reset', function(ctx) {
-    console.log('got reset event');
     bindStuffToContext(ctx);
     help();
 });
