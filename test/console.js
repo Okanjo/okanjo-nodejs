@@ -47,7 +47,7 @@ function help() {
     console.log(' - config  -- The included configuration');
     console.log(' - api     -- Okanjo API client instance using config');
     console.log(' - last    -- The last api response.data passed into dump()');
-    console.log(' - error   -- The last api error passed into test()');
+    console.log(' - error   -- The last api error passed into dump()');
     console.log(' - session -- The session context from calling login()');
     console.log(' - depth   -- How deep to inspect objects (default: 2)');
     console.log('Global Commands:');

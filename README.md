@@ -199,7 +199,7 @@ Globals Vars:
  - config  -- The included configuration
  - api     -- Okanjo API client instance using config
  - last    -- The last api response.data passed into dump()
- - error   -- The last api error passed into test()
+ - error   -- The last api error passed into dump()
  - session -- The session context from calling login()
  - depth   -- How deep to inspect objects (default: 2)
 Global Commands:
