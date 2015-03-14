@@ -2,13 +2,20 @@
 
 This library provides easy integration with the Okanjo platform.
 
-See the [Okanjo Documentation](okanjo.github.io/okanjo-docs/build/index.html) for information on the API.
+See the [Okanjo Documentation](okanjo.github.io/okanjo-docs/build/index.html) for information on the Marketplace API.
 
 ## Prerequisites
 
-To use Okanjo API, you must have the following:
+To use the Okanjo Marketplace API, you must have both:
 * An API key
 * An API passphrase.
+
+To use the Okanjo Ads API, you will need either:
+* An API key (to access public routes)
+* An API key and secret (to manage a marketplace)
+* An account email and password (to manage your, account, marketplaces and keys)
+* Nothing at all (gotta start somewhere, just can create an account)
+
 
 ## Getting Started
 
@@ -16,6 +23,12 @@ Simply install with npm like so:
 
 ```shell
 $ npm install okanjo
+```
+
+Optionally, you can install okanjo globally to expose `okanjo-cli` in your PATH.
+
+```shell
+$ npm install -g okanjo
 ```
 
 And use the API like so:
@@ -26,7 +39,7 @@ And use the API like so:
 var okanjo = require('okanjo');
 
 // Create the client api instance
-var api = new okanjo.Client({
+var api = new ok.clients.MarketplaceClient({
     key: 'YOUR_API_KEY',
     passPhrase: 'YOUR_API_PASSPHRASE'
 });
@@ -58,26 +71,26 @@ in-memory example out of the box, and you can use this as a template for an inte
 ```js
 
 // Okanjo namespace
-var okanjo = require('okanjo');
+var ok = require('okanjo');
 
 // Create the client api instance
-var api = new okanjo.Client({
+var api = new ok.clients.MarketplaceClient({
     key: 'YOUR_API_KEY',
     passPhrase: 'YOUR_API_PASSPHRASE'
 });
 
-// Create an implementation of an okanjo.provider.CacheProvider
-var cacheProvider = new okanjo.provider.MemoryCacheProvider(api, {
+// Create an implementation of an ok.providers.CacheProvider
+var cacheProvider = new ok.providers.MemoryCacheProvider(api, {
     prefix: 'my_prefix_',
     suffix: '.my_suffix'
-});
+}); // would generate key names like: my_prefix_%s.my_suffix
 
 // Attach your fancy new cache provider
-api.addProvider(okanjo.Client.ProviderType.Cache, cacheProvider);
+api.addProvider(ok.providers.type.cache, cacheProvider);
 
 // Get some products using cachedExecute instead, and make sure to provide a TTL!
 api.getProducts().where({ available: 1, type: 1 }).take(5).cachedExecute(
-    okanjo.provider.CacheProvider.TimeToLive.Minute * 15,
+    ok.providers.CacheProvider.timeToLive.minute * 15,
     function(err, response) {
 
         // err param will be set if something went horribly wrong
@@ -89,68 +102,10 @@ api.getProducts().where({ available: 1, type: 1 }).take(5).cachedExecute(
 
 ```
 
-You can easily build your own cache provider to integrate with your own caching service. For example:
-
-```js
-
-/**
- * Basic, in-process memory cache provider
- * @param {Client} api - okanjo.Client api instance
- * @param {*} options - Configuration parameters that may be needed (e.g. prefix/suffix, connection info, etc)
- * @constructor
- */
-function MemoryCacheProvider(api, options) {
-    CacheProvider.call(this, api, options);
-    this.cache = {};
-}
-
-// Extend the CacheProvider base
-util.inherits(MemoryCacheProvider, CacheProvider);
+You can easily build your own cache provider to integrate with your own caching service. 
+Check out the super basic in-memory example: [memory_provider.js](lib/provider/memory_provider.js)
 
 
-/**
- * Internal method to get the cached response given the cache key.
- * @param {string} key - Cache key to retrieve
- * @param {function} callback - Callback function, argument is the cached response or null if not cached.
- * @private
- */
-MemoryCacheProvider.prototype._get = function(key, callback) {
-    // Pull key from cache
-    var value = this.cache.hasOwnProperty(key) ? this.cache[key] : null,
-        now = (new Date()).getTime();
-
-    // Manual TTL check
-    if (value != null && value.ttl > 0) {
-        if ((now - value.setTime) / 1000 > value.ttl) {
-            // TTL expired - purge from memory
-            delete this.cache[key];
-            value = null;
-        }
-    }
-
-    // Return the cached value or null if not cached
-    callback && callback(value != null ? value.data : null);
-};
-
-
-/**
- * Internal method to set a response in the cache
- * @param {string} key - Cache key to save
- * @param {number} ttl - How many seconds to live in the cache
- * @param {*} value - The object to cache
- * @param {function} callback - Callback function, no arguments, fired when the value has been cached.
- * @private
- */
-MemoryCacheProvider.prototype._set = function(key, ttl, value, callback) {
-    this.cache[key] = {
-        ttl: ttl,
-        data: value,
-        setTime: (new Date()).getTime()
-    };
-    callback && callback();
-};
-
-```
 
 ### Debugging
 
@@ -161,8 +116,8 @@ We emit log events when stuff happens in the client. To check out what's going o
 // Okanjo namespace
 var okanjo = require('okanjo');
 
-// Create the client api instance
-var api = new okanjo.Client({
+// Create the marketplace client api instance
+var api = new ok.clients.MarketplaceClient({
     key: 'YOUR_API_KEY',
     passPhrase: 'YOUR_API_PASSPHRASE'
 });
@@ -170,8 +125,8 @@ var api = new okanjo.Client({
 // Watch the log event and handle notifications
 api.on('log', function(level, message, args) {
     // You can filter out lower-level log events that you don't want to see
-    // See okanjo.Client.LogLevel for options
-    if (level.level >= okanjo.Client.LogLevel.Debug.level) {
+    // See okanjo.logLevel for options
+    if (level.level >= okanjo.logLevel.debug.level) {
         console.log('[' + (new Date()) + '] ' + level.name + ': ' + message, args);
     }
 });
@@ -183,27 +138,31 @@ api.on('log', function(level, message, args) {
 
 Sometimes, you don't want to write a script just to do a few things with the API, and just want to get things done. We have a simple interactive console that you can use exactly for this purpose.
 
-To use the console, first copy the file `test/config.default.js` to `test/config.js` and update it with your API / user credentials.
+To use the console, first copy the file `config.default.js` to `config.js` and update it with your API / user credentials.
 
-Then simply run: `node test/console`
+Then simply run: `node bin/console.js` or if installed globally (e.g. `npm install -g okanjo`) then you can just run `okanjo-cli`.
 
 You'll be greeted with the Okanjo Interactive Console list of globals and functions. Here's an example of what you can do:
 
 ```js
-$ node test/console
+$ okanjo-cli 
 
-Okanjo Interactive Console
+Okanjo Interactive Console (alpha)
 --------------------------
 Globals Vars:
- - okanjo  -- The Okanjo SDK
- - config  -- The included configuration
- - api     -- Okanjo API client instance using config
- - last    -- The last api response.data passed into dump()
- - error   -- The last api error passed into dump()
- - session -- The session context from calling login()
- - depth   -- How deep to inspect objects (default: 2)
+ - ok          -- The Okanjo SDK
+ - config      -- The included configuration
+ - mp          -- Okanjo Marketplace API client instance using config
+ - ads         -- Okanjo Ads API client instance using config
+ - last        -- The last api response.data passed into dump()
+ - res         -- The last api response passed into dump()
+ - error       -- The last api error passed into dump()
+ - session_mp  -- The session context from calling login_mp()
+ - session_ads -- The session context from calling login_ads()
+ - depth       -- How deep to inspect objects (default: 2)
 Global Commands:
- - login()          -- Login with the user1 from config, updates global session var
+ - login_mp()       -- Marketplace login with the user1 from config, updates global session_mp var
+ - login_ads()      -- Ads login with the user1 from config, updates global session_ads var
  - dump(err,res)    -- Function for testing API calls, stores err,res in global error,last and inspects the response. e.g. api.getProducts().execute(test);
  - debug(err,res)   -- Same as dump but does not store err,res globally
  - inspect(...)     -- Inspects arguments given at current depth
@@ -212,7 +171,8 @@ Global Commands:
  - .load ./file.js  -- Load a JS file into the console session
  - .exit            -- Quit and exit this process
 --------------------------
- > login()      // login using the credentials from the config.js file
+
+ > login_mp()      // login to okanjo marketplace using the credentials from the config.js file
 undefined
  > null
 { user_token: 'UTasdf12345...',
@@ -242,25 +202,26 @@ undefined
      meta: [] },
   notifications: [] }
 
- > var storeId = session.user.stores[0].id    // the session global is set after calling login()
+ > var storeId = session.user.stores[0].id    // the session global is set after calling login_mp()
 undefined
 
- > api.get       // press <tab> for auto-completion or suggestions
-api.getBrands                      api.getBrandsByIdOrApiKey          api.getCategories                  api.getCategoryById                api.getCategoryTree                api.getCauseById                   api.getCauses
-api.getEventById                   api.getEventSubscriptions          api.getProductById                 api.getProducts                    api.getPromotionByCode             api.getRegionById                  api.getRegions
-api.getStoreAddressById            api.getStoreAddresses              api.getStoreById                   api.getStoreFeedback               api.getStoreFeedbackByOrderItemId  api.getStoreReturnPolicies         api.getStoreSaleById
-api.getStoreSales                  api.getStoreTransactionById        api.getStoreTransactions           api.getStores                      api.getTagByName                   api.getTags                        api.getUserAddressById
-api.getUserAddresses               api.getUserAuctionById             api.getUserAuctions                api.getUserById                    api.getUserFeedback                api.getUserFeedbackByOrderItemId   api.getUserNotificationById
-api.getUserNotifications           api.getUserOrderById               api.getUserOrderItemById           api.getUserOrderItems              api.getUserOrders                  api.getUserTransactionById         api.getUserTransactions
-api.getVanityUriBySlug
+ > mp.get       // press <tab> for auto-completion or suggestions
+mp.getBrands                      mp.getBrandsByIdOrApiKey          mp.getCategories                  mp.getCategoryById                mp.getCategoryTree                mp.getCauseById                   mp.getCauses
+mp.getEventById                   mp.getEventSubscriptions          mp.getProductById                 mp.getProducts                    mp.getPromotionByCode             mp.getRegionById                  mp.getRegions
+mp.getStoreAddressById            mp.getStoreAddresses              mp.getStoreById                   mp.getStoreFeedback               mp.getStoreFeedbackByOrderItemId  mp.getStoreReturnPolicies         mp.getStoreSaleById
+mp.getStoreSales                  mp.getStoreTransactionById        mp.getStoreTransactions           mp.getStores                      mp.getTagByName                   mp.getTags                        mp.getUserAddressById
+mp.getUserAddresses               mp.getUserAuctionById             mp.getUserAuctions                mp.getUserById                    mp.getUserFeedback                mp.getUserFeedbackByOrderItemId   mp.getUserNotificationById
+mp.getUserNotifications           mp.getUserOrderById               mp.getUserOrderItemById           mp.getUserOrderItems              mp.getUserOrders                  mp.getUserTransactionById         mp.getUserTransactions
+mp.getVanityUriBySlug             
 
- > api.getProd    // press <tab> for auto-completion or suggestions
-api.getProductById  api.getProducts
+
+ > mp.getProd    // press <tab> for auto-completion or suggestions
+mp.getProductById  mp.getProducts     
 
  > depth = 1
 1
 
- > api.getProducts().where({ store_id: storeId, available: 1, type: okanjo.constants.productType.regular }).select('id,title,price').take(2).execute(dump)
+ > mp.getProducts().where({ store_id: storeId, available: 1, type: ok.constants.marketplace.productType.regular }).select('id,title,price').take(2).execute(dump)
    undefined
  > null
    [ { id: '141888',

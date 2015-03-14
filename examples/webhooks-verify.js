@@ -37,8 +37,8 @@
 
 var http = require('http'),
     util = require('util'),
-    okanjo = require('../lib/okanjo'),
-    api = new okanjo.Client({
+    okanjo = require('../lib/index'),
+    api = new okanjo.clients.MarketplaceClient({
         key: 'YOUR_API_KEY',
         passPhrase: 'YOUR_API_PASSPHRASE'
     }),
@@ -76,7 +76,7 @@ http.createServer(function (req, res) {
                         if (err) {
                             throw new Error('Failed to process request');
                         } else {
-                            if (response.status == okanjo.Response.Status.OK) {
+                            if (response.status == okanjo.common.Response.status.ok) {
                                 // Don't use what we received, instead, use what the API gave us
                                 event = response.data;
                                 type = response.data.type;
@@ -86,7 +86,7 @@ http.createServer(function (req, res) {
                                 // Action differently depending on what type of action came in
                                 switch(type) {
 
-                                    case okanjo.constants.eventType.disbursementCreated:
+                                    case okanjo.constants.marketplace.eventType.disbursementCreated:
                                         var transactions = data.transactions,
                                             disbursement_type = data.disbursement.type,
                                             disbursement_total = data.disbursement.total,
@@ -94,19 +94,19 @@ http.createServer(function (req, res) {
                                         console.log(logTime, 'GOT DISBURSEMENT EVENT!', id, util.format('Txns=%s, Type=%s, Total=%s, Fee=%s', transactions.length, disbursement_type, disbursement_total, disbursement_fee));
                                         break;
 
-                                    case okanjo.constants.eventType.productCreated:
+                                    case okanjo.constants.marketplace.eventType.productCreated:
                                         console.log(logTime, 'GOT PRODUCT CREATED EVENT!', id, util.format('Id=%s, Title=%s, Slug=%s', data.id, data.title, data.slug));
                                         break;
 
-                                    case okanjo.constants.eventType.orderConfirmed:
+                                    case okanjo.constants.marketplace.eventType.orderConfirmed:
                                         console.log(logTime, 'GOT NEW ORDER EVENT!', id, util.format('Id=%s, Items=%s, Status=%s', data.id, data.items.length, data.status));
                                         break;
 
-                                    case okanjo.constants.eventType.orderUpdated:
+                                    case okanjo.constants.marketplace.eventType.orderUpdated:
                                         console.log(logTime, 'GOT ORDER UPDATED EVENT!', id, util.format('Id=%s, Items=%s, Status=%s', data.id, data.items.length, data.status));
                                         break;
 
-                                    case okanjo.constants.eventType.orderItemUpdated:
+                                    case okanjo.constants.marketplace.eventType.orderItemUpdated:
                                         console.log(logTime, 'GOT ITEM UPDATED EVENT!', id, util.format('Id=%s, OrderId=%s, Status=%s', data.id, data.order_id, data.status));
                                         break;
 

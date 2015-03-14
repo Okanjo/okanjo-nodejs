@@ -3,6 +3,19 @@
 
 When stuff changes, it's described here.
 
+# 0.2.x
+
+## 2015-03-14
+ * Added Okanjo Ads alpha implementation
+ * Major refactor of the entire product
+  * Moved things around
+  * Blew out multiple objects per file into individual files
+  * Added indexes and general okanjo namespacing
+ * Added basic unit test framework: mocha/should
+ * Registered the okanjo console test as a bin, run with okanjo-cli!
+
+# 0.1.x
+
 ## 2015-01-14
  * Added interactive console for working with the API in node
  * Bumped version to 0.1.24
