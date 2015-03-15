@@ -8,7 +8,7 @@ See the [Okanjo Documentation](okanjo.github.io/okanjo-docs/build/index.html) fo
 
 To use the Okanjo Marketplace API, you must have both:
 * An API key
-* An API passphrase.
+* An API passphrase
 
 To use the Okanjo Ads API, you will need either:
 * An API key (to access public routes)

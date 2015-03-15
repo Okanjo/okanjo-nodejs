@@ -73,12 +73,26 @@ help();
 
 var repl = require("repl"),
     ok = require('../lib/index'),
-    util = require('util'),
-    config = require('../config'),
-    mp = new ok.clients.MarketplaceClient(config.marketplace.api),
+    util = require('util');
+
+try {
+    var config = require('../config');
+} catch (e) {
+    console.error('!! Could not load config.js! To load a default config, copy config.default.js to config.js.');
+    console.error('Using empty config:');
+    console.error('config = {\n    marketplace: { api: { key: "FIXME", passPhrase: "FIXME" }, user1: { } },\n    ads: { api: {}, user1: {} }\n}');
+    console.error();
+    config = {
+        marketplace: { api: { key: "FIXME", passPhrase: "FIXME" }, user1: { } },
+        ads: { api: {}, user1: {} }
+    }
+}
+
+var mp = new ok.clients.MarketplaceClient(config.marketplace.api),
     ads = new ok.clients.AdsClient(config.ads.api),
     term = repl.start(" > "),
     context = term.context;
+
 
 mp.on('log', function(level, message, args) {
     if (level.level >= ok.logLevel.info.level) {
