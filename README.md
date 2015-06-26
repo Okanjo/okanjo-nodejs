@@ -7,6 +7,7 @@ See the [Okanjo Documentation](okanjo.github.io/okanjo-docs/build/index.html) fo
 ## Prerequisites
 
 To use Okanjo API, you must have the following:
+
 * An API key
 * An API passphrase.
 
