@@ -5,6 +5,13 @@ When stuff changes, it's described here.
 
 # 0.2.x
 
+## 2015-07-10
+ * Added `holdStatus` and `holdType` constants
+ * Added hold getter routes for user and stores
+ * Updated payoutPreference to `bank_account` only
+ * Added `getUserBrands` and `getBrandUsers` routes and methods for brand / user management
+ * Added contact `addressType`
+
 ## 2015-03-14
  * Added Okanjo Ads alpha implementation
  * Major refactor of the entire product
