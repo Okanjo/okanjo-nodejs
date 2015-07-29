@@ -60,7 +60,6 @@ var ads = {
             },
 
             client: {
-                BalancedMarketplaceUri: '/v1/marketplaces/TEST-MPrnJQJHu7QjihgE61ch0MT'
             }
         },
 
@@ -78,7 +77,6 @@ var ads = {
             },
 
             client: {
-                BalancedMarketplaceUri: '/v1/marketplaces/MP6vnNdXY7izEEVPs1gl7jSy'
             }
         }
     };

@@ -144,11 +144,11 @@ function OkanjoConsoleHelper(context, setter) {
     // Build the inspect dump to the current context and expose it
     this.set('dump', function(err, res) {
         self.set('error', err);
-        self.set('last', res.data);
+        self.set('last', (res && res.data) ? res.data : null);
         self.set('res', res);
         self.inspect(err, res ? res.data : null);
 
-        if (res.error) { self.inspect(res.error, res.message, res.validation )}
+        if (res && res.error) { self.inspect(res.error, res.message, res.validation )}
     });
 
     // Build the login function to the current context and expose it
