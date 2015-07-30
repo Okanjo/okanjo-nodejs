@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /**
  * Date: 1/14/15 7:57 AM
  *
@@ -40,18 +42,22 @@
 
 function help() {
     console.log('');
-    console.log('Okanjo Interactive Console');
+    console.log('Okanjo Interactive Console (alpha)');
     console.log('--------------------------');
     console.log('Globals Vars:');
-    console.log(' - okanjo  -- The Okanjo SDK');
-    console.log(' - config  -- The included configuration');
-    console.log(' - api     -- Okanjo API client instance using config');
-    console.log(' - last    -- The last api response.data passed into dump()');
-    console.log(' - error   -- The last api error passed into dump()');
-    console.log(' - session -- The session context from calling login()');
-    console.log(' - depth   -- How deep to inspect objects (default: 2)');
+    console.log(' - ok          -- The Okanjo SDK');
+    console.log(' - config      -- The included configuration');
+    console.log(' - mp          -- Okanjo Marketplace API client instance using config');
+    console.log(' - ads         -- Okanjo Ads API client instance using config');
+    console.log(' - last        -- The last api response.data passed into dump()');
+    console.log(' - res         -- The last api response passed into dump()');
+    console.log(' - error       -- The last api error passed into dump()');
+    console.log(' - session_mp  -- The session context from calling login_mp()');
+    console.log(' - session_ads -- The session context from calling login_ads()');
+    console.log(' - depth       -- How deep to inspect objects (default: 2)');
     console.log('Global Commands:');
-    console.log(' - login()          -- Login with the user1 from config, updates global session var');
+    console.log(' - login_mp()       -- Marketplace login with the user1 from config, updates global session_mp var');
+    console.log(' - login_ads()      -- Ads login with the user1 from config, updates global session_ads var');
     console.log(' - dump(err,res)    -- Function for testing API calls, stores err,res in global error,last and inspects the response. e.g. api.getProducts().execute(test);');
     console.log(' - debug(err,res)   -- Same as dump but does not store err,res globally');
     console.log(' - inspect(...)     -- Inspects arguments given at current depth');
@@ -65,17 +71,37 @@ function help() {
 help();
 
 
-// repl_test.js
 var repl = require("repl"),
-    okanjo = require('./../lib/okanjo'),
-    util = require('util'),
-    config = require('./config'),
-    api = new okanjo.Client(config.api),
+    ok = require('../lib/index'),
+    util = require('util');
+
+try {
+    var config = require('../config');
+} catch (e) {
+    console.error('!! Could not load config.js! To load a default config, copy config.default.js to config.js.');
+    console.error('Using empty config:');
+    console.error('config = {\n    marketplace: { api: { key: "FIXME", passPhrase: "FIXME" }, user1: { } },\n    ads: { api: {}, user1: {} }\n}');
+    console.error();
+    config = {
+        marketplace: { api: { key: "FIXME", passPhrase: "FIXME" }, user1: { } },
+        ads: { api: {}, user1: {} }
+    }
+}
+
+var mp = new ok.clients.MarketplaceClient(config.marketplace.api),
+    ads = new ok.clients.AdsClient(config.ads.api),
     term = repl.start(" > "),
     context = term.context;
 
-api.on('log', function(level, message, args) {
-    if (level.level >= okanjo.Client.LogLevel.Info.level) {
+
+mp.on('log', function(level, message, args) {
+    if (level.level >= ok.logLevel.info.level) {
+        console.log('[' + (new Date()) + '] ' + level.name + ': ' + message, args);
+    }
+});
+
+ads.on('log', function(level, message, args) {
+    if (level.level >= ok.logLevel.info.level) {
         console.log('[' + (new Date()) + '] ' + level.name + ': ' + message, args);
     }
 });
@@ -118,18 +144,41 @@ function OkanjoConsoleHelper(context, setter) {
     // Build the inspect dump to the current context and expose it
     this.set('dump', function(err, res) {
         self.set('error', err);
-        self.set('last', res.data);
+        self.set('last', (res && res.data) ? res.data : null);
+        self.set('res', res);
         self.inspect(err, res ? res.data : null);
+
+        if (res && res.error) { self.inspect(res.error, res.message, res.validation )}
     });
 
     // Build the login function to the current context and expose it
-    this.set('login', function login(cb) {
+    this.set('login_mp', function login_mp(cb) {
         // Log the user in
-        api.userLogin().data(config.user1).execute(function(err,res) {
-            api.userToken = res.data.user_token;
+        mp.userLogin().data(config.marketplace.user1).execute(function(err,res) {
+            if (err || res.status != ok.common.Response.status.ok) {
+                console.error('Login failed');
+            } else {
+                mp.userToken = res.data.user_token;
+                self.set('session_mp', res.data);
+            }
 
-            self.set('session', res.data);
+            self.dump(err, res);
+            cb && cb(err,res);
+        });
+    });
 
+    // Build the login function to the current context and expose it
+    this.set('login_ads', function login_ads(cb) {
+        // Log the user in
+        ads.postAccountSession().data(config.ads.user1).execute(function(err,res) {
+            if (err || res.status != ok.common.Response.status.ok) {
+                console.error('Login failed');
+            } else {
+                ads.sessionId = res.data.session.id;
+                ads.userToken = res.data.session.token;
+
+                self.set('session_ads', res.data);
+            }
             self.dump(err, res);
             cb && cb(err,res);
         });
@@ -139,13 +188,16 @@ function OkanjoConsoleHelper(context, setter) {
     this.set('debug', this.debug);
 
     // Expose the rest of these globals on the context
-    this.set('okanjo', okanjo);
-    this.set('api', api);
+    this.set('ok', ok);
+    this.set('mp', mp);
+    this.set('ads', ads);
     this.set('config', config);
 
     // Set them so they're not undefined
-    this.set('session', null);
+    this.set('session_mp', null);
+    this.set('session_ads', null);
     this.set('last', null);
+    this.set('res', null);
     this.set('error', null);
 }
 
@@ -153,11 +205,13 @@ OkanjoConsoleHelper.prototype = {
 
     last: null,
     err: null,
-    session: null,
+    session_mp: null,
+    session_ads: null,
     depth: null,
 
-    okanjo: okanjo,
-    api: api,
+    ok: ok,
+    mp: mp,
+    ads: ads,
     config: config,
 
     constructor: OkanjoConsoleHelper,
@@ -166,25 +220,17 @@ OkanjoConsoleHelper.prototype = {
         this.inspect('error:', err, 'response:', res);
     },
 
-    set: function(name, value) {
+    set: function(name, value) { },
 
-    },
+    get: function(name) { },
 
-    get: function(name) {
+    inspect: function() { },
 
-    },
+    dump: function(err, res) { },
 
-    inspect: function() {
+    login_mp: function(err, res) { },
 
-    },
-
-    dump: function(err, res) {
-
-    },
-
-    login: function(err, res) {
-
-    },
+    login_ads: function(err, res) { },
 
     toString: function() {
         var o = {};
@@ -209,10 +255,17 @@ function bindStuffToContext(ctx) {
     ctx.x = new OkanjoConsoleHelper(ctx, function(name, value) { ctx[name] = value; });
 
     // Expose the .login function on the console
-    term.defineCommand('login', {
-        help: 'Do a login using the user1 defined in config',
+    term.defineCommand('login_mp', {
+        help: 'Do a marketplace login using the user1 defined in config',
         action: function() {
-            ctx.login();
+            ctx.login_mp();
+        }
+    });
+
+    term.defineCommand('login_ads', {
+        help: 'Do a ads login using the user1 defined in config',
+        action: function() {
+            ctx.login_ads();
         }
     });
 }

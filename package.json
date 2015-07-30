@@ -1,10 +1,13 @@
 {
   "name": "okanjo",
-  "version": "0.1.24",
+  "version": "0.2.0",
   "description": "Okanjo JavaScript Software Development Kit",
   "main": "./index.js",
+  "bin": {
+    "okanjo-cli": "./bin/console.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test"
   },
   "repository": {
     "type": "git",
@@ -12,7 +15,11 @@
   },
   "keywords": [
     "Okanjo",
-    "Ecommerce"
+    "Ecommerce",
+    "Marketplace",
+    "Ads",
+    "AdCommerce",
+    "ProductSense"
   ],
   "author": "Okanjo",
   "license": "MIT",
@@ -21,5 +28,9 @@
   },
   "dependencies": {
     "qs": "~0.6.6"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.1",
+    "should": "^5.2.0"
   }
 }

@@ -3,6 +3,32 @@
 
 When stuff changes, it's described here.
 
+# 0.2.x
+
+## 2015-07-30
+ * Started config changes for username deprecation
+ 
+## 2015-07-28
+ * Fixed some error edge cases when response comes back null (e.g. bad endpoint) 
+
+## 2015-07-10
+ * Added `holdStatus` and `holdType` constants
+ * Added hold getter routes for user and stores
+ * Updated payoutPreference to `bank_account` only
+ * Added `getUserBrands` and `getBrandUsers` routes and methods for brand / user management
+ * Added contact `addressType`
+
+## 2015-03-14
+ * Added Okanjo Ads alpha implementation
+ * Major refactor of the entire product
+  * Moved things around
+  * Blew out multiple objects per file into individual files
+  * Added indexes and general okanjo namespacing
+ * Added basic unit test framework: mocha/should
+ * Registered the okanjo console test as a bin, run with okanjo-cli!
+
+# 0.1.x
+
 ## 2015-01-14
  * Added interactive console for working with the API in node
  * Bumped version to 0.1.24
