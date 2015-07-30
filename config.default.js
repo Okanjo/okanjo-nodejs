@@ -32,7 +32,6 @@ var ads = {
 
             // If authenticating via account login
             user1: {
-                action: 'loginEmailPassword',
                 email: 'YOUR_ACCOUNT_EMAIL_ADDRESS',
                 password: 'YOUR_ACCOUNT_PASSWORD'
             }

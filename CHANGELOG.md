@@ -5,6 +5,9 @@ When stuff changes, it's described here.
 
 # 0.2.x
 
+## 2015-07-30
+ * Started config changes for username deprecation
+ 
 ## 2015-07-28
  * Fixed some error edge cases when response comes back null (e.g. bad endpoint) 
 
