@@ -5,6 +5,10 @@ When stuff changes, it's described here.
 
 # 0.2.x
 
+## 2015-08-11
+ * Fixed incorrect method name to `getBrandByIdOrApiKey`
+ * Added redirect handling for 300-level requests
+
 ## 2015-07-30
  * Started config changes for username deprecation
  
