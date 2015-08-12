@@ -5,7 +5,7 @@ When stuff changes, it's described here.
 
 # 0.2.x
 
-## 2015-08-11
+## 2015-08-11 - v0.2.1
  * Fixed incorrect method name to `getBrandByIdOrApiKey`
  * Added redirect handling for 300-level requests
 
