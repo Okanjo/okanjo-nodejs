@@ -9,7 +9,7 @@ When stuff changes, it's described here.
  * Fixed incorrect method name to `getBrandByIdOrApiKey`
  * Added redirect handling for 300-level requests
 
-## 2015-07-30
+## 2015-07-30 - v0.2.0
  * Started config changes for username deprecation
  
 ## 2015-07-28
