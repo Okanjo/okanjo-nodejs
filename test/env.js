@@ -61,7 +61,7 @@ describe('Configuration', function() {
 
     it('should require ok', function() {
         var ok = require('../');
-        ok.should.be.ok.and.be.and.Object;
+        ok.should.be.ok.and.be.an.Object;
     });
     it('can create ads api client instance', function() {
         var ok = require('../');
