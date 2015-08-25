@@ -1,5 +1,5 @@
 /**
- * Date: 8/5/15 10:27 AM
+ * Date: 8/20/15 10:27 AM
  *
  * ----
  *
@@ -36,26 +36,37 @@
  */
 
 
-var okanjo = require('../../../index'),
-    config = require('../../../config');
+var config = require('../../../config'),
+    genMedia = require('./media'),
+    okanjo = require('../../../');
+
 
 module.exports = {
 
-    generate: function (mp, callback) {
+    postProduct: function (mp, userRes, callback) {
 
+        genMedia.generate(mp, function (err, mediaId) {
 
-        var tmpPath = __dirname + '/../assets/unittest.jpg',
-            tmpName = 'unittest.jpg';
+            var product = {
+                store_id: userRes.data.user.stores[0].id,
+                type: 0,
+                title: 'Unit Test Product',
+                description: 'This Product Exists For Testing Purposes.',
+                price: 10.00,
+                stock: null,
+                category_id: 10,
+                condition: 'New',
+                return_policy: {id:0},
+                media: [mediaId],
+                thumbnail_media_id: mediaId,
+                is_free_shipping: 1
+            };
 
+            mp.postProduct().data(product).execute( function (err, res) {
+                var productId = res.data.id;
 
-        var upload = new okanjo.common.FileUpload(tmpPath, tmpName, 'image/jpg', {
-            purpose: okanjo.constants.marketplace.mediaImagePurpose.product
-        });
-
-        mp.postMedia().data(upload).execute(function (err, res) {
-
-            return callback && callback(err, res.data.id);
-
+                callback && callback(err, res, productId);
+            });
         });
     }
 };

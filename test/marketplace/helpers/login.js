@@ -47,9 +47,9 @@ module.exports = {
         var userConfig = config.marketplace.user1;
 
         mp.userLogin().data(userConfig).execute(function (err, res) {
-
             mp.userToken = res.data.user_token;
-            callback && callback(err, res);
+            var userId = res.data.user.id;
+            callback && callback(err, res, userId);
         });
     }
 };

@@ -1,5 +1,5 @@
 /**
- * Date: 8/5/15 10:27 AM
+ * Date: 8/25/15 4:20 PM
  *
  * ----
  *
@@ -34,28 +34,3 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-
-var okanjo = require('../../../index'),
-    config = require('../../../config');
-
-module.exports = {
-
-    generate: function (mp, callback) {
-
-
-        var tmpPath = __dirname + '/../assets/unittest.jpg',
-            tmpName = 'unittest.jpg';
-
-
-        var upload = new okanjo.common.FileUpload(tmpPath, tmpName, 'image/jpg', {
-            purpose: okanjo.constants.marketplace.mediaImagePurpose.product
-        });
-
-        mp.postMedia().data(upload).execute(function (err, res) {
-
-            return callback && callback(err, res.data.id);
-
-        });
-    }
-};

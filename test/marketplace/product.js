@@ -1,8 +1,4 @@
 /**
- * Created by matthewrachwal on 7/28/15.
- */
-//noinspection JSUnusedGlobalSymbols
-/**
  * Date: 8/11/15 9:18 PM
  *
  * ----
@@ -42,9 +38,11 @@
 var config = require('../../config'),
     okanjo = require('../../index'),
     mp_login = require('./helpers/login'),
+    clean = require('./helpers/cleanup_job'),
     genMedia = require('./helpers/media');
 
 mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+var cleanupJobs = [];
 
 describe('Product', function () {
 
@@ -64,9 +62,9 @@ describe('Product', function () {
 
     it('can be created', function (done) {
 
-        mp_login.login(mp, function (err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate( function (err, mediaId) {
+            genMedia.generate(mp,  function (err, mediaId) {
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -82,25 +80,24 @@ describe('Product', function () {
                     thumbnail_media_id: mediaId,
                     is_free_shipping: 1
                 };
-
+                
                 mp.postProduct().data(product).execute( function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.should.be.ok;
                     res.should.be.json;
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-                    product = {status: 7};
-
-                    mp.putProductById(res.data.id).data(product).execute( function (err, res) {
-                        (!err).should.be.true;
-                        res.should.be.ok;
-                        res.should.be.json;
-                        res.status.should.be.equal(okanjo.common.Response.status.ok);
-                        res.data.should.be.ok;
-
-                        done();
-                    });
+                    done();
                 });
             });
         });
@@ -109,9 +106,9 @@ describe('Product', function () {
 
     it('cannot be created when title is made of whitespace', function (done) {
 
-        mp_login.login(mp, function (err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate( function (err, mediaId) {
+            genMedia.generate(mp,  function (err, mediaId) {
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -129,6 +126,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute( function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
@@ -141,9 +147,9 @@ describe('Product', function () {
 
     it('cannot be created when the title is too short', function (done) {
 
-        mp_login.login(mp, function (err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate( function (err, mediaId) {
+            genMedia.generate(mp,  function (err, mediaId) {
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -161,6 +167,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute( function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
@@ -173,9 +188,9 @@ describe('Product', function () {
 
     it('cannot be created when the title is too long', function (done) {
 
-        mp_login.login(mp, function (err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate( function (err, mediaId) {
+            genMedia.generate(mp,  function (err, mediaId) {
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -193,6 +208,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute( function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
@@ -205,9 +229,9 @@ describe('Product', function () {
 
     it('cannot be created when the description is made of whitespace', function (done) {
 
-        mp_login.login(mp, function (err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate( function (err, mediaId) {
+            genMedia.generate(mp,  function (err, mediaId) {
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -225,6 +249,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute( function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
@@ -237,9 +270,9 @@ describe('Product', function () {
 
     it('cannot be created when the description is too short', function (done) {
 
-        mp_login.login(mp, function (err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate( function (err, mediaId) {
+            genMedia.generate(mp,  function (err, mediaId) {
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -257,6 +290,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute( function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
@@ -269,9 +311,9 @@ describe('Product', function () {
 
     it('cannot be created when the description is too long',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -289,6 +331,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute(function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
@@ -301,9 +352,9 @@ describe('Product', function () {
 
     it('cannot be created when the price is too low',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -321,6 +372,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute(function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
@@ -333,9 +393,9 @@ describe('Product', function () {
 
     it('cannot be created when the price is too high',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -353,6 +413,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute(function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
@@ -365,9 +434,9 @@ describe('Product', function () {
 
     it('cannot be created when missing shipping information',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -384,6 +453,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute(function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
@@ -396,9 +474,9 @@ describe('Product', function () {
 
     it('cannot be created when free shipping is not selected and no other shipping information is provided',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -416,6 +494,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute(function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
@@ -428,9 +515,9 @@ describe('Product', function () {
 
     it('cannot be created when stock is in an unacceptable range',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -448,6 +535,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute(function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
@@ -460,9 +556,9 @@ describe('Product', function () {
 
     it('cannot be created when return policy "name" is an empty string',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -480,6 +576,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute(function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
@@ -492,9 +597,9 @@ describe('Product', function () {
 
     it('cannot be created when return policy "policy" is an empty string',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -512,6 +617,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute(function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
@@ -524,9 +638,9 @@ describe('Product', function () {
 
     it('cannot be created when return policy "policy" is filled with whitespace',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -544,6 +658,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute(function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
@@ -556,9 +679,9 @@ describe('Product', function () {
 
     it('cannot be created when return policy "name" is filled with whitespace',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -576,6 +699,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute(function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
@@ -588,9 +720,9 @@ describe('Product', function () {
 
     it('cannot be created when set as deleted',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -609,6 +741,15 @@ describe('Product', function () {
                 };
 
                 mp.postProduct().data(product).execute(function (err, res) {
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest, res.raw);
 
@@ -621,9 +762,9 @@ describe('Product', function () {
 
     it('can be updated',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -654,7 +795,15 @@ describe('Product', function () {
                         price: 20.00
                     };
 
-                    productId = res.data.id;
+                    var productId = res.data.id;
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
 
                     mp.putProductById(productId).data(product).execute(function (err, res){
                         (!err).should.be.true;
@@ -663,7 +812,7 @@ describe('Product', function () {
                         res.status.should.be.equal(okanjo.common.Response.status.ok);
                         res.data.should.be.ok;
 
-                            done();
+                        done();
                     });
                 });
             });
@@ -673,9 +822,9 @@ describe('Product', function () {
 
     it('cannot be updated with an invalid price',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -704,7 +853,15 @@ describe('Product', function () {
                         price: -20.00
                     };
 
-                    productId = res.data.id;
+                    var productId = res.data.id;
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
 
                     mp.putProductById(productId).data(product).execute(function (err, res){
                         (!err).should.be.true;
@@ -722,9 +879,9 @@ describe('Product', function () {
 
     it('cannot be undeleted',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var product = {
                     store_id: res.data.user.stores[0].id,
@@ -753,6 +910,14 @@ describe('Product', function () {
                     };
 
                     var productId = res.data.id;
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
 
                     mp.putProductById(productId).data(product).execute(function (){
 
@@ -794,9 +959,9 @@ describe('Product', function () {
 
     it('can be retrieved by id',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
             var product = {
                 store_id: res.data.user.stores[0].id,
@@ -814,6 +979,19 @@ describe('Product', function () {
             };
 
             mp.postProduct().data(product).execute(function (err, res) {
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.ok);
+                res.data.should.be.ok;
+
+                if(res.data.id) {
+                    cleanupJobs.push({
+                        mp_instance: mp,
+                        user_id: userId,
+                        product_id: res.data.id
+                    });
+                }
 
                     mp.getProductById(res.data.id).data().execute(function (err, res){
                         (!err).should.be.true;
@@ -846,7 +1024,7 @@ describe('Product', function () {
 
     it('auction can receive bids',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
             if(err){
                 throw err;
             }
@@ -855,7 +1033,7 @@ describe('Product', function () {
                 throw new Error(res.data.description, res.status);
             }
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var startD = new Date(),
                     endD = new Date(startD);
@@ -889,6 +1067,14 @@ describe('Product', function () {
                     if(res.status != 200){
                         console.log(product);
                         throw new Error(res.data.description, res.status);
+                    }
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
                     }
 
                     mp.postBidOnProduct(res.data.id).data({max_bid: 15.00}).execute(function(err, res){
@@ -908,7 +1094,7 @@ describe('Product', function () {
 
     it('cannot post a bid larger than the max',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
             if(err){
                 throw err;
             }
@@ -917,7 +1103,7 @@ describe('Product', function () {
                 throw new Error(res.data.description, res.status);
             }
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var startD = new Date(),
                     endD = new Date(startD);
@@ -951,6 +1137,14 @@ describe('Product', function () {
                     if(res.status != 200){
                         console.log(product);
                         throw new Error(res.data.description, res.status);
+                    }
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
                     }
 
                     mp.postBidOnProduct(res.data.id).data({max_bid: -100.00}).execute(function(err, res){
@@ -967,7 +1161,7 @@ describe('Product', function () {
 
     it('cannot post bid smaller than the minimum',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
             if(err){
                 throw err;
             }
@@ -976,7 +1170,7 @@ describe('Product', function () {
                 throw new Error(res.data.description, res.status);
             }
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var startD = new Date(),
                     endD = new Date(startD);
@@ -1010,6 +1204,14 @@ describe('Product', function () {
                     if(res.status != 200){
                         console.log(product);
                         throw new Error(res.data.description, res.status);
+                    }
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
                     }
 
                     mp.postBidOnProduct(res.data.id).data({max_bid: 9.00}).execute(function(err, res){
@@ -1027,7 +1229,7 @@ describe('Product', function () {
 
     it('cannot post bid less than the current bid',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
             if(err){
                 throw err;
             }
@@ -1036,7 +1238,7 @@ describe('Product', function () {
                 throw new Error(res.data.description, res.status);
             }
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var startD = new Date(),
                     endD = new Date(startD);
@@ -1073,6 +1275,14 @@ describe('Product', function () {
                     }
 
                     var productId = res.data.id;
+
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
 
                     mp.postBidOnProduct(productId).data({max_bid: 100.00}).execute(function(){
 
@@ -1111,9 +1321,9 @@ describe('Product', function () {
     });
 
 
-    it('cannot be receive a bid if it is not an auction',function(done){
+    it('cannot receive a bid if it is not an auction',function(done){
 
-        mp_login.login(mp, function(err, res) {
+        mp_login.login(mp, function(err, res, userId) {
             if(err){
                 throw err;
             }
@@ -1122,7 +1332,7 @@ describe('Product', function () {
                 throw new Error(res.data.description, res.status);
             }
 
-            genMedia.generate(function(err, mediaId){
+            genMedia.generate(mp, function(err, mediaId){
 
                 var startD = new Date(),
                     endD = new Date(startD);
@@ -1157,6 +1367,14 @@ describe('Product', function () {
 
                     var productId = res.data.id;
 
+                    if(res.data.id) {
+                        cleanupJobs.push({
+                            mp_instance: mp,
+                            user_id: userId,
+                            product_id: res.data.id
+                        });
+                    }
+
                     mp.postBidOnProduct(productId).data({max_bid: 100.00}).execute(function(err, res){
 
                         (!err).should.be.true;
@@ -1166,6 +1384,12 @@ describe('Product', function () {
                     });
                 });
             });
+        });
+    });
+
+    after(function(done){
+        clean.cleanupJob(cleanupJobs, function(){
+            done();
         });
     });
 });

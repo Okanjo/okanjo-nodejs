@@ -1,5 +1,5 @@
 /**
- * Date: 8/5/15 10:27 AM
+ * Date: 8/20/15 10:27 AM
  *
  * ----
  *
@@ -36,26 +36,49 @@
  */
 
 
-var okanjo = require('../../../index'),
-    config = require('../../../config');
+var config = require('../../../config'),
+    okanjo = require('../../../'),
+    async = require('async');
+
 
 module.exports = {
 
-    generate: function (mp, callback) {
+    cleanupJob: function (cleanupJobs, callback) {
 
+        async.map(cleanupJobs, function(job, callback){
 
-        var tmpPath = __dirname + '/../assets/unittest.jpg',
-            tmpName = 'unittest.jpg';
+            var mp = job.mp_instance;
 
+            if(job.product_id) {
 
-        var upload = new okanjo.common.FileUpload(tmpPath, tmpName, 'image/jpg', {
-            purpose: okanjo.constants.marketplace.mediaImagePurpose.product
-        });
+                mp.putProductById(job.product_id).data({status: 7}).execute(function(err,res){
 
-        mp.postMedia().data(upload).execute(function (err, res) {
+                    if(res.statusCode != 200){
 
-            return callback && callback(err, res.data.id);
+                        return callback(res.raw);
+                    }else{
+                        return callback(null, job);
+                    }
+                });
+            }
 
+            if(job.card_id) {
+
+                mp.deleteUserCardById(job.user_id, job.card_id).execute(function(err, res){
+
+                    if(res.statusCode != 200){
+
+                        return callback(res.raw);
+                    }else{
+                        return callback(null, job);
+                    }
+                });
+            }
+
+        }, function(err, cleanupJobs){
+
+            callback(err, cleanupJobs);
         });
     }
+
 };

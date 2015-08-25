@@ -370,7 +370,7 @@ describe('Store', function () {
     });
 
 
-    it('cannot be deleted by unauthorized user', function (done) {
+    it('cannot be deleted by an unauthorized user', function (done) {
 
         var storeParams = {
             name: 'Unit Test',
