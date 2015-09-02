@@ -143,3 +143,7 @@ describe('Login', function(){
     });
 });
 
+
+function gen() {
+    return (("00000000" + (Math.round(Math.random()*Math.pow(36,8))).toString(36)).slice(-8));
+}
