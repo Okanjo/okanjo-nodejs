@@ -129,12 +129,8 @@ describe('Checkout Confirm',function(){
                                     card_token: res.id
                                 };
 
-                                cleanupJobs.push({
-                                    mp_instance: mp,
-                                    user_id: userId,
-                                    product_id: productId,
-                                    card_id: res.card.id
-                                });
+                                clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                                clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, res.card.id);
 
                                 mp.confirmCheckout().data(confirm).execute(function(err, res) {
                                     (!err).should.be.true;
@@ -237,11 +233,7 @@ describe('Checkout Confirm',function(){
                                     card_token: res.id
                                 };
 
-                                cleanupJobs.push({
-                                    mp_instance: mp,
-                                    user_id: userId,
-                                    card_id: res.card.id
-                                });
+                                clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, res.card.id);
 
                                 mp.putProductById(productId).data({status: 7}).execute(function (err, res){
                                     (!err).should.be.true;
@@ -339,12 +331,8 @@ describe('Checkout Confirm',function(){
                                     card_token: res.id
                                 };
 
-                                cleanupJobs.push({
-                                    mp_instance: mp,
-                                    user_id: userId,
-                                    product_id: productId,
-                                    card_id: res.card.id
-                                });
+                                clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                                clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, res.card.id);
 
                                 mp.confirmCheckout().data(confirm).execute(function (err, res){
                                     (!err).should.be.true;
@@ -439,12 +427,8 @@ describe('Checkout Confirm',function(){
                                     card_token: res.id
                                 };
 
-                                cleanupJobs.push({
-                                    mp_instance: mp,
-                                    user_id: userId,
-                                    product_id: productId,
-                                    card_id: res.card.id
-                                });
+                                clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                                clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, res.card.id);
 
                                 mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
 

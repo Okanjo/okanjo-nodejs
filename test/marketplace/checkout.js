@@ -48,7 +48,7 @@ describe('Checkout',function(){
 
     it('is possible',function(done){
 
-        mp_login.login(mp, function(err, res, userId) {
+        mp_login.login(mp, function(err, res) {
 
             genMedia.generate(mp, function(err, mediaId){
 
@@ -101,11 +101,7 @@ describe('Checkout',function(){
                         shipping_phone: '+1-414-810-1760'
                     };
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
 
                     mp.checkout().data(checkoutData).execute( function (err, res){
                         (!err).should.be.true;
@@ -124,7 +120,7 @@ describe('Checkout',function(){
 
     it('is not possible with invalid cart',function(done){
 
-        mp_login.login(mp, function(err, res, userId) {
+        mp_login.login(mp, function(err, res) {
 
             genMedia.generate(mp, function(err, mediaId){
 
@@ -177,11 +173,7 @@ describe('Checkout',function(){
                         shipping_phone: '+1-414-810-1760'
                     };
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
 
                     mp.checkout().data(checkoutData).execute( function (err, res){
                         (!err).should.be.true;
@@ -197,7 +189,7 @@ describe('Checkout',function(){
 
     it('is not possible with bad url',function(done){
 
-        mp_login.login(mp, function(err, res, userId) {
+        mp_login.login(mp, function(err, res) {
 
             genMedia.generate(mp, function(err, mediaId){
 
@@ -250,11 +242,7 @@ describe('Checkout',function(){
                         shipping_phone: '+1-414-810-1760'
                     };
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
 
                     mp.checkout().data(checkoutData).execute( function (err, res){
                         (!err).should.be.true;
@@ -270,7 +258,7 @@ describe('Checkout',function(){
 
     it('is not possible when the grand total is to large',function(done){
 
-        mp_login.login(mp, function(err, res, userId) {
+        mp_login.login(mp, function(err, res) {
 
             genMedia.generate(mp, function(err, mediaId){
 
@@ -323,11 +311,7 @@ describe('Checkout',function(){
                         shipping_phone: '+1-414-810-1760'
                     };
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
 
                     mp.checkout().data(checkoutData).execute( function (err, res){
                         (!err).should.be.true;
@@ -343,7 +327,7 @@ describe('Checkout',function(){
 
     it('is not possible with invalid shipping address',function(done){
 
-        mp_login.login(mp, function(err, res, userId) {
+        mp_login.login(mp, function(err, res) {
 
             genMedia.generate(mp, function(err, mediaId){
 
@@ -395,11 +379,7 @@ describe('Checkout',function(){
                         shipping_phone: '+1-414-810-1760'
                     };
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
 
                     mp.checkout().data(checkoutData).execute( function (err, res){
                         (!err).should.be.true;
@@ -415,7 +395,7 @@ describe('Checkout',function(){
 
     it('is not possible when shipping information does not match Paypals shipping information',function(done){
 
-        mp_login.login(mp, function(err, res, userId) {
+        mp_login.login(mp, function(err, res) {
 
             genMedia.generate(mp, function(err, mediaId){
 
@@ -468,11 +448,7 @@ describe('Checkout',function(){
                         shipping_phone: '+1-414-810-1760'
                     };
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
 
                     mp.checkout().data(checkoutData).execute( function (err, res){
                         (!err).should.be.true;
@@ -488,7 +464,7 @@ describe('Checkout',function(){
 
     it('is not possible when state field is to long',function(done){
 
-        mp_login.login(mp, function(err, res, userId) {
+        mp_login.login(mp, function(err, res) {
 
             genMedia.generate(mp, function(err, mediaId){
 
@@ -541,11 +517,7 @@ describe('Checkout',function(){
                         shipping_phone: '+1-414-810-1760'
                     };
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
 
                     mp.checkout().data(checkoutData).execute( function (err, res){
                         (!err).should.be.true;
@@ -561,7 +533,7 @@ describe('Checkout',function(){
 
     it('is not possible if not logged in',function(done){
 
-        mp_login.login(mp, function(err, res, userId) {
+        mp_login.login(mp, function(err, res) {
 
             genMedia.generate(mp, function(err, mediaId){
 
@@ -614,11 +586,7 @@ describe('Checkout',function(){
                         shipping_phone: '+1-414-810-1760'
                     };
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
 
                     mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
 

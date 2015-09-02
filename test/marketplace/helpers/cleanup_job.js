@@ -47,29 +47,47 @@ module.exports = {
 
         async.map(cleanupJobs, function(job, callback){
 
-            var mp = job.mp_instance;
+            if (job.type && job.type == 'product') {
 
-            if(job.product_id) {
+                cleanProduct(job, function(err, res){
 
-                mp.putProductById(job.product_id).data({status: 7}).execute(function(err,res){
-
-                    if(res.statusCode != 200){
-
+                    if (res.statusCode != 200) {
                         return callback(res.raw);
-                    }else{
+                    } else {
+
                         return callback(null, job);
                     }
                 });
-            }
 
-            if(job.card_id) {
+            } else if (job.type && job.type == 'card') {
 
-                mp.deleteUserCardById(job.user_id, job.card_id).execute(function(err, res){
+                cleanCard(job, function(err, res){
 
-                    if(res.statusCode != 200){
-
+                    if (res.statusCode != 200) {
                         return callback(res.raw);
-                    }else{
+                    } else {
+                        return callback(null, job);
+                    }
+                });
+
+            } else if (job.type && job.type == 'store') {
+
+                cleanStore(job, function(err, res){
+
+                    if (res.statusCode != 200) {
+                        return callback(res.raw);
+                    } else {
+                        return callback(null, job);
+                    }
+                });
+
+            } else if (job.type && job.type == 'address') {
+
+                cleanAddress(job, function(err, res){
+
+                    if (res.statusCode != 200) {
+                        return callback(res.raw);
+                    } else {
                         return callback(null, job);
                     }
                 });
@@ -79,6 +97,88 @@ module.exports = {
 
             callback(err, cleanupJobs);
         });
+    },
+
+    //type must be 'product'
+    cleanupProduct: function(arr, type, userToken, productId){
+        arr.push({type: type, user_token: userToken, product_id: productId});
+    },
+
+    //type must be 'card'
+    cleanupCard: function(arr, type, userToken, userId, cardId){
+        arr.push({type: type, user_token: userToken, user_id: userId, card_id: cardId});
+    },
+
+    //type must be 'store'
+    cleanupStore: function(arr, type, userToken, storeId){
+        arr.push({type: type, user_token: userToken, store_id: storeId});
+    },
+
+    //type must be 'address'
+    cleanupAddress: function(arr, type, userToken, userId, addressId){
+        arr.push({type: type, user_token: userToken, user_id: userId, address_id: addressId});
     }
 
 };
+
+
+//
+//Functions that do the actual removal of resources
+//
+
+
+function cleanProduct(job, callback) {
+
+    if (job.user_token && job.product_id) {
+
+        var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+        mp.userToken = job.user_token;
+
+        mp.putProductById(job.product_id).data({status: 7}).execute(callback);
+    } else {
+        callback(new Error('Missing proper parameters, you passed in' + job));
+    }
+}
+
+
+function cleanCard(job, callback) {
+
+    if (job.user_token && job.user_id && job.card_id) {
+
+        var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+        mp.userToken = job.user_token;
+
+        mp.deleteUserCardById(job.user_id, job.card_id).execute(callback);
+    } else {
+        callback(new Error('Missing proper parameters, you passed in' + job));
+    }
+}
+
+
+function cleanStore(job, callback) {
+
+    if (job.user_token && job.store_id) {
+
+        var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+        mp.userToken = job.user_token;
+
+        mp.deleteStoreById(job.store_id).execute(callback);
+    } else {
+        callback(new Error('Missing proper parameters, you passed in' + job));
+    }
+}
+
+
+function cleanAddress(job, callback){
+
+    if (job.user_token && job.user_id && job.address_id) {
+
+        var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+        mp.userToken = job.user_token;
+
+        mp.deleteUserAddressById(job.user_id, job.address_id).execute(callback);
+    } else {
+        callback(new Error('Missing proper parameters, you passed in' + job));
+    }
+}
+

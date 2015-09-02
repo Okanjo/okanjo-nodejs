@@ -69,13 +69,8 @@ describe('User Notification',function() {
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId,
-                        card_id: checkoutObj.card_id
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
 
                     mp.getUserNotifications(userId).execute(function(err, res){
                         (!err).should.be.true;
@@ -115,12 +110,8 @@ describe('User Notification',function() {
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId,
-                        card_id: checkoutObj.card_id
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
 
                     mp.getUserNotifications(userId).execute(function(err, res){
                         (!err).should.be.true;
@@ -168,12 +159,8 @@ describe('User Notification',function() {
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId,
-                        card_id: checkoutObj.card_id
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
 
                     mp.getUserNotifications(userId).execute(function(err, res){
                         (!err).should.be.true;
@@ -240,12 +227,8 @@ describe('User Notification',function() {
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId,
-                        card_id: checkoutObj.card_id
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
 
                     mp.getUserNotifications(userId).execute(function(err, res){
                         (!err).should.be.true;
@@ -296,12 +279,8 @@ describe('User Notification',function() {
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId,
-                        card_id: checkoutObj.card_id
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
 
                     mp.getUserNotifications(userId).execute(function(err, res){
                         (!err).should.be.true;
@@ -353,12 +332,8 @@ describe('User Notification',function() {
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId,
-                        card_id: checkoutObj.card_id
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
 
                     mp.getUserNotifications(userId).execute(function(err, res){
                         (!err).should.be.true;
@@ -442,12 +417,8 @@ describe('User Notification',function() {
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId,
-                        card_id: checkoutObj.card_id
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
 
                     mp.getUserNotifications(userId).execute(function (err, res) {
                         (!err).should.be.true;
@@ -492,12 +463,8 @@ describe('User Notification',function() {
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId,
-                        card_id: checkoutObj.card_id
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
 
                     mp.getUserNotifications(userId).execute(function(err, res){
                         (!err).should.be.true;

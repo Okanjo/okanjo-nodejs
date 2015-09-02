@@ -40,7 +40,6 @@
 
 
 var config = require('../../config'),
-    should = require('should'),
     okanjo = require('../../index');
 
 
