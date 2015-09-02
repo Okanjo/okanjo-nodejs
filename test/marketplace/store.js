@@ -45,9 +45,11 @@
 var config = require('../../config'),
     okanjo = require('../../index'),
     mp_login = require('./helpers/login'),
+    clean = require('./helpers/cleanup_job'),
     genMedia = require('./helpers/media');
 
-mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+var cleanupJobs = [];
 
 describe('Store', function () {
 
@@ -79,7 +81,13 @@ describe('Store', function () {
         mp_login.login(mp, function () {
 
             mp.postStore().data(newStore).execute( function (err, res) {
-                var storeId = res.data.id;
+
+                var storeId;
+
+                if(res.data.id) {
+                    storeId = res.data.id;
+                    clean.cleanupStore(cleanupJobs, 'store', mp.userToken, storeId);
+                }
 
                 mp.getStoreById(storeId).data().execute( function (err, res) {
                     (!err).should.be.true;
@@ -88,12 +96,7 @@ describe('Store', function () {
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-                    mp.deleteStoreById(storeId).data().execute( function (err, res) {
-                        (!err).should.be.true;
-                        res.should.be.ok;
-
-                        done();
-                    });
+                    done();
                 });
             });
         });
@@ -128,18 +131,21 @@ describe('Store', function () {
         mp_login.login(mp, function () {
 
             mp.postStore().data(newStore).execute( function (err, res) {
+
+                var storeId;
+
+                if(res.data.id) {
+                    storeId = res.data.id;
+                    clean.cleanupStore(cleanupJobs, 'store', mp.userToken, storeId);
+                }
+
                 (!err).should.be.true;
                 res.should.be.ok;
                 res.should.be.json;
                 res.status.should.be.equal(okanjo.common.Response.status.ok);
                 res.data.should.be.ok;
 
-                mp.deleteStoreById(res.data.id).data().execute( function (err, res) {
-                    (!err).should.be.true;
-                    res.should.be.ok;
-
-                    done();
-                });
+                done();
             });
         });
     });
@@ -159,15 +165,18 @@ describe('Store', function () {
         mp_login.login(mp, function () {
 
             mp.postStore().data(newStore).execute( function (err, res) {
+
+                var storeId;
+
+                if(res.data.id) {
+                    storeId = res.data.id;
+                    clean.cleanupStore(cleanupJobs, 'store', mp.userToken, storeId);
+                }
+
                 (!err).should.be.true;
                 res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
-                mp.deleteStoreById(res.data.id).data().execute(function (err, res) {
-                    (!err).should.be.true;
-                    res.should.be.ok;
-
-                    done();
-                });
+                done();
             });
         });
     });
@@ -187,15 +196,18 @@ describe('Store', function () {
         mp_login.login(mp, function() {
 
             mp.postStore().data(newStore).execute( function (err, res) {
+
+                var storeId;
+
+                if(res.data.id) {
+                    storeId = res.data.id;
+                    clean.cleanupStore(cleanupJobs, 'store', mp.userToken, storeId);
+                }
+
                 (!err).should.be.true;
                 res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
-                mp.deleteStoreById(res.data.id).data().execute( function (err, res) {
-                    (!err).should.be.true;
-                    res.should.be.ok;
-
-                    done();
-                });
+                done();
             });
         });
     });
@@ -215,11 +227,19 @@ describe('Store', function () {
         mp_login.login(mp, function() {
 
             mp.postStore().data(storeParams).execute( function (err, res) {
+
+                var storeId;
+
+                if(res.data.id) {
+                    storeId = res.data.id;
+                    clean.cleanupStore(cleanupJobs, 'store', mp.userToken, storeId);
+                }
+
                 (!err).should.be.true;
                 res.should.be.ok;
-                var storeId = res.data.id;
 
                 storeParams.name = 'Unit Test Update';
+
                 mp.putStoreById(storeId).data(storeParams).execute( function (err, res) {
                     (!err).should.be.true;
                     res.should.be.ok;
@@ -227,12 +247,7 @@ describe('Store', function () {
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-                    mp.deleteStoreById(storeId).data().execute( function (err, res) {
-                        (!err).should.be.true;
-                        res.should.be.ok;
-
-                        done();
-                    });
+                    done();
                 });
             });
         });
@@ -253,9 +268,16 @@ describe('Store', function () {
         mp_login.login(mp, function () {
 
             mp.postStore().data(storeParams).execute(function (err, res) {
+
+                var storeId;
+
+                if(res.data.id) {
+                    storeId = res.data.id;
+                    clean.cleanupStore(cleanupJobs, 'store', mp.userToken, storeId);
+                }
+
                 (!err).should.be.true;
                 res.should.be.ok;
-                var storeId = res.data.id;
 
                 storeParams.contact_email = '      @kjh.com';
 
@@ -263,12 +285,7 @@ describe('Store', function () {
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
-                    mp.deleteStoreById(storeId).data().execute( function (err, res) {
-                        (!err).should.be.true;
-                        res.should.be.ok;
-
-                        done();
-                    });
+                    done();
                 });
             });
         });
@@ -289,22 +306,25 @@ describe('Store', function () {
         mp_login.login(mp, function () {
 
             mp.postStore().data(storeParams).execute( function (err, res) {
+
+                var storeId;
+
+                if(res.data.id) {
+                    storeId = res.data.id;
+                    clean.cleanupStore(cleanupJobs, 'store', mp.userToken, storeId);
+                }
+
                 (!err).should.be.true;
                 res.should.be.ok;
-                var storeId = res.data.id;
+
 
                 storeParams.name = 'This Name Is Wayyyyyyyyyyyyyyyy Tooooooooooo Lonnnnnnnnnggggggggggg';
+
                 mp.putStoreById(storeId).data(storeParams).execute( function (err, res) {
                     (!err).should.be.true;
                     res.status.should.be.equal(okanjo.common.Response.status.badRequest);
 
-
-                    mp.deleteStoreById(storeId).data().execute( function (err, res) {
-                        (!err).should.be.true;
-                        res.should.be.ok;
-
-                        done();
-                    });
+                    done();
                 });
             });
         });
@@ -396,6 +416,12 @@ describe('Store', function () {
                     done();
                 });
             });
+        });
+    });
+
+    after(function(done){
+        clean.cleanupJob(cleanupJobs, function(){
+            done();
         });
     });
 });

@@ -47,8 +47,16 @@ module.exports = {
 
         genMedia.generate(mp, function (err, mediaId) {
 
+            var storeId = null;
+
+            if(userRes.data.user){
+                storeId = userRes.data.user.stores[0].id;
+            }else{
+                storeId = userRes.data.id;
+            }
+
             var product = {
-                store_id: userRes.data.user.stores[0].id,
+                store_id: storeId,
                 type: 0,
                 title: 'Unit Test Product',
                 description: 'This Product Exists For Testing Purposes.',

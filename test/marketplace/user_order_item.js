@@ -70,12 +70,8 @@ describe('User Order Item',function() {
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId,
-                        card_id: checkoutObj.card_id
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
 
                     mp.getUserOrderItems(userId).execute(function (err, res) {
                         (!err).should.be.true;
@@ -115,12 +111,8 @@ describe('User Order Item',function() {
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId,
-                        card_id: checkoutObj.card_id
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
 
                     mp.getUserOrderById(userId, checkoutObj.order_id).embed(['items']).execute(function (err, res) {
                         (!err).should.be.true;
@@ -180,12 +172,8 @@ describe('User Order Item',function() {
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId,
-                        card_id: checkoutObj.card_id
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
 
                     mp.getUserOrderById(userId, checkoutObj.order_id).embed(['items']).execute(function (err, res) {
                         (!err).should.be.true;
@@ -250,12 +238,8 @@ describe('User Order Item',function() {
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-                    cleanupJobs.push({
-                        mp_instance: mp,
-                        user_id: userId,
-                        product_id: productId,
-                        card_id: checkoutObj.card_id
-                    });
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
 
                     mp.getUserOrderById(userId, checkoutObj.order_id).embed(['items']).execute(function (err, res) {
                         (!err).should.be.true;

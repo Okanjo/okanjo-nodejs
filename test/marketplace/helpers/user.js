@@ -1,5 +1,5 @@
 /**
- * Date: 8/25/15 4:20 PM
+ * Date: 8/26/15 12:12 PM
  *
  * ----
  *
@@ -39,23 +39,38 @@
 var config = require('../../../config'),
     okanjo = require('../../../');
 
+
 module.exports = {
 
-    createStore: function (mp, callback) {
+    create_user: function (mp, callback) {
 
-        var newStore = {
-            name: 'UnitTest',
-            contact_email: 'unittester@okanjo.com',
-            about: 'Illest Merch In Town',
-            //avatar_media_id: 'temp',
-            //banner_media_id: 'temp',
-            zip: 53072
+        var iteration = gen();
+
+        var newUser = {
+
+            action: okanjo.constants.marketplace.loginAction.registerEmailPassword,
+            email: 'radicalEd.' + iteration + '@okanjo.com',
+            password: 'password',
+            username: 'Ed' + iteration,
+            first_name: 'Radical',
+            last_name: 'Edward',
+            //birthday: '01/01/2058',
+            zip: 53072,
+            gender: 'female'
+
         };
 
-        mp.postStore().data(newStore).execute(function (err, res) {
-            var storeId = res.data.id;
+        mp.userLogin().data(newUser).execute(function (err, res) {
 
-            callback && callback(err, res, storeId);
+            mp.userToken = res.data.user_token;
+            var userId = res.data.user.id;
+            callback && callback(err, res, userId);
+
         });
     }
 };
+
+
+function gen() {
+    return (("00000000" + (Math.round(Math.random()*Math.pow(36,8))).toString(36)).slice(-8));
+}
