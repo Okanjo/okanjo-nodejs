@@ -32,6 +32,7 @@
   "devDependencies": {
     "async": "^1.4.0",
     "mocha": "^2.2.1",
+    "requestbin": "^1.1.1",
     "should": "^5.2.0"
   }
 }

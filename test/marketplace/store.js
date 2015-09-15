@@ -273,7 +273,7 @@ describe('Store', function () {
 
                 if(res.data.id) {
                     storeId = res.data.id;
-                    clean.cleanupStore(cleanupJobs, 'store', mp.userToken, storeId);
+
                 }
 
                 (!err).should.be.true;

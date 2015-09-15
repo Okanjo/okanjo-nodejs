@@ -91,6 +91,17 @@ module.exports = {
                         return callback(null, job);
                     }
                 });
+
+            } else if (job.type && job.type == 'event') {
+
+                cleanEvent(job, function(err, res){
+
+                    if (res.statusCode != 200) {
+                        return callback(res.raw);
+                    } else {
+                        return callback(null, job);
+                    }
+                });
             }
 
         }, function(err, cleanupJobs){
@@ -117,8 +128,12 @@ module.exports = {
     //type must be 'address'
     cleanupAddress: function(arr, type, userToken, userId, addressId){
         arr.push({type: type, user_token: userToken, user_id: userId, address_id: addressId});
-    }
+    },
 
+    //type must be 'event'
+    cleanupEvent: function(arr, type, userToken, eventType, webhookUrl){
+        arr.push({type: type, user_token: userToken, event_type: eventType, webhook_url: webhookUrl});
+    }
 };
 
 
@@ -150,7 +165,7 @@ function cleanCard(job, callback) {
 
         mp.deleteUserCardById(job.user_id, job.card_id).execute(callback);
     } else {
-        callback(new Error('Missing proper parameters, you passed in' + job));
+        callback(new Error('Missing proper parameters, you passed in ' + job));
     }
 }
 
@@ -164,7 +179,7 @@ function cleanStore(job, callback) {
 
         mp.deleteStoreById(job.store_id).execute(callback);
     } else {
-        callback(new Error('Missing proper parameters, you passed in' + job));
+        callback(new Error('Missing proper parameters, you passed in ' + job));
     }
 }
 
@@ -178,7 +193,25 @@ function cleanAddress(job, callback){
 
         mp.deleteUserAddressById(job.user_id, job.address_id).execute(callback);
     } else {
-        callback(new Error('Missing proper parameters, you passed in' + job));
+        callback(new Error('Missing proper parameters, you passed in ' + job));
     }
 }
 
+function cleanEvent(job, callback){
+
+    if (job.user_token && job.event_type && job.webhook_url) {
+
+        var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+        mp.userToken = job.user_token;
+
+        var event = {
+            type: job.event_type,
+            webhook_url: job.webhook_url
+        };
+
+        mp.unsubscribeToEvent().data(event).execute(callback);
+    }else{
+        callback(new Error('Missing proper parameters, you passed in ' + job));
+    }
+
+}

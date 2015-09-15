@@ -38,13 +38,38 @@
 var config = require('../../config'),
     okanjo = require('../../index'),
     mp_login = require('./helpers/login'),
+    store = require('./helpers/store'),
     clean = require('./helpers/cleanup_job'),
     genMedia = require('./helpers/media');
 
-mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
 var cleanupJobs = [];
 
 describe('Checkout',function(){
+
+    before(function(done) {
+
+        mp_login.login(mp, function(err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            store.createStore(mp, function (err, res, storeId) {
+
+                clean.cleanupStore(cleanupJobs, 'store', mp.userToken, storeId);
+
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.ok);
+                res.data.should.be.ok;
+
+                done();
+            });
+        });
+    });
 
     it('is possible',function(done){
 

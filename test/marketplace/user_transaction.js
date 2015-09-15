@@ -50,7 +50,7 @@ var cleanupJobs = [];
 
 describe('User Transaction', function(){
 
-    it('can retrieve list ',function(done){
+    it('can retrieve list',function(done){
 
         mp_login.login(mp, function (err, res, userId) {
             (!err).should.be.true;
