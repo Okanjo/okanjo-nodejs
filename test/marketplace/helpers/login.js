@@ -47,6 +47,9 @@ module.exports = {
         var userConfig = config.marketplace.user1;
 
         mp.userLogin().data(userConfig).execute(function (err, res) {
+            if(err){
+                throw err;
+            }
             mp.userToken = res.data.user_token;
             var userId = res.data.user.id;
             callback && callback(err, res, userId);

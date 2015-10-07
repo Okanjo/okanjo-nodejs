@@ -34,15 +34,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-    /*
+
+
+
+
 
 var config = require('../../config'),
     okanjo = require('../../index'),
-    mp_login = require('./helpers/login'),
-    store = require('./helpers/store'),
     card = require('./helpers/card'),
-    clean = require('./helpers/cleanup_job'),
-    genMedia = require('./helpers/media');
+    mp_login = require('./helpers/login'),
+    product = require('./helpers/product'),
+    media = require('./helpers/media'),
+    store = require('./helpers/store'),
+    query = require('../../lib/query/index'),
+    util = require('util'),
+    clean = require('./helpers/cleanup_job');
+
+
+okanjo.clients.MarketplaceClient.Routes.Testing = '/testing/%s/generate-virtual-product';
+
+okanjo.clients.MarketplaceClient.prototype.postVirtualProduct = function (storeId) {
+    return new query.ControllerQuery(this, {
+        method: query.QueryBase.HttpMethods.POST,
+        path: util.format(okanjo.clients.MarketplaceClient.Routes.Testing, storeId)
+    });
+};
+
 
 var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
 var cleanupJobs = [];
@@ -80,24 +97,16 @@ describe('Checkout Donation Confirm',function(){
                     res.data.should.be.ok;
 
 
-                    genMedia.generate(mp, function (err, mediaId) {
+                    media.generate(mp, function (err, mediaId) {
 
-                        var product = {
-                            store_id: storeId,
-                            type: okanjo.constants.marketplace.productType.donation,
-                            title: 'Unit Test',
-                            description: 'This Product Exists For Testing Purposes.',
-                            price: 10.00,
-                            stock: null,
-                            category_id: 10,
-                            condition: 'New',
-                            return_policy: {id: 0},
-                            media: [mediaId],
-                            thumbnail_media_id: mediaId,
-                            is_free_shipping: 1
+                        var productData = {
+
+                            cause_id: config.marketplace.client.cause_id,
+                            category_id: config.marketplace.client.category_id,
+                            media: [mediaId]
                         };
 
-                        mp.postProduct().data(product).execute(function (err, res) {
+                        mp.postVirtualProduct(storeId).data(productData).execute(function (err, res) {
                             (!err).should.be.true;
                             res.should.be.ok;
                             if (err) {
@@ -113,7 +122,7 @@ describe('Checkout Donation Confirm',function(){
                             var cartData = {};
                             cartData[productId] = {
                                 quantity: 1,
-                                shipping_type: 'free'
+                                shipping_type: res.data.shipping[0].id
                             };
 
                             var checkoutData = {
@@ -226,24 +235,16 @@ describe('Checkout Donation Confirm',function(){
                     res.data.should.be.ok;
 
 
-                    genMedia.generate(mp, function (err, mediaId) {
+                    media.generate(mp, function (err, mediaId) {
 
-                        var product = {
-                            store_id: storeId,
-                            type: okanjo.constants.marketplace.productType.donation,
-                            title: 'Unit Test',
-                            description: 'This Product Exists For Testing Purposes.',
-                            price: 10.00,
-                            stock: null,
-                            category_id: 10,
-                            condition: 'New',
-                            return_policy: {id: 0},
-                            media: [mediaId],
-                            thumbnail_media_id: mediaId,
-                            is_free_shipping: 1
+                        var productData = {
+
+                            cause_id: config.marketplace.client.cause_id,
+                            category_id: config.marketplace.client.category_id,
+                            media: [mediaId]
                         };
 
-                        mp.postProduct().data(product).execute(function (err, res) {
+                        mp.postVirtualProduct(storeId).data(productData).execute(function (err, res) {
                             (!err).should.be.true;
                             res.should.be.ok;
                             if (err) {
@@ -259,7 +260,7 @@ describe('Checkout Donation Confirm',function(){
                             var cartData = {};
                             cartData[productId] = {
                                 quantity: 1,
-                                shipping_type: 'free'
+                                shipping_type: res.data.shipping[0].id
                             };
 
                             var checkoutData = {
@@ -331,146 +332,6 @@ describe('Checkout Donation Confirm',function(){
     });
 
 
-    it('is not possible when not logged in',function(done){
-
-        mp_login.login(mp, function(err, res, userId) {
-            (!err).should.be.true;
-            res.should.be.ok;
-            res.should.be.json;
-            res.status.should.be.equal(okanjo.common.Response.status.ok);
-            res.data.should.be.ok;
-
-            store.createStore(mp, function (err, res, storeId) {
-
-                clean.cleanupStore(cleanupJobs, 'store', mp.userToken, storeId);
-
-                (!err).should.be.true;
-                res.should.be.ok;
-                res.should.be.json;
-                res.status.should.be.equal(okanjo.common.Response.status.ok);
-                res.data.should.be.ok;
-
-                var storePut = {
-                    type: okanjo.constants.marketplace.storeType.cause
-                };
-
-                mp.putStoreById(storeId).data(storePut).execute(function(err, res){
-                    (!err).should.be.true;
-                    res.should.be.ok;
-                    res.should.be.json;
-                    res.status.should.be.equal(okanjo.common.Response.status.ok);
-                    res.data.should.be.ok;
-
-
-                    genMedia.generate(mp, function (err, mediaId) {
-
-                        var product = {
-                            store_id: storeId,
-                            type: okanjo.constants.marketplace.productType.donation,
-                            title: 'Unit Test',
-                            description: 'This Product Exists For Testing Purposes.',
-                            price: 10.00,
-                            stock: null,
-                            category_id: 10,
-                            condition: 'New',
-                            return_policy: {id: 0},
-                            media: [mediaId],
-                            thumbnail_media_id: mediaId,
-                            is_free_shipping: 1
-                        };
-
-                        mp.postProduct().data(product).execute(function (err, res) {
-                            (!err).should.be.true;
-                            res.should.be.ok;
-                            if (err) {
-                                throw err;
-                            }
-
-                            if (res.status != 200) {
-                                console.log(product);
-                                throw new Error(res.data.description, res.status);
-                            }
-
-                            var productId = res.data.id;
-                            var cartData = {};
-                            cartData[productId] = {
-                                quantity: 1,
-                                shipping_type: 'free'
-                            };
-
-                            var checkoutData = {
-                                cart: JSON.stringify(cartData),
-                                return_url: "https://okanjo.com/unit/test/return",
-                                cancel_url: "https://okanjo.com/unit/test/cancel",
-                                email: 'unittest@okanjo.com',
-                                shipping_first_name: "Unit",
-                                shipping_last_name: "Tester",
-                                shipping_address_1: "220 E Buffalo St",
-                                shipping_address_2: "Ste 405", // optional
-                                shipping_city: "Milwaukee",
-                                shipping_state: "WI",
-                                shipping_zip: 53202,
-                                shipping_country: "US",
-                                shipping_phone: '+1-414-810-1760'
-                            };
-
-                            clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
-
-                            mp.donationCheckout().data(checkoutData).execute(function (err, res) {
-                                (!err).should.be.true;
-                                res.should.be.ok;
-
-                                if(err){
-                                    console.log('checkout');
-                                    throw err;
-                                }
-
-                                var orderToken = res.data.token;
-
-                                card.getDefaultCard( function (err, res) {
-
-                                    if (err) {
-                                        console.log('getDefaultCard');
-                                        throw err;
-                                    }
-
-                                    card.getCardToken(res, function (err, res) {
-
-                                        if (err) {
-                                            console.log('getCardToken');
-                                            throw err;
-                                        }
-
-                                        var confirm = {
-                                            order_token: decodeURIComponent(orderToken),
-                                            card_token: res.id
-                                        };
-
-                                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
-                                        clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, res.card.id);
-
-                                        var mpNew = new okanjo.clients.MarketplaceClient(config.marketplace.api);
-
-                                        mpNew.confirmDonationCheckout().data(confirm).execute(function (err, res) {
-                                            (!err).should.be.true;
-                                            res.should.be.ok;
-                                            res.should.be.json;
-                                            res.status.should.be.equal(okanjo.common.Response.status.unauthorized, res.raw);
-                                            res.data.should.be.ok;
-
-                                            done();
-                                        });
-                                    });
-                                });
-                            });
-                        });
-                    });
-                });
-            });
-        });
-    });
-
-
     it('is not possible when the product in cart has been is modified',function(done){
 
         mp_login.login(mp, function(err, res, userId) {
@@ -502,24 +363,16 @@ describe('Checkout Donation Confirm',function(){
                     res.data.should.be.ok;
 
 
-                    genMedia.generate(mp, function (err, mediaId) {
+                    media.generate(mp, function (err, mediaId) {
 
-                        var product = {
-                            store_id: storeId,
-                            type: okanjo.constants.marketplace.productType.donation,
-                            title: 'Unit Test',
-                            description: 'This Product Exists For Testing Purposes.',
-                            price: 10.00,
-                            stock: null,
-                            category_id: 10,
-                            condition: 'New',
-                            return_policy: {id: 0},
-                            media: [mediaId],
-                            thumbnail_media_id: mediaId,
-                            is_free_shipping: 1
+                        var productData = {
+
+                            cause_id: config.marketplace.client.cause_id,
+                            category_id: config.marketplace.client.category_id,
+                            media: [mediaId]
                         };
 
-                        mp.postProduct().data(product).execute(function (err, res) {
+                        mp.postVirtualProduct(storeId).data(productData).execute(function (err, res) {
                             (!err).should.be.true;
                             res.should.be.ok;
                             if (err) {
@@ -535,7 +388,7 @@ describe('Checkout Donation Confirm',function(){
                             var cartData = {};
                             cartData[productId] = {
                                 quantity: 1,
-                                shipping_type: 'free'
+                                shipping_type: res.data.shipping[0].id
                             };
 
                             var checkoutData = {
@@ -623,4 +476,3 @@ describe('Checkout Donation Confirm',function(){
     });
 });
 
-*/
