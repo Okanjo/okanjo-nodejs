@@ -36,9 +36,6 @@
  */
 
 
-
-
-
 var config = require('../../config'),
     okanjo = require('../../index'),
     card = require('./helpers/card'),
@@ -50,7 +47,6 @@ var config = require('../../config'),
     util = require('util'),
     clean = require('./helpers/cleanup_job');
 
-
 okanjo.clients.MarketplaceClient.Routes.Testing = '/testing/%s/generate-virtual-product';
 
 okanjo.clients.MarketplaceClient.prototype.postVirtualProduct = function (storeId) {
@@ -59,7 +55,6 @@ okanjo.clients.MarketplaceClient.prototype.postVirtualProduct = function (storeI
         path: util.format(okanjo.clients.MarketplaceClient.Routes.Testing, storeId)
     });
 };
-
 
 var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
 var cleanupJobs = [];

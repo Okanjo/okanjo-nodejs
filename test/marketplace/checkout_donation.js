@@ -91,7 +91,6 @@ describe('Checkout Donation',function(){
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-
                     media.generate(mp, function (err, mediaId) {
 
                         var productData = {
@@ -278,7 +277,6 @@ describe('Checkout Donation',function(){
                     res.should.be.json;
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
-
 
                     media.generate(mp, function (err, mediaId) {
 
@@ -476,7 +474,6 @@ describe('Checkout Donation',function(){
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-
                     media.generate(mp, function (err, mediaId) {
 
                         var productData = {
@@ -569,7 +566,6 @@ describe('Checkout Donation',function(){
                     res.should.be.json;
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
-
 
                     media.generate(mp, function (err, mediaId) {
 
@@ -664,7 +660,6 @@ describe('Checkout Donation',function(){
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-
                     media.generate(mp, function (err, mediaId) {
 
                         var productData = {
@@ -725,7 +720,8 @@ describe('Checkout Donation',function(){
                 });
             });
         });
-    });git
+    });
+
 
     after(function(done){
         clean.cleanupJob(cleanupJobs, function(){
