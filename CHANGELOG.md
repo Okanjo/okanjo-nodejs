@@ -5,6 +5,9 @@ When stuff changes, it's described here.
 
 # 0.2.x
 
+## 2015-10-20 - v0.2.3
+ * Include `numFound` in the response as a dedicated property, when available
+
 ## 2015-08-26 - v0.2.2
  * Refactored FileUpload for better extensibility with testing
  * Added async dev dependency
