@@ -35,7 +35,6 @@
  * SOFTWARE.
  */
 
-
 var config = require('../../config'),
     okanjo = require('../../index'),
     card = require('./helpers/card'),
@@ -47,12 +46,12 @@ var config = require('../../config'),
     util = require('util'),
     clean = require('./helpers/cleanup_job');
 
-okanjo.clients.MarketplaceClient.Routes.Testing = '/testing/%s/generate-virtual-product';
+okanjo.clients.MarketplaceClient.Routes.virtualTest = '/testing/%s/generate-virtual-product';
 
 okanjo.clients.MarketplaceClient.prototype.postVirtualProduct = function (storeId) {
     return new query.ControllerQuery(this, {
         method: query.QueryBase.HttpMethods.POST,
-        path: util.format(okanjo.clients.MarketplaceClient.Routes.Testing, storeId)
+        path: util.format(okanjo.clients.MarketplaceClient.Routes.virtualTest, storeId)
     });
 };
 

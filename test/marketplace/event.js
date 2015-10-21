@@ -196,6 +196,8 @@ describe('Event', function() {
     });
 
 
+
+
     it('cannot unsubscribe if it is not subscribed to', function (done) {
 
         mp_login.login(mp, function(err, res) {
@@ -320,6 +322,8 @@ describe('Event', function() {
                 res.status.should.be.equal(okanjo.common.Response.status.ok);
                 res.data.should.be.ok;
 
+
+
                 mp.unsubscribeToEvent().data(event).execute(function (err, res) {
                     (!err).should.be.true;
                     res.should.be.ok;
@@ -385,6 +389,93 @@ describe('Event', function() {
                         }, 5000);
                     });
                 });
+            });
+        });
+    });
+
+    it('can retrieve by id', function (done) {
+
+        mp_login.login(mp, function (err, userRes) {
+            (!err).should.be.true;
+            userRes.should.be.ok;
+            userRes.should.be.json;
+            userRes.status.should.be.equal(okanjo.common.Response.status.ok);
+            userRes.data.should.be.ok;
+
+            request.create(true, function(err, res){
+
+                var binName = res.name;
+                var event ={
+                    type: 'product.created',
+                    webhook_url: 'http://requestb.in/' + binName
+                };
+
+                clean.cleanupEvent(cleanupJobs, 'event', mp.userToken, event.type, event.webhook_url);
+
+                mp.subscribeToEvent().data(event).execute(function (err, res) {
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok, res.raw);
+                    res.data.should.be.ok;
+
+                    product.postProduct(mp, userRes, function (err, res) {
+                        (!err).should.be.true;
+                        res.should.be.ok;
+                        res.should.be.json;
+                        res.status.should.be.equal(okanjo.common.Response.status.ok, res.raw);
+                        res.data.should.be.ok;
+
+                        var productId = res.data.id;
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+
+                        setTimeout(function() {
+
+                            request.requests(binName, function(err, res){
+
+                                request.request(binName, res[0].id, function(err, res){
+                                    (!err).should.be.true;
+                                    res.method.should.be.equal('POST');
+                                    JSON.parse(res.body).data.id.should.be.equal(productId);
+
+                                    mp.getEventById(JSON.parse(res.body).id).execute(function(err, res){
+                                        (!err).should.be.true;
+                                        res.should.be.ok;
+                                        res.should.be.json;
+                                        res.status.should.be.equal(okanjo.common.Response.status.ok, res.raw);
+                                        res.data.should.be.ok;
+
+                                        done();
+                                    });
+                                });
+                            });
+                        }, 5000);
+                    });
+                });
+            });
+        });
+    });
+
+
+    it('cannot be retrieve by id if it does not exist', function (done) {
+
+        mp_login.login(mp, function(err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            mp.getEventById().execute(function(err, res){
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.notFound, res.raw);
+                res.data.should.be.ok;
+
+
+                done();
+
             });
         });
     });
