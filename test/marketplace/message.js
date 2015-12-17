@@ -285,7 +285,7 @@ describe('Message', function() {
                 (!err).should.be.true;
                 res.should.be.ok;
                 res.should.be.json;
-                res.status.should.be.equal(okanjo.common.Response.status.notFound);
+                res.status.should.be.equal(okanjo.common.Response.status.badRequest, res.raw);
                 res.data.should.be.ok;
 
                 done();

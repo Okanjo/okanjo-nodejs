@@ -59,6 +59,7 @@ module.exports = {
                 endD = new Date(startD);
 
             endD.setMinutes(endD.getMinutes() + 10);
+            startD.setMinutes(startD.getMinutes() - 10);
 
             var product = {
                 store_id: storeId,

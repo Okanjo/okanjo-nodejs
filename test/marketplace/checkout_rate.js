@@ -41,6 +41,7 @@ var config = require('../../config'),
     mp_login = require('./helpers/login'),
     store = require('./helpers/store'),
     card = require('./helpers/card'),
+    product = require('./helpers/product'),
     clean = require('./helpers/cleanup_job'),
     genMedia = require('./helpers/media');
 
@@ -174,9 +175,12 @@ describe('Checkout Rates',function(){
                                                 };
 
                                                 mp.postProduct().data(product).execute(function (err, res) {
-
                                                     (!err).should.be.true;
                                                     res.should.be.ok;
+                                                    res.should.be.json;
+                                                    res.status.should.be.equal(okanjo.common.Response.status.ok, res.raw);
+                                                    res.data.should.be.ok;
+
                                                     if (err) {
                                                         throw err;
                                                     }
@@ -357,9 +361,12 @@ describe('Checkout Rates',function(){
                                                 };
 
                                                 mp.postProduct().data(product).execute(function (err, res) {
-
                                                     (!err).should.be.true;
                                                     res.should.be.ok;
+                                                    res.should.be.json;
+                                                    res.status.should.be.equal(okanjo.common.Response.status.ok, res.raw);
+                                                    res.data.should.be.ok;
+
                                                     if (err) {
                                                         throw err;
                                                     }
@@ -601,12 +608,12 @@ describe('Checkout Rates',function(){
 
     it('cannot be generated if product is missing',function(done){ ///have to set this up with a missing product
 
-        mp_login.login(mp, function(err, res, userId) {
+        mp_login.login(mp, function(err, userRes, userId) {
             (!err).should.be.true;
-            res.should.be.ok;
-            res.should.be.json;
-            res.status.should.be.equal(okanjo.common.Response.status.ok);
-            res.data.should.be.ok;
+            userRes.should.be.ok;
+            userRes.should.be.json;
+            userRes.status.should.be.equal(okanjo.common.Response.status.ok);
+            userRes.data.should.be.ok;
 
             store.createStore(mp, function (err, res, storeId) {
 
@@ -706,37 +713,44 @@ describe('Checkout Rates',function(){
                                                 throw new Error(res.data.description, res.status);
                                             }
 
-                                            var productId = 0,
-                                                cartData = {};
-
-                                            cartData[productId] = {
-                                                quantity: 1,
-                                                shipping_type: 'UPS'
-                                            };
-
-                                            var checkoutData = {
-                                                cart: JSON.stringify(cartData),
-                                                return_url: "https://okanjo.com/unit/test/return",
-                                                cancel_url: "https://okanjo.com/unit/test/cancel",
-                                                shipping_first_name: "Unit",
-                                                shipping_last_name: "Tester",
-                                                shipping_address_1: "220 E Buffalo St",
-                                                shipping_address_2: "Ste 405", // optional
-                                                shipping_city: "Milwaukee",
-                                                shipping_state: "WI",
-                                                shipping_zip: 53202,
-                                                shipping_country: "US",
-                                                shipping_phone: '+1-414-810-1760'
-                                            };
-
-                                            mp.checkoutRates(userId).data(checkoutData).execute(function (err, res) {
+                                            product.postProduct(mp, userRes, function (err, res) {
                                                 (!err).should.be.true;
                                                 res.should.be.ok;
                                                 res.should.be.json;
-                                                res.status.should.be.equal(okanjo.common.Response.status.badRequest, res.raw);
+                                                res.status.should.be.equal(okanjo.common.Response.status.ok, res.raw);
                                                 res.data.should.be.ok;
 
-                                                done();
+                                                var cartData = {};
+
+                                                cartData[0] = {
+                                                    quantity: 1,
+                                                    shipping_type: 'UPS'
+                                                };
+
+                                                var checkoutData = {
+                                                    cart: JSON.stringify(cartData),
+                                                    return_url: "https://okanjo.com/unit/test/return",
+                                                    cancel_url: "https://okanjo.com/unit/test/cancel",
+                                                    shipping_first_name: "Unit",
+                                                    shipping_last_name: "Tester",
+                                                    shipping_address_1: "220 E Buffalo St",
+                                                    shipping_address_2: "Ste 405", // optional
+                                                    shipping_city: "Milwaukee",
+                                                    shipping_state: "WI",
+                                                    shipping_zip: 53202,
+                                                    shipping_country: "US",
+                                                    shipping_phone: '+1-414-810-1760'
+                                                };
+
+                                                mp.checkoutRates(userId).data(checkoutData).execute(function (err, res) {
+                                                    (!err).should.be.true;
+                                                    res.should.be.ok;
+                                                    res.should.be.json;
+                                                    res.status.should.be.equal(okanjo.common.Response.status.badRequest, res.raw);
+                                                    res.data.should.be.ok;
+
+                                                    done();
+                                                });
                                             });
                                         });
                                     });

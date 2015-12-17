@@ -47,7 +47,7 @@ describe('Login', function(){
 
     it('can be done',function(done) {
 
-        mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+       var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
 
         var userConfig = config.marketplace.user1;
 
@@ -66,7 +66,7 @@ describe('Login', function(){
 
     it('cannot be done with username',function (done) {
 
-        mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+        var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
 
         var userConfig = {
             action: okanjo.constants.marketplace.loginAction.loginUsernamePassword,

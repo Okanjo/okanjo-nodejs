@@ -1660,9 +1660,344 @@ describe('Product', function () {
         });
     });
 
+
+
+    it('can create product with shipping options', function(done){
+
+        mp_login.login(mp, function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            genMedia.generate(mp, function (err, mediaId) {
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: 0,
+                    title: 'Unit Test Product',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 0,
+                    shipping_options: [{
+                        description: '0 Dollar shipping!',
+                        price: 0.00,
+                        carrier: 'Me',
+                        service: 'By Bike'
+                    }]
+                };
+
+                mp.postProduct().data(product).execute( function (err, res) {
+
+                    var productId;
+
+                    if(res.data.id) {
+                        productId = res.data.id;
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    }
+
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+                    res.data.should.be.ok;
+
+                    done();
+                });
+            });
+        });
+    });
+
+    it('cannot create product with shipping options price bellow limit', function(done){
+
+        mp_login.login(mp, function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            genMedia.generate(mp, function (err, mediaId) {
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: 0,
+                    title: 'Unit Test Product',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 0,
+                    shipping_options: [{
+                        description: '0 Dollar shipping!',
+                        price: -1.00,
+                        carrier: 'Me',
+                        service: 'By Bike'
+                    }]
+                };
+
+                mp.postProduct().data(product).execute( function (err, res) {
+
+                    var productId;
+
+                    if(res.data.id) {
+                        productId = res.data.id;
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    }
+
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+                    res.data.should.be.ok;
+
+                    done();
+                });
+            });
+        });
+    });
+
+
+    it('cannot create product with shipping options and free shipping', function(done){
+
+        mp_login.login(mp, function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            genMedia.generate(mp, function (err, mediaId) {
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: 0,
+                    title: 'Unit Test Product',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 1,
+                    shipping_options: [{
+                        description: '0 Dollar shipping!',
+                        price: 0.00,
+                        carrier: 'Me',
+                        service: 'By Bike'
+                    }]
+                };
+
+                mp.postProduct().data(product).execute( function (err, res) {
+
+                    var productId;
+
+                    if(res.data.id) {
+                        productId = res.data.id;
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    }
+
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.badRequest, res.raw);
+                    res.data.should.be.ok;
+
+                    done();
+                });
+            });
+        });
+    });
+
+
+    it('can put product with $10 shipping options to $0', function(done){
+
+        mp_login.login(mp, function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            genMedia.generate(mp, function (err, mediaId) {
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: 0,
+                    title: 'Unit Test Product',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 0,
+                    shipping_options: [{
+                        description: 'fast shipping!',
+                        price: 10.00,
+                        carrier: 'Me',
+                        service: 'By Bike really fast'
+                    }]
+                };
+
+                mp.postProduct().data(product).execute( function (err, res) {
+
+                    var productId;
+
+                    if(res.data.id) {
+                        productId = res.data.id;
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    }
+
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+                    res.data.should.be.ok;
+
+                    mp.getProductById(productId).embed('shipping').execute(function(err, res){
+                    var shipping = {
+                        shipping_options: [{
+                            id: res.data.shipping[0].id,
+                            description: '0 Dollar shipping!',
+                            price: 0.00,
+                            carrier: 'Me',
+                            service: 'By Bike'
+                        }]
+                    };
+
+                        mp.putProductById(productId).data(shipping).execute(function(err, res){
+                            (!err).should.be.true;
+                            res.should.be.ok;
+                            res.should.be.json;
+                            res.status.should.be.equal(okanjo.common.Response.status.ok);
+                            res.data.should.be.ok;
+
+                            mp.getProductById(productId).embed('shipping').execute(function(err, res) {
+                                (!err).should.be.true;
+                                res.should.be.ok;
+                                res.should.be.json;
+                                res.status.should.be.equal(okanjo.common.Response.status.ok);
+                                res.data.should.be.ok;
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+    it('cannot put free shipping on a product with shipping options', function(done){
+
+        mp_login.login(mp, function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            genMedia.generate(mp, function (err, mediaId) {
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: 0,
+                    title: 'Unit Test Product',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 0,
+                    shipping_options: [{
+                        description: 'fast shipping!',
+                        price: 10.00,
+                        carrier: 'Me',
+                        service: 'By Bike really fast'
+                    }]
+                };
+
+                mp.postProduct().data(product).execute( function (err, res) {
+
+                    var productId;
+
+                    if(res.data.id) {
+                        productId = res.data.id;
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    }
+
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+                    res.data.should.be.ok;
+
+                    mp.getProductById(productId).embed('shipping').execute(function(err, res){
+                        (!err).should.be.true;
+                        res.should.be.ok;
+                        res.should.be.json;
+                        res.status.should.be.equal(okanjo.common.Response.status.ok);
+                        res.data.should.be.ok;
+
+                        var shipping = {
+                            is_free_shipping: 1
+                        };
+
+                        mp.putProductById(productId).data(shipping).execute(function(err, res){
+                            (!err).should.be.true;
+                            res.should.be.ok;
+                            res.should.be.json;
+                            res.status.should.be.equal(okanjo.common.Response.status.ok);
+                            res.data.should.be.ok;
+
+                            mp.getProductById(productId).embed('shipping').execute(function(err, res) {
+                                if(res.data.shipping == null){
+                                    var shipData = false;
+                                }
+                                (!err).should.be.true;
+                                res.should.be.ok;
+                                res.should.be.json;
+                                res.data.should.be.ok;
+                                shipData.should.be.false;
+
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+
     after(function(done){
         clean.cleanupJob(cleanupJobs, function(){
             done();
         });
     });
 });
+
+
+
+
+
+
+
+

@@ -325,7 +325,7 @@ describe('Deal', function() {
     });
 
 
-    it('cant checkout deal product when deal is over', function (done) {
+    it('cannot checkout deal product when deal is over', function (done) {
 
         mp_login.login(mp, function (err, res, userId) {
             (!err).should.be.true;
@@ -480,19 +480,10 @@ describe('Deal', function() {
                             (!err).should.be.true;
                             res.should.be.ok;
                             res.should.be.json;
-                            res.status.should.be.equal(okanjo.common.Response.status.ok, res.raw);
+                            res.status.should.be.equal(okanjo.common.Response.status.badRequest, res.raw);
                             res.data.should.be.ok;
 
-                            mp.getProductById(productId).execute(function(err, res){
-                                (!err).should.be.true;
-                                res.should.be.ok;
-                                res.should.be.json;
-                                res.status.should.be.equal(okanjo.common.Response.status.badRequest, res.raw);
-                                res.data.should.be.ok;
-
-                                done();
-
-                            });
+                           done();
                         });
                     });
                 });

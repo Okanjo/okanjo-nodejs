@@ -39,9 +39,13 @@
 var config = require('../../config'),
     okanjo = require('../../index'),
     mp_login = require('./helpers/login'),
+    media = require('./helpers/media'),
     store = require('./helpers/store'),
+    user = require('./helpers/user'),
     product = require('./helpers/product'),
     auctionProduct = require('./helpers/auction_product'),
+    query = require('../../lib/query/index'),
+    util = require('util'),
     clean = require('./helpers/cleanup_job');
 
 var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
@@ -154,6 +158,48 @@ describe('User Auction', function(){
     });
 
 
+    //it('can be retrieved by id',function(done){
+    //
+    //    mp_login.login(mp, function(err, res, userId){
+    //        (!err).should.be.true;
+    //        res.should.be.ok;
+    //        res.should.be.json;
+    //        res.status.should.be.equal(okanjo.common.Response.status.ok);
+    //        res.data.should.be.ok;
+    //
+    //        auctionProduct.postProduct(mp, res, function(err, res, productId){
+    //            (!err).should.be.true;
+    //            res.should.be.ok;
+    //            res.should.be.json;
+    //            res.status.should.be.equal(okanjo.common.Response.status.ok, res.raw);
+    //            res.data.should.be.ok;
+    //
+    //            clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+    //
+    //            mp.postBidOnProduct(productId).data({max_bid: 90.00}).execute(function(){
+    //                (!err).should.be.true;
+    //                res.should.be.ok;
+    //                res.should.be.json;
+    //                res.status.should.be.equal(okanjo.common.Response.status.ok);
+    //                res.data.should.be.ok;
+    //
+    //                mp.getUserAuctionById(userId, productId).execute(function(err, res){
+    //                    console.log(res);
+    //                    (!err).should.be.true;
+    //                    res.should.be.ok;
+    //                    res.should.be.json;
+    //                    res.data.should.be.an.Object;
+    //                    res.data.should.not.be.an.Array;
+    //                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+    //                    res.data.should.be.ok;
+    //
+    //                    done();
+    //                });
+    //            });
+    //        });
+    //    });
+    //});
+
     it('can be retrieved by id',function(done){
 
         mp_login.login(mp, function(err, res, userId){
@@ -170,33 +216,70 @@ describe('User Auction', function(){
                 res.status.should.be.equal(okanjo.common.Response.status.ok, res.raw);
                 res.data.should.be.ok;
 
-                clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
-
-                mp.postBidOnProduct(productId).data({max_bid: 90.00}).execute(function(){
+                mp.postBidOnProduct(productId).data({max_bid: 90.00}).execute(function(err, res) {
                     (!err).should.be.true;
                     res.should.be.ok;
                     res.should.be.json;
                     res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
-                    mp.getUserAuctions(userId).execute(function(err, res){
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+
+                    mp.getUserAuctionById(userId, productId).execute(function (err, res) {
                         (!err).should.be.true;
                         res.should.be.ok;
                         res.should.be.json;
+                        res.data.should.be.an.Object;
+                        //res.data.should.not.be.an.Array;
                         res.status.should.be.equal(okanjo.common.Response.status.ok);
                         res.data.should.be.ok;
 
-                        mp.getUserAuctionById(userId, res.data[0].id).execute(function(err, res){
-                            (!err).should.be.true;
-                            res.should.be.ok;
-                            res.should.be.json;
-                            res.data.should.be.an.Object;
-                            res.data.should.not.be.an.Array;
-                            res.status.should.be.equal(okanjo.common.Response.status.ok);
-                            res.data.should.be.ok;
+                        done();
+                    });
+                });
+            });
+        });
+    });
 
-                            done();
-                        });
+
+    it('cannot be retrieved by id if not an auction',function(done){
+
+        mp_login.login(mp, function(err, res, userId){
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            product.postProduct(mp, res, function(err, res, productId){
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.ok, res.raw);
+                res.data.should.be.ok;
+
+
+                mp.getProductById(productId).execute( function (err, res) {
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok, res.raw);
+                    res.data.should.be.ok;
+
+
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+
+
+                    mp.getUserAuctionById(userId, productId).execute(function (err, res) {
+                        (!err).should.be.true;
+                        res.should.be.ok;
+                        res.should.be.json;
+                        res.data.should.be.an.Object;
+                        res.data.should.not.be.an.Array;
+                        res.status.should.be.equal(okanjo.common.Response.status.notFound);
+                        res.data.should.be.ok;
+
+                        done();
                     });
                 });
             });
@@ -264,7 +347,8 @@ describe('User Auction', function(){
             res.data.should.be.ok;
 
 
-            mp.getUserAuctionById(userId, 0).execute(function(err, res){
+            mp.getUserAuctionById(userId, 4564567).execute(function(err, res){
+
                 (!err).should.be.true;
                 res.should.be.ok;
                 res.should.be.json;
@@ -509,6 +593,137 @@ describe('User Auction', function(){
                         res.data.should.be.ok;
 
                         done();
+                    });
+                });
+            });
+        });
+    });
+
+
+    okanjo.clients.MarketplaceClient.Routes.dealTest = '/testing/%s/generate-deal-product';
+
+    okanjo.clients.MarketplaceClient.prototype.postDealProduct = function (storeId) {
+        return new query.ControllerQuery(this, {
+            method: query.QueryBase.HttpMethods.POST,
+            path: util.format(okanjo.clients.MarketplaceClient.Routes.dealTest, storeId)
+        });
+    };
+
+    it('cannot watch a deal', function (done) {
+
+        mp_login.login(mp, function (err, res, userId) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            store.createStore(mp, function (err, res, storeId) {
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.ok);
+                res.data.should.be.ok;
+
+                clean.cleanupStore(cleanupJobs, 'store', mp.userToken, storeId);
+
+                media.generate(mp, function (err, mediaId) {
+
+                    var dealProductData = {
+
+                        category_id: config.marketplace.client.category_id,
+                        media: [mediaId],
+                        deal_start: new Date(Date.now()).toISOString(),
+                        deal_end: new Date(Date.now() + 1200000).toISOString()
+                    };
+
+                    mp.postDealProduct(storeId).data(dealProductData).execute(function (err, res) {
+                        (!err).should.be.true;
+                        res.should.be.ok;
+                        res.should.be.json;
+                        res.status.should.be.equal(okanjo.common.Response.status.ok, res.raw);
+                        res.data.should.be.ok;
+
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, res.data.id);
+
+                        mp.putUserAuctionById(userId, res.data.id).execute(function(err, res) {
+                            (!err).should.be.true;
+                            res.should.be.ok;
+                            res.should.be.json;
+                            res.status.should.be.equal(okanjo.common.Response.status.badRequest, res.raw);
+                            res.data.should.be.ok;
+
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+
+    okanjo.clients.MarketplaceClient.Routes.Testing = '/testing/%s/generate-virtual-product';
+
+    okanjo.clients.MarketplaceClient.prototype.postVirtualProduct = function (storeId) {
+        return new query.ControllerQuery(this, {
+            method: query.QueryBase.HttpMethods.POST,
+            path: util.format(okanjo.clients.MarketplaceClient.Routes.Testing, storeId)
+        });
+    };
+
+    it('cannot watch a virtual product',function(done) {
+
+        mp_login.login(mp, function (err, res, userId) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            store.createStore(mp, function (err, res, storeId) {
+
+                clean.cleanupStore(cleanupJobs, 'store', mp.userToken, storeId);
+
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.ok);
+                res.data.should.be.ok;
+
+                var storePut = {
+                    type: okanjo.constants.marketplace.storeType.cause
+                };
+
+                mp.putStoreById(storeId).data(storePut).execute(function (err, res) {
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+                    res.data.should.be.ok;
+
+                    media.generate(mp, function (err, mediaId) {
+
+                        var productData = {
+
+                            cause_id: config.marketplace.client.cause_id,
+                            category_id: config.marketplace.client.category_id,
+                            media: [mediaId]
+                        };
+
+                        mp.postVirtualProduct(storeId).data(productData).execute(function (err, res) {
+                            (!err).should.be.true;
+                            res.should.be.ok;
+
+                            mp.putUserAuctionById(userId, res.data.id).execute(function(err, res) {
+                                (!err).should.be.true;
+                                res.should.be.ok;
+                                res.should.be.json;
+                                res.status.should.be.equal(okanjo.common.Response.status.badRequest, res.raw);
+                                res.data.should.be.ok;
+
+                                done();
+                            });
+                        });
                     });
                 });
             });
