@@ -1,5 +1,5 @@
 /**
- * Date: 8/26/15 12:12 PM
+ * Date: 1/8/16 3:28 PM
  *
  * ----
  *
@@ -34,43 +34,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+var config = require('../config'),
+    okanjo = require('../index');
 
 
-var config = require('../../../config'),
-    okanjo = require('../../../');
 
+describe('Account', function() {
 
-module.exports = {
+//-------------- POST ACCOUNT -----------------------------------------------------------------------------------------
 
-    create_user: function (mp, callback) {
+    it('can register a new account', function (done) {
 
-        var iteration = gen();
+        var ads = new okanjo.Client(config.api);
 
         var newUser = {
-
-            action: okanjo.constants.marketplace.loginAction.registerEmailPassword,
-            email: 'radicalEd.' + iteration + '@okanjo.com',
-            password: 'password',
-            username: 'Ed' + iteration,
-            first_name: 'Radical',
-            last_name: 'Edward',
-            //birthday: '01/01/2058',
-            zip: 53072,
-            gender: 'female'
-
+            email: 'radical.edward@okanjo.com',
+            password: 'password'
         };
 
-        mp.userLogin().data(newUser).execute(function (err, res) {
+        ads.registerAccount().data(newUser).execute(function (err, res) {
+            console.log(err, res);
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.created);
+            res.data.should.be.ok;
 
-            mp.userToken = res.data.user_token;
-            var userId = res.data.user.id;
-            callback && callback(err, res, userId);
-
+            done();
         });
-    }
-};
-
-
-function gen() {
-    return (("00000000" + (Math.round(Math.random()*Math.pow(36,8))).toString(36)).slice(-8));
-}
+    });
+});

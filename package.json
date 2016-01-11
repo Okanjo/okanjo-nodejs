@@ -1,11 +1,8 @@
 {
-  "name": "okanjo",
-  "version": "0.2.0",
+  "name": "@okanjo/okanjo-sdk",
+  "version": "0.3.0",
   "description": "Okanjo JavaScript Software Development Kit",
   "main": "./index.js",
-  "bin": {
-    "okanjo-cli": "./bin/console.js"
-  },
   "scripts": {
     "test": "mocha test"
   },
