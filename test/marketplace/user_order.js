@@ -252,8 +252,7 @@ describe('User Order',function() {
                         res.status.should.be.equal(okanjo.common.Response.status.badRequest);
                         res.data.should.be.ok;
 
-                        mp.getUserOrderById(userId, checkoutObj.order_id).embed("meta").execute(function (err, res) {
-                            console.log(res);
+                        mp.getUserOrderById(userId, checkoutObj.order_id).embed("meta").execute(function () {
                             done();
                         });
                     });
@@ -299,8 +298,7 @@ describe('User Order',function() {
                         res.status.should.be.equal(okanjo.common.Response.status.badRequest);
                         res.data.should.be.ok;
 
-                        mp.getUserOrderById(userId, checkoutObj.order_id).embed("meta").execute(function (err, res) {
-                            console.log(res);
+                        mp.getUserOrderById(userId, checkoutObj.order_id).embed("meta").execute(function () {
                             done();
                         });
                     });
@@ -346,8 +344,7 @@ describe('User Order',function() {
                         res.status.should.be.equal(okanjo.common.Response.status.ok);
                         res.data.should.be.ok;
 
-                        mp.getUserOrderById(userId, checkoutObj.order_id).embed("meta").execute(function (err, res) {
-                            console.log(res);
+                        mp.getUserOrderById(userId, checkoutObj.order_id).embed("meta").execute(function () {
                             done();
                         });
                     });
@@ -391,8 +388,7 @@ describe('User Order',function() {
                         res.should.be.json;
                         res.status.should.be.equal(okanjo.common.Response.status.ok);
                         res.data.should.be.ok;
-                        mp.getUserOrderById(userId, checkoutObj.order_id).embed("meta").execute(function (err, res) {
-                            console.log(res.data.meta);
+                        mp.getUserOrderById(userId, checkoutObj.order_id).embed("meta").execute(function () {
                             done();
                         });
                     });
