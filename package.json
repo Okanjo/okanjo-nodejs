@@ -1,10 +1,14 @@
 {
   "name": "@okanjo/okanjo-sdk",
-  "version": "0.3.0",
-  "description": "Okanjo JavaScript Software Development Kit",
-  "main": "./index.js",
+  "version": "0.4.0",
+  "description": "Use the Okanjo API in JavaScript!",
+  "main": "lib/client.js",
   "scripts": {
-    "test": "mocha test"
+    "test": "node_modules/.bin/mocha test",
+    "cover": "rm -f coverage/coverage*.json && node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- -R spec && node_modules/.bin/istanbul report",
+    "hint": "node_modules/.bin/jshint ./lib/**/*.js",
+    "report": "npm run cover && npm run hint",
+    "browser": "./node_modules/.bin/browserify -r ./lib/client.js > dist/api.js"
   },
   "repository": {
     "type": "git",
@@ -12,6 +16,7 @@
   },
   "keywords": [
     "Okanjo",
+    "API",
     "Ecommerce",
     "Marketplace",
     "Ads",
@@ -23,13 +28,11 @@
   "bugs": {
     "url": "https://github.com/Okanjo/okanjo-nodejs/issues"
   },
-  "dependencies": {
-    "qs": "~0.6.6"
-  },
   "devDependencies": {
-    "async": "^1.4.0",
-    "mocha": "^2.2.1",
-    "requestbin": "^1.1.1",
-    "should": "^5.2.0"
+    "browserify": "^13.0.0",
+    "istanbul": "^0.4.2",
+    "jshint": "^2.9.1",
+    "mocha": "^2.4.1",
+    "should": "^8.2.0"
   }
 }
