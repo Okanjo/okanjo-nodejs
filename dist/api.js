@@ -882,7 +882,7 @@ var objectKeys = Object.keys || function (obj) {
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":8,"./encode":9}],"/lib/client.js":[function(require,module,exports){
+},{"./decode":8,"./encode":9}],"okanjo":[function(require,module,exports){
 (function (process){
 /*
  * Date: 1/26/16 11:59 AM
@@ -984,7 +984,6 @@ Client.Query = Query;
  * @param {object} spec - Query specifications
  * @param {function} callback
  * @return {Query} - A compiled query, ready to rock and roll, or be modified and executed yourself
- * @private
  */
 Client.prototype._makeRequest = function(spec, callback) {
 
