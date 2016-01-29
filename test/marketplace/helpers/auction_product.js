@@ -1,5 +1,5 @@
 /**
- * Date: 8/7/15 10:27 AM
+ * Date: 9/2/15 1:32 PM
  *
  * ----
  *
@@ -37,25 +37,53 @@
 
 
 var config = require('../../../config'),
+    genMedia = require('./media'),
     okanjo = require('../../../');
 
 
 module.exports = {
 
-    login: function (mp, callback) {
+    postProduct: function (mp, userRes, callback) {
 
-        var userConfig = config.marketplace.user1;
+        genMedia.generate(mp, function (err, mediaId) {
 
-        mp.userLogin().data(userConfig).execute(function (err, res) {
-            if(err){
-                throw err;
+            var storeId = null;
+
+            if(userRes.data.user){
+                storeId = userRes.data.user.stores[0].id;
+            }else{
+                storeId = userRes.data.id;
             }
-            mp.userToken = res.data.user_token;
-            var userId = res.data.user.id;
-            callback && callback(err, res, userId);
+
+            var startD = new Date(),
+                endD = new Date(startD);
+
+            endD.setMinutes(endD.getMinutes() + 10);
+            startD.setMinutes(startD.getMinutes() - 10);
+
+            var product = {
+                store_id: storeId,
+                type: 1,
+                title: 'Unit Test Product',
+                description: 'This Product Exists For Testing Purposes.',
+                price: 100.00,
+                stock: null,
+                category_id: 10,
+                condition: 'New',
+                media: [mediaId],
+                thumbnail_media_id: mediaId,
+                is_free_shipping: 1,
+                return_policy: {id:0},
+                auction_start: startD.toISOString(),
+                auction_end: endD.toISOString(),
+                auction_min_bid: 10.00
+            };
+
+            mp.postProduct().data(product).execute( function (err, res) {
+                var productId = res.data.id;
+
+                callback && callback(err, res, productId);
+            });
         });
     }
 };
-
-
-

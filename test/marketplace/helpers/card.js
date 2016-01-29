@@ -67,9 +67,78 @@ module.exports = {
         callback && callback(null, data);
     },
 
+    getDefaultBankAccount: function (callback) {
+
+        var data = {
+            key: 'pk_test_Q4XPBZZiNyeDJS6c69anpwhf',
+            payment_user_agent: 'stripe.js/375db0e',
+            bank_account: {
+                country: 'US',
+                currency: 'USD',
+                routing_number: 110000000,
+                account_number: '000123456789'
+            }
+        };
+
+        callback && callback(null, data);
+    },
+
     getCardToken: function (card, callback) {
 
         var postData = queryString.stringify(card);
+
+        var options = {
+            hostname: "api.stripe.com",
+            port: 443,
+            path: '/v1/tokens',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Length': Buffer.byteLength(postData, 'utf8'),
+                'cache-control': 'no-cache',
+                'accept': 'application/json',
+                'user-agent': 'OkanjoUnitTest/1.1',
+                'origin': 'https://js.stripe.com',
+                'pragma': 'no-cache',
+                'referrer': 'https://js.stripe.com/v2/channel.html?stripe_xdm_e=https%3A%2F%2Funittest.okanjo.com&stripe_xdm_c=default51211&stripe_xdm_p=1'
+            }
+        };
+
+        var req = https.request(options, function(res) {
+            //console.log('STATUS: ' + res.statusCode);
+            //console.log('HEADERS: ' + JSON.stringify(res.headers));    Use this to examine the response coming back from payment handler.
+            res.setEncoding('utf8');
+            var resData = '';
+            res.on('data', function(chunk) {
+                resData += chunk;
+            });
+
+            res.on('end', function() {
+
+                try {
+                    var response = JSON.parse(resData);
+                    callback && callback(null, response);
+                } catch (err) {
+                    callback && callback(err);
+                }
+            });
+
+        });
+
+        req.on('error', function(err) {
+            console.log('problem with request: ' + err.message);
+
+            callback && callback(err);
+        });
+
+// write data to request body
+        req.write(postData);
+        req.end();
+    },
+
+    getBankAccountToken: function (account, callback) {
+
+        var postData = queryString.stringify(account);
 
         var options = {
             hostname: "api.stripe.com",

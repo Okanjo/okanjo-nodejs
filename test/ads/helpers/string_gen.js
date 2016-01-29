@@ -1,5 +1,5 @@
 /**
- * Date: 8/7/15 10:27 AM
+ * Date: 11/19/15 2:05 PM
  *
  * ----
  *
@@ -35,27 +35,35 @@
  * SOFTWARE.
  */
 
-
 var config = require('../../../config'),
-    okanjo = require('../../../');
+    okanjo = require('../../../'),
+    async = require('async');
 
 
 module.exports = {
 
-    login: function (mp, callback) {
+    genString:  function (stringLength, callback) {
 
-        var userConfig = config.marketplace.user1;
+        var res = '',
+            err = null;
 
-        mp.userLogin().data(userConfig).execute(function (err, res) {
-            if(err){
-                throw err;
+            stringLength = parseInt(stringLength, 10);
+
+        if(isNaN(stringLength)){
+
+            err = 'Not a Number';
+            res = null;
+
+        } else {
+
+            for (var i = 0; i <= stringLength; i++) {
+
+                res = res.concat('o');
+
             }
-            mp.userToken = res.data.user_token;
-            var userId = res.data.user.id;
-            callback && callback(err, res, userId);
-        });
+        }
+
+        callback && callback(err, res);
     }
+
 };
-
-
-

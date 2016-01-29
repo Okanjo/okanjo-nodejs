@@ -38,6 +38,7 @@
 var config = require('../../config'),
     okanjo = require('../../index'),
     mp_login = require('./helpers/login'),
+    store = require('./helpers/store'),
     product = require('./helpers/product'),
     clean = require('./helpers/cleanup_job'),
     checkout = require('./helpers/checkout');
@@ -46,6 +47,30 @@ var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
 var cleanupJobs = [];
 
 describe('User Order',function() {
+
+    before(function(done) {
+
+        mp_login.login(mp, function(err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            store.createStore(mp, function (err, res, storeId) {
+
+                clean.cleanupStore(cleanupJobs, 'store', mp.userToken, storeId);
+
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.ok);
+                res.data.should.be.ok;
+
+                done()
+            });
+        });
+    });
 
     it('can retrieve list', function (done) {
 
@@ -190,7 +215,7 @@ describe('User Order',function() {
     });
 
 
-    it('cannot be updated with an invalid field', function (done) {
+    it('cannot be updated with an invalid field test', function (done) {
 
         mp_login.login(mp, function (err, res, userId) {
             (!err).should.be.true;
@@ -216,11 +241,156 @@ describe('User Order',function() {
                     clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
                     clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
 
-                    mp.putUserOrderById(userId, checkoutObj.order_id).data({meta: 'asdf'}).execute(function (err, res) {
-                        (!err).should.be.true;
-                        res.status.should.be.equal(okanjo.common.Response.status.badRequest, res.raw);
+                    //{meta: [{'something': 'somethings value'}]}
+                    //{meta: {'something': 'somethings variable'}}
 
-                        done();
+                    mp.putUserOrderById(userId, checkoutObj.order_id).data({meta: [{'something': 'somethings variable'}]}).execute(function (err, res) {
+
+                        (!err).should.be.true;
+                        res.should.be.ok;
+                        res.should.be.json;
+                        res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+                        res.data.should.be.ok;
+
+                        mp.getUserOrderById(userId, checkoutObj.order_id).embed("meta").execute(function () {
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+
+    it('cannot be updated with an invalid field 1', function (done) {
+
+        mp_login.login(mp, function (err, res, userId) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            product.postProduct(mp, res, function (err, res, productId){
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.ok);
+                res.data.should.be.ok;
+
+                checkout.checkout(mp, productId, function(err, res, checkoutObj){
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+                    res.data.should.be.ok;
+
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
+
+                    //{meta: [{'something': 'somethings value'}]}
+                    //{meta: {'something': 'somethings variable'}}
+
+                    mp.putUserOrderById(userId, checkoutObj.order_id).data({meta: "something"}).execute(function (err, res) {
+                        (!err).should.be.true;
+                        res.should.be.ok;
+                        res.should.be.json;
+                        res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+                        res.data.should.be.ok;
+
+                        mp.getUserOrderById(userId, checkoutObj.order_id).embed("meta").execute(function () {
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+
+    it('cannot be updated with an invalid field 2', function (done) {
+
+        mp_login.login(mp, function (err, res, userId) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            product.postProduct(mp, res, function (err, res, productId){
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.ok);
+                res.data.should.be.ok;
+
+                checkout.checkout(mp, productId, function(err, res, checkoutObj){
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+                    res.data.should.be.ok;
+
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
+
+                    //{meta: [{'something': 'somethings value'}]}
+                    //{meta: {'something': 'somethings variable'}}
+
+                    mp.putUserOrderById(userId, checkoutObj.order_id).data({meta: {'something': 'somethings variable'}}).execute(function (err, res) {
+                        (!err).should.be.true;
+                        res.should.be.ok;
+                        res.should.be.json;
+                        res.status.should.be.equal(okanjo.common.Response.status.ok);
+                        res.data.should.be.ok;
+
+                        mp.getUserOrderById(userId, checkoutObj.order_id).embed("meta").execute(function () {
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+    it('cannot be updated with an invalid field 3', function (done) {
+
+        mp_login.login(mp, function (err, res, userId) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            product.postProduct(mp, res, function (err, res, productId){
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.ok);
+                res.data.should.be.ok;
+
+                checkout.checkout(mp, productId, function(err, res, checkoutObj){
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+                    res.data.should.be.ok;
+
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    clean.cleanupCard(cleanupJobs, 'card', mp.userToken, userId, checkoutObj.card_id);
+
+                    //{meta: [{'something': 'somethings value'}]}
+                    //{meta: {'something': 'somethings variable'}}
+
+                    mp.putUserOrderById(userId, checkoutObj.order_id).data([{'something': 'somethings variable'}]).execute(function (err, res) {
+                        (!err).should.be.true;
+                        res.should.be.ok;
+                        res.should.be.json;
+                        res.status.should.be.equal(okanjo.common.Response.status.ok);
+                        res.data.should.be.ok;
+                        mp.getUserOrderById(userId, checkoutObj.order_id).embed("meta").execute(function () {
+                            done();
+                        });
                     });
                 });
             });

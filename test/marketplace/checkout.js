@@ -38,13 +38,38 @@
 var config = require('../../config'),
     okanjo = require('../../index'),
     mp_login = require('./helpers/login'),
+    store = require('./helpers/store'),
     clean = require('./helpers/cleanup_job'),
     genMedia = require('./helpers/media');
 
-mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
 var cleanupJobs = [];
 
 describe('Checkout',function(){
+
+    before(function(done) {
+
+        mp_login.login(mp, function(err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            store.createStore(mp, function (err, res, storeId) {
+
+                clean.cleanupStore(cleanupJobs, 'store', mp.userToken, storeId);
+
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.ok);
+                res.data.should.be.ok;
+
+                done();
+            });
+        });
+    });
 
     it('is possible',function(done){
 
@@ -229,7 +254,144 @@ describe('Checkout',function(){
 
                     var checkoutData = {
                         cart: JSON.stringify(cartData),
-                        return_url: "hs://okanjocom/bad/url",
+                        //return_url: "ftp://okanjo.com/bad/url",
+                        return_url: "ftp://example/pub/file.txt",
+                        cancel_url: "https://okanjo.com/unit/test/cancel",
+                        shipping_first_name: "Unit",
+                        shipping_last_name: "Tester",
+                        shipping_address_1: "220 E Buffalo St",
+                        shipping_address_2: "Ste 405", // optional
+                        shipping_city: "Milwaukee",
+                        shipping_state: "WI",
+                        shipping_zip: 53202,
+                        shipping_country: "US",
+                        shipping_phone: '+1-414-810-1760'
+                    };
+
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+
+                    mp.checkout().data(checkoutData).execute( function (err, res){
+                        (!err).should.be.true;
+                        res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+
+                        done();
+                    });
+                });
+            });
+        });
+    });
+
+    it('is not possible with bad url',function(done){
+
+        mp_login.login(mp, function(err, res) {
+
+            genMedia.generate(mp, function(err, mediaId){
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: 0,
+                    title: 'Unit Test',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 1
+                };
+
+                mp.postProduct().data(product).execute(function (err, res) {
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    if(err){
+                        throw err;
+                    }
+
+                    if(res.status != 200){
+                        console.log(product);
+                        throw new Error(res.data.description, res.status);
+                    }
+
+                    var productId = res.data.id;
+                    var cartData ={};
+                    cartData[productId] = {
+                        quantity: 1,
+                        shipping_type: 'free'
+                    };
+
+                    var checkoutData = {
+                        cart: JSON.stringify(cartData),
+                        return_url: "https:/asdf /e asdf/./as./f./a.sd/f.''asdf][]asdfxample/pub/file.txt",
+                        cancel_url: "https://okanjo.com/unit/test/cancel",
+                        shipping_first_name: "Unit",
+                        shipping_last_name: "Tester",
+                        shipping_address_1: "220 E Buffalo St",
+                        shipping_address_2: "Ste 405", // optional
+                        shipping_city: "Milwaukee",
+                        shipping_state: "WI",
+                        shipping_zip: 53202,
+                        shipping_country: "US",
+                        shipping_phone: '+1-414-810-1760'
+                    };
+
+                    clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+
+                    mp.checkout().data(checkoutData).execute( function (err, res){
+                        (!err).should.be.true;
+                        res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+
+                        done();
+                    });
+                });
+            });
+        });
+    });
+
+    it('is not possible with bad url',function(done){
+
+        mp_login.login(mp, function(err, res) {
+
+            genMedia.generate(mp, function(err, mediaId){
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: 0,
+                    title: 'Unit Test',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 1
+                };
+
+                mp.postProduct().data(product).execute(function (err, res) {
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    if(err){
+                        throw err;
+                    }
+
+                    if(res.status != 200){
+                        console.log(product);
+                        throw new Error(res.data.description, res.status);
+                    }
+
+                    var productId = res.data.id;
+                    var cartData ={};
+                    cartData[productId] = {
+                        quantity: 1,
+                        shipping_type: 'free'
+                    };
+
+                    var checkoutData = {
+                        cart: JSON.stringify(cartData),
+                        return_url: "https://",
                         cancel_url: "https://okanjo.com/unit/test/cancel",
                         shipping_first_name: "Unit",
                         shipping_last_name: "Tester",

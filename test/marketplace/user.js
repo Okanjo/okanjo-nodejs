@@ -64,11 +64,74 @@ describe('User', function(){
         };
 
         mp.userLogin().data(newUser).execute(function (err, res) {
-
             (!err).should.be.true;
             res.should.be.ok;
             res.should.be.json;
             res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            done();
+        });
+    });
+
+
+    it('can register with a password that includes whitespace',function(done) {
+
+        var iteration = gen();
+
+        var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+
+        var newUser = {
+
+            action: okanjo.constants.marketplace.loginAction.registerEmailPassword,
+            email: 'radicalEd.' + iteration + '@okanjo.com',
+            password: ' pass ',
+            username: 'Ed' + iteration,
+            first_name: 'Radical',
+            last_name: 'Edward',
+            //birthday: '01/01/2058',
+            zip: 53072,
+            gender: 'female'
+
+        };
+
+        mp.userLogin().data(newUser).execute(function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            done();
+        });
+    });
+
+
+    it('cannot register if password is < 6',function(done) {
+
+        var iteration = gen();
+
+        var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+
+        var newUser = {
+
+            action: okanjo.constants.marketplace.loginAction.registerEmailPassword,
+            email: 'radicalEd.' + iteration + '@okanjo.com',
+            password: '12345',
+            username: 'Ed' + iteration,
+            first_name: 'Radical',
+            last_name: 'Edward',
+            //birthday: '01/01/2058',
+            zip: 53072,
+            gender: 'female'
+
+        };
+
+        mp.userLogin().data(newUser).execute(function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.badRequest);
             res.data.should.be.ok;
 
             done();
@@ -98,7 +161,10 @@ describe('User', function(){
 
         mp.userLogin().data(newUser).execute(function (err, res) {
             (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
             res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+            res.data.should.be.ok;
 
             done();
         });
@@ -127,7 +193,10 @@ describe('User', function(){
 
         mp.userLogin().data(newUser).execute( function (err, res) {
             (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
             res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+            res.data.should.be.ok;
 
             done();
         });
@@ -154,7 +223,12 @@ describe('User', function(){
 
         };
 
-        mp.userLogin().data(newUser).execute( function () {
+        mp.userLogin().data(newUser).execute( function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
 
             mp.userLogin().data(newUser).execute( function (err, res) {
                 (!err).should.be.true;
@@ -191,7 +265,10 @@ describe('User', function(){
 
         mp.userLogin().data(newUser).execute( function (err, res) {
             (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
             res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+            res.data.should.be.ok;
 
             done();
         });
@@ -218,7 +295,12 @@ describe('User', function(){
 
         };
 
-        mp.userLogin().data(newUser).execute( function () {
+        mp.userLogin().data(newUser).execute( function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
 
             var userData = {
                 email: newUser.email
@@ -236,44 +318,6 @@ describe('User', function(){
         });
     });
 
-
-    it('cannot reset password with both email and username entered', function (done) {
-
-        var iteration = gen();
-
-        var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
-
-        var newUser = {
-
-            action: okanjo.constants.marketplace.loginAction.registerEmailPassword,
-            email: 'radicalEd.' + iteration + '@okanjo.com',
-            password: 'password',
-            username: 'Ed' + iteration,
-            first_name: 'Radical',
-            last_name: 'Edward',
-            //birthday: '01/01/2058',
-            zip: 53072,
-            gender: 'female'
-
-        };
-
-        mp.userLogin().data(newUser).execute( function () {
-
-            var userData = {
-                email: newUser.email,
-                username: newUser.username
-            };
-
-            mp.userForgotPassword().data(userData).execute( function (err, res){
-                (!err).should.be.true;
-                res.status.should.be.equal(okanjo.common.Response.status.badRequest);
-
-                done();
-            });
-        });
-    });
-
-
     it('cannot reset password if an account does not exist', function (done) {
 
         var iteration = gen();
@@ -286,7 +330,10 @@ describe('User', function(){
 
         mp.userForgotPassword().data(newUser).execute(function (err, res){
             (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
             res.status.should.be.equal(okanjo.common.Response.status.notFound);
+            res.data.should.be.ok;
 
             done();
         });
@@ -313,6 +360,11 @@ describe('User', function(){
         };
 
         mp.userLogin().data(newUser).execute( function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
 
             var userId = res.data.user.id;
             mp.userToken = res.data.user_token;
@@ -340,7 +392,10 @@ describe('User', function(){
 
             mp.getUserById(0).data().execute( function (err, res){
                 (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
                 res.status.should.be.equal(okanjo.common.Response.status.notFound);
+                res.data.should.be.ok;
 
                 done();
             });
@@ -369,6 +424,12 @@ describe('User', function(){
         };
 
         mp.userLogin().data(newUser).execute( function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
 
             mp.userToken = res.data.user_token;
             var userId = res.data.user.id;
@@ -412,6 +473,11 @@ describe('User', function(){
         };
 
         mp.userLogin().data(newUser).execute( function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
 
             mp.userToken = res.data.user_token;
 
@@ -423,7 +489,10 @@ describe('User', function(){
 
             mp.putUserById(userId).data(user).execute( function (err, res){
                 (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
                 res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+                res.data.should.be.ok;
 
                 done();
             });
@@ -452,6 +521,11 @@ describe('User', function(){
         };
 
         mp.userLogin().data(newUser).execute( function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
 
             var userId = res.data.user.id;
 
@@ -462,7 +536,10 @@ describe('User', function(){
 
             mp.putUserById(userId).data(user).execute( function (err, res){
                 (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
                 res.status.should.be.equal(okanjo.common.Response.status.unauthorized);
+                res.data.should.be.ok;
 
                 done();
             });
@@ -479,7 +556,7 @@ describe('User', function(){
         var newUser = {
 
             action: okanjo.constants.marketplace.loginAction.registerEmailPassword,
-            email: 'radicalEd.' + iteration + '@okanjo.com',
+            email: 'radicalEd' + iteration + '@okanjo.com',
             password: 'password',
             username: 'Ed' + iteration,
             first_name: 'Radical',
@@ -493,16 +570,26 @@ describe('User', function(){
         var userEmail = newUser.email;
 
         mp.userLogin().data(newUser).execute( function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
 
             mp.userToken = res.data.user_token;
 
             var userId = res.data.user.id;
 
             var user = {
-                new_password: ''
+                new_password: 'newPassword'
             };
 
             mp.setUserPasswordById(userId).data(user).execute( function (){
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.ok);
+                res.data.should.be.ok;
 
                 var userConfig = {
                     action: okanjo.constants.marketplace.loginAction.loginEmailPassword,
@@ -518,6 +605,72 @@ describe('User', function(){
                     res.data.should.be.ok;
 
                     done();
+
+                });
+            });
+        });
+    });
+
+
+    it('can change password to one that contains whitespace',function(done) {
+
+        var iteration = gen();
+
+        var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+
+        var newUser = {
+
+            action: okanjo.constants.marketplace.loginAction.registerEmailPassword,
+            email: 'radicalEd' + iteration + '@okanjo.com',
+            password: 'password',
+            username: 'Ed' + iteration,
+            first_name: 'Radical',
+            last_name: 'Edward',
+            //birthday: '01/01/2058',
+            zip: 53072,
+            gender: 'female'
+
+        };
+
+        var userEmail = newUser.email;
+
+        mp.userLogin().data(newUser).execute( function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            mp.userToken = res.data.user_token;
+
+            var userId = res.data.user.id;
+
+            var user = {
+                new_password: ' mypa '
+            };
+
+            mp.setUserPasswordById(userId).data(user).execute( function (){
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.ok);
+                res.data.should.be.ok;
+
+                var userConfig = {
+                    action: okanjo.constants.marketplace.loginAction.loginEmailPassword,
+                    email: userEmail,
+                    password: user.new_password
+                };
+
+                mp.userLogin().data(userConfig).execute( function (err, res){
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+                    res.data.should.be.ok;
+
+                    done();
+
                 });
             });
         });
@@ -544,29 +697,102 @@ describe('User', function(){
 
         };
 
-        var userEmail = newUser.email;
-
         mp.userLogin().data(newUser).execute( function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
 
             mp.userToken = res.data.user_token;
 
+            var userEmail = res.data.user.contact_email;
             var userId = res.data.user.id;
 
             var user = {
                 new_password: ''
             };
 
-            mp.setUserPasswordById(userId).data(user).execute( function () {
+            mp.setUserPasswordById(userId).data(user).execute( function (err, res) {
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+                res.data.should.be.ok;
 
                 var userConfig = {
                     action: okanjo.constants.marketplace.loginAction.loginEmailPassword,
                     email: userEmail,
-                    password: user.new_password
+                    password: newUser.password
                 };
 
                 mp.userLogin().data(userConfig).execute( function (err, res){
                     (!err).should.be.true;
-                    res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+                    res.data.should.be.ok;
+
+                    done();
+                });
+            });
+        });
+    });
+
+
+    it('test',function (done) {
+
+        var iteration = gen();
+
+        var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
+
+        var newUser = {
+
+            action: okanjo.constants.marketplace.loginAction.registerEmailPassword,
+            email: 'radicalEd.' + iteration + '@okanjo.com',
+            password: 'password',
+            username: 'Ed' + iteration,
+            first_name: 'Radical',
+            last_name: 'Edward',
+            //birthday: '01/01/2058',
+            zip: 53072,
+            gender: 'female'
+
+        };
+
+        mp.userLogin().data(newUser).execute( function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            mp.userToken = res.data.user_token;
+
+            var userEmail = res.data.user.contact_email;
+
+            var userId = res.data.user.id;
+
+
+            mp.setUserPasswordById(userId).data({new_password: ''}).execute( function (err, res) {
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+                res.data.should.be.ok;
+
+                var userConfig = {
+                    action: okanjo.constants.marketplace.loginAction.loginEmailPassword,
+                    email: userEmail,
+                    password: newUser.password
+                };
+
+
+                mp.userLogin().data(userConfig).execute(function (err, res) {
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
                     res.data.should.be.ok;
 
                     done();
@@ -597,6 +823,11 @@ describe('User', function(){
         };
 
         mp.userLogin().data(newUser).execute( function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
 
             var userId = res.data.user.id;
 
@@ -614,6 +845,8 @@ describe('User', function(){
         });
     });
 });
+
+
 
 //This function allows the test to create a new user randomly
 function gen() {

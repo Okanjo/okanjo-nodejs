@@ -93,12 +93,22 @@ describe('Brand', function(){
 
         var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
 
-        mp.getBrandByIdOrApiKey(0).execute(function (err, res) {
+        mp_login.login(mp, function(err, res){
             (!err).should.be.true;
-            res.status.should.be.equal(okanjo.common.Response.status.notFound);
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            mp.getBrandByIdOrApiKey(0).execute(function (err, res) {
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.notFound);
 
 
-            done();
+                done();
+            });
         });
     });
 });

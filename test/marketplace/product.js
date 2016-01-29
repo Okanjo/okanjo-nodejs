@@ -40,6 +40,7 @@ var config = require('../../config'),
     product = require('./helpers/product'),
     mp_login = require('./helpers/login'),
     clean = require('./helpers/cleanup_job'),
+    store = require('./helpers/store'),
     async = require('async'),
     genMedia = require('./helpers/media');
 
@@ -47,6 +48,30 @@ var mp = new okanjo.clients.MarketplaceClient(config.marketplace.api);
 var cleanupJobs = [];
 
 describe('Product', function () {
+
+    before(function(done) {
+
+        mp_login.login(mp, function(err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            store.createStore(mp, function (err, res, storeId) {
+
+                clean.cleanupStore(cleanupJobs, 'store', mp.userToken, storeId);
+
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.ok);
+                res.data.should.be.ok;
+
+                done()
+            });
+        });
+    });
 
     it('can get available list', function (done) {
 
@@ -105,7 +130,7 @@ describe('Product', function () {
     });
 
 
-    it('cannot be created when title is made of whitespace', function (done) {
+    it('cannot be created when the title is made of whitespace', function (done) {
 
         mp_login.login(mp, function(err, res) {
 
@@ -315,7 +340,7 @@ describe('Product', function () {
                     store_id: res.data.user.stores[0].id,
                     type: 0,
                     title: 'Unit Test Product',
-                    description: 'testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest1',
+                    description: '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111true',
                     price: 10.00,
                     stock: null,
                     category_id: 10,
@@ -745,6 +770,91 @@ describe('Product', function () {
     });
 
 
+    it('cannot be created with type set to donation', function (done) {
+
+        mp_login.login(mp, function(err, res) {
+
+            genMedia.generate(mp,  function (err, mediaId) {
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: okanjo.constants.marketplace.productType.donation,
+                    title: 'Unit Test Product',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 1
+                };
+
+                mp.postProduct().data(product).execute( function (err, res) {
+
+                    var productId;
+
+                    if(res.data.id) {
+                        productId = res.data.id;
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    }
+
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+                    res.data.should.be.ok;
+
+                    done();
+                });
+            });
+        });
+    });
+
+    it('cannot be created with type set to deal', function (done) {
+
+        mp_login.login(mp, function(err, res) {
+
+            genMedia.generate(mp,  function (err, mediaId) {
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: okanjo.constants.marketplace.productType.deal,
+                    title: 'Unit Test Product',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 1
+                };
+
+                mp.postProduct().data(product).execute( function (err, res) {
+
+                    var productId;
+
+                    if(res.data.id) {
+                        productId = res.data.id;
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    }
+
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+                    res.data.should.be.ok;
+
+                    done();
+                });
+            });
+        });
+    });
+
+
     it('can be updated',function(done){
 
         mp_login.login(mp, function(err, res) {
@@ -802,6 +912,109 @@ describe('Product', function () {
     });
 
 
+    it('cannot be updated with type set to donation', function (done) {
+
+        mp_login.login(mp, function(err, res) {
+
+            genMedia.generate(mp,  function (err, mediaId) {
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: 0,
+                    title: 'Unit Test Product',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 1
+                };
+
+                mp.postProduct().data(product).execute( function (err, res) {
+
+                    var productId;
+
+                    if(res.data.id) {
+                        productId = res.data.id;
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    }
+
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+                    res.data.should.be.ok;
+
+                    mp.putProductById(productId).data({type: okanjo.constants.marketplace.productType.donation}).execute(function(err, res){
+                        (!err).should.be.true;
+                        res.should.be.ok;
+                        res.should.be.json;
+                        res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+                        res.data.should.be.ok;
+
+                        done();
+                    });
+                });
+            });
+        });
+    });
+
+
+    it('cannot be updated with type set to deal', function (done) {
+
+        mp_login.login(mp, function(err, res) {
+
+            genMedia.generate(mp,  function (err, mediaId) {
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: 0,
+                    title: 'Unit Test Product',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 1
+                };
+
+                mp.postProduct().data(product).execute( function (err, res) {
+
+                    var productId;
+
+                    if(res.data.id) {
+                        productId = res.data.id;
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    }
+
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+                    res.data.should.be.ok;
+
+                    mp.putProductById(productId).data({type: okanjo.constants.marketplace.productType.deal}).execute(function(err, res){
+                        (!err).should.be.true;
+                        res.should.be.ok;
+                        res.should.be.json;
+                        res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+                        res.data.should.be.ok;
+
+                        done();
+                    });
+                });
+            });
+        });
+    });
+
+
+
     it('cannot be updated with an invalid price',function(done){
 
         mp_login.login(mp, function(err, res) {
@@ -855,6 +1068,56 @@ describe('Product', function () {
         });
     });
 
+    it('can be deleted', function(done){
+
+        mp_login.login(mp, function(err, res) {
+
+            genMedia.generate(mp, function (err, mediaId) {
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: 0,
+                    title: 'Unit Test Product',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id: 0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 1
+                };
+
+                mp.postProduct().data(product).execute(function (err, res) {
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+                    res.data.should.be.ok;
+
+                    var product = {
+                        status: okanjo.constants.marketplace.productStatus.permanentlyRemoved
+                    };
+
+                    var productId = res.data.id;
+
+                    mp.putProductById(productId).data(product).execute(function (err, res) {
+                        (!err).should.be.true;
+                        res.should.be.ok;
+                        res.should.be.json;
+                        res.status.should.be.equal(okanjo.common.Response.status.ok);
+                        res.data.should.be.ok;
+
+                        done();
+                    });
+
+                });
+            });
+        });
+
+    });
+
 
     it('cannot be undeleted',function(done){
 
@@ -885,7 +1148,7 @@ describe('Product', function () {
                     res.data.should.be.ok;
 
                     var product = {
-                        status: 7
+                        status: okanjo.constants.marketplace.productStatus.permanentlyRemoved
                     };
 
                     var productId;
@@ -895,18 +1158,23 @@ describe('Product', function () {
                         clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
                     }
 
-                    mp.putProductById(productId).data(product).execute(function (){
+                    mp.putProductById(productId).data(product).execute(function (err, res){
+                        (!err).should.be.true;
+                        res.should.be.ok;
+                        res.should.be.json;
+                        res.status.should.be.equal(okanjo.common.Response.status.ok);
+                        res.data.should.be.ok;
 
                         product.status = 1;
 
-                        mp.putProductById(productId).data(product).execute(function (){
+                        mp.putProductById(productId).data(product).execute(function (err, res){
+                            (!err).should.be.true;
+                            res.should.be.ok;
+                            res.should.be.json;
+                            res.status.should.be.equal(okanjo.common.Response.status.notFound);
+                            res.data.should.be.ok;
 
-                            mp.getProductById(productId).data().execute(function (err, res){
-                                (!err).should.be.true;
-                                res.status.should.be.equal(okanjo.common.Response.status.notFound);
-
-                                done();
-                            });
+                            done();
                         });
                     });
                 });
@@ -1392,9 +1660,344 @@ describe('Product', function () {
         });
     });
 
+
+
+    it('can create product with shipping options', function(done){
+
+        mp_login.login(mp, function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            genMedia.generate(mp, function (err, mediaId) {
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: 0,
+                    title: 'Unit Test Product',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 0,
+                    shipping_options: [{
+                        description: '0 Dollar shipping!',
+                        price: 0.00,
+                        carrier: 'Me',
+                        service: 'By Bike'
+                    }]
+                };
+
+                mp.postProduct().data(product).execute( function (err, res) {
+
+                    var productId;
+
+                    if(res.data.id) {
+                        productId = res.data.id;
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    }
+
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+                    res.data.should.be.ok;
+
+                    done();
+                });
+            });
+        });
+    });
+
+    it('cannot create product with shipping options price bellow limit', function(done){
+
+        mp_login.login(mp, function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            genMedia.generate(mp, function (err, mediaId) {
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: 0,
+                    title: 'Unit Test Product',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 0,
+                    shipping_options: [{
+                        description: '0 Dollar shipping!',
+                        price: -1.00,
+                        carrier: 'Me',
+                        service: 'By Bike'
+                    }]
+                };
+
+                mp.postProduct().data(product).execute( function (err, res) {
+
+                    var productId;
+
+                    if(res.data.id) {
+                        productId = res.data.id;
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    }
+
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.badRequest);
+                    res.data.should.be.ok;
+
+                    done();
+                });
+            });
+        });
+    });
+
+
+    it('cannot create product with shipping options and free shipping', function(done){
+
+        mp_login.login(mp, function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            genMedia.generate(mp, function (err, mediaId) {
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: 0,
+                    title: 'Unit Test Product',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 1,
+                    shipping_options: [{
+                        description: '0 Dollar shipping!',
+                        price: 0.00,
+                        carrier: 'Me',
+                        service: 'By Bike'
+                    }]
+                };
+
+                mp.postProduct().data(product).execute( function (err, res) {
+
+                    var productId;
+
+                    if(res.data.id) {
+                        productId = res.data.id;
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    }
+
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.badRequest, res.raw);
+                    res.data.should.be.ok;
+
+                    done();
+                });
+            });
+        });
+    });
+
+
+    it('can put product with $10 shipping options to $0', function(done){
+
+        mp_login.login(mp, function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            genMedia.generate(mp, function (err, mediaId) {
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: 0,
+                    title: 'Unit Test Product',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 0,
+                    shipping_options: [{
+                        description: 'fast shipping!',
+                        price: 10.00,
+                        carrier: 'Me',
+                        service: 'By Bike really fast'
+                    }]
+                };
+
+                mp.postProduct().data(product).execute( function (err, res) {
+
+                    var productId;
+
+                    if(res.data.id) {
+                        productId = res.data.id;
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    }
+
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+                    res.data.should.be.ok;
+
+                    mp.getProductById(productId).embed('shipping').execute(function(err, res){
+                    var shipping = {
+                        shipping_options: [{
+                            id: res.data.shipping[0].id,
+                            description: '0 Dollar shipping!',
+                            price: 0.00,
+                            carrier: 'Me',
+                            service: 'By Bike'
+                        }]
+                    };
+
+                        mp.putProductById(productId).data(shipping).execute(function(err, res){
+                            (!err).should.be.true;
+                            res.should.be.ok;
+                            res.should.be.json;
+                            res.status.should.be.equal(okanjo.common.Response.status.ok);
+                            res.data.should.be.ok;
+
+                            mp.getProductById(productId).embed('shipping').execute(function(err, res) {
+                                (!err).should.be.true;
+                                res.should.be.ok;
+                                res.should.be.json;
+                                res.status.should.be.equal(okanjo.common.Response.status.ok);
+                                res.data.should.be.ok;
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+    it('cannot put free shipping on a product with shipping options', function(done){
+
+        mp_login.login(mp, function (err, res) {
+            (!err).should.be.true;
+            res.should.be.ok;
+            res.should.be.json;
+            res.status.should.be.equal(okanjo.common.Response.status.ok);
+            res.data.should.be.ok;
+
+            genMedia.generate(mp, function (err, mediaId) {
+
+                var product = {
+                    store_id: res.data.user.stores[0].id,
+                    type: 0,
+                    title: 'Unit Test Product',
+                    description: 'This Product Exists For Testing Purposes.',
+                    price: 10.00,
+                    stock: null,
+                    category_id: 10,
+                    condition: 'New',
+                    return_policy: {id:0},
+                    media: [mediaId],
+                    thumbnail_media_id: mediaId,
+                    is_free_shipping: 0,
+                    shipping_options: [{
+                        description: 'fast shipping!',
+                        price: 10.00,
+                        carrier: 'Me',
+                        service: 'By Bike really fast'
+                    }]
+                };
+
+                mp.postProduct().data(product).execute( function (err, res) {
+
+                    var productId;
+
+                    if(res.data.id) {
+                        productId = res.data.id;
+                        clean.cleanupProduct(cleanupJobs, 'product', mp.userToken, productId);
+                    }
+
+                    (!err).should.be.true;
+                    res.should.be.ok;
+                    res.should.be.json;
+                    res.status.should.be.equal(okanjo.common.Response.status.ok);
+                    res.data.should.be.ok;
+
+                    mp.getProductById(productId).embed('shipping').execute(function(err, res){
+                        (!err).should.be.true;
+                        res.should.be.ok;
+                        res.should.be.json;
+                        res.status.should.be.equal(okanjo.common.Response.status.ok);
+                        res.data.should.be.ok;
+
+                        var shipping = {
+                            is_free_shipping: 1
+                        };
+
+                        mp.putProductById(productId).data(shipping).execute(function(err, res){
+                            (!err).should.be.true;
+                            res.should.be.ok;
+                            res.should.be.json;
+                            res.status.should.be.equal(okanjo.common.Response.status.ok);
+                            res.data.should.be.ok;
+
+                            mp.getProductById(productId).embed('shipping').execute(function(err, res) {
+                                if(res.data.shipping == null){
+                                    var shipData = false;
+                                }
+                                (!err).should.be.true;
+                                res.should.be.ok;
+                                res.should.be.json;
+                                res.data.should.be.ok;
+                                shipData.should.be.false;
+
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+
     after(function(done){
         clean.cleanupJob(cleanupJobs, function(){
             done();
         });
     });
 });
+
+
+
+
+
+
+
+

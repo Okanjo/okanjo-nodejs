@@ -1,5 +1,5 @@
 /**
- * Date: 8/7/15 10:27 AM
+ * Date: 11/12/15 3:34 PM
  *
  * ----
  *
@@ -34,28 +34,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-
 var config = require('../../../config'),
-    okanjo = require('../../../');
-
+    okanjo = require('../../../index');
 
 module.exports = {
 
-    login: function (mp, callback) {
+    login: function (ads, callback) {
 
-        var userConfig = config.marketplace.user1;
+        var userConfig = config.ads.user1;
 
-        mp.userLogin().data(userConfig).execute(function (err, res) {
+        ads.postAccountSession().data(userConfig).execute(function (err, res) {
             if(err){
                 throw err;
             }
-            mp.userToken = res.data.user_token;
-            var userId = res.data.user.id;
-            callback && callback(err, res, userId);
+
+            ads.apiKey = null;
+            ads.apiPassPhrase = null;
+            ads.userToken = res.data.session.token;
+
+            var accountId = res.data.account.id;
+            callback && callback(err, res, accountId);
         });
     }
 };
-
-
-

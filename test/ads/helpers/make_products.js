@@ -1,5 +1,5 @@
 /**
- * Date: 8/7/15 10:27 AM
+ * Date: 11/20/15 1:20 PM
  *
  * ----
  *
@@ -35,27 +35,31 @@
  * SOFTWARE.
  */
 
-
 var config = require('../../../config'),
-    okanjo = require('../../../');
-
+    okanjo = require('../../../'),
+    async = require('async');
 
 module.exports = {
 
-    login: function (mp, callback) {
+    makeProducts: function (ads, marketplaceId, products, callback) {
 
-        var userConfig = config.marketplace.user1;
+        var ids = [];
 
-        mp.userLogin().data(userConfig).execute(function (err, res) {
-            if(err){
-                throw err;
-            }
-            mp.userToken = res.data.user_token;
-            var userId = res.data.user.id;
-            callback && callback(err, res, userId);
-        });
+        async.eachSeries(products, function(product, callback) {
+
+            ads.postMarketplaceProduct(marketplaceId).data(product).execute( function(err, res) {
+                (!err).should.be.true;
+                res.should.be.ok;
+                res.should.be.json;
+                res.status.should.be.equal(okanjo.common.Response.status.created);
+
+                ids.push(res.data.id);
+
+                callback();
+            });
+
+        },callback(ids));
+
     }
+
 };
-
-
-

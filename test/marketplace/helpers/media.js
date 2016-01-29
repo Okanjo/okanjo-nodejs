@@ -53,7 +53,6 @@ module.exports = {
         });
 
         mp.postMedia().data(upload).execute(function (err, res) {
-
             return callback && callback(err, res.data.id);
 
         });
