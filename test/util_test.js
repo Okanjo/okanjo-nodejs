@@ -52,6 +52,8 @@ describe('Utilities', function() {
             arr: [ 1, 2, 3],
             obj: { a: 1, b: 2 },
 
+            nil: null,
+
             arrDeep: [ 1, { c: 3, d: { e: 99, a: [ 3, 3 ] } } ]
         };
 
@@ -69,6 +71,9 @@ describe('Utilities', function() {
         target.key.should.be.equal('str');
         target.obj.a.should.equal(1);
         target.arr.length.should.be.equal(3);
+
+        // Null value should have retained
+        should(target.nil).be.exactly(null);
 
         // New props should be different references than the original
         target.arr.should.not.be.exactly(original.arr);
