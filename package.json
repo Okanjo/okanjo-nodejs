@@ -8,7 +8,7 @@
     "cover": "rm -f coverage/coverage*.json && node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- -R spec && node_modules/.bin/istanbul report",
     "hint": "node_modules/.bin/jshint ./lib/**/*.js",
     "report": "npm run cover && npm run hint",
-    "browser": "./node_modules/.bin/browserify -r ./lib/client.js > dist/api.js"
+    "browser": "./node_modules/.bin/browserify -i ./lib/providers/http_provider.js -r ./lib/client.js  -o dist/api.js"
   },
   "repository": {
     "type": "git",

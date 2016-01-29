@@ -7,7 +7,7 @@
  * https://okanjo.com
  * support@okanjo.com
  *
- * https://github.com/okanjo/okanjo-nodejs-lite
+ * https://github.com/okanjo/okanjo-nodejs
  *
  * ----
  *
@@ -36,13 +36,161 @@
  */
 
 
-var should = require('should');
+var should = require('should'),
+    http = require('http'),
+    url = require('url'),
+    qs = require('querystring'),
+    util = require('util');
 
 module.exports = {
+
     verifyQuerySpec: function (q, spec) {
         q.method.should.equal(spec.method);
         q.getRealPath().should.equal(spec.path);
         should(q.query).deepEqual(spec.query);
         should(q.payload).deepEqual(spec.payload);
-    }
+    },
+
+    log: function(name, thing) {
+        console.log(thing === undefined ? 'LOG:' : name, util.inspect(thing, { colors: true, depth: 5 }));
+    },
+
+    FauxApiServer: FauxApiServer
+};
+
+
+/**
+ * Super simple test server
+ * @param config
+ * @constructor
+ */
+function FauxApiServer(config) {
+
+    this.config = config || {};
+    this.port = process.env.TEST_SERVER_PORT || this.config.port || 3200;
+    this.routes = [];
+
+    this.server = http.createServer(function(req, res) {
+
+        var payload = "";
+
+        req.on('data', function(chunk) {
+            payload += chunk;
+        });
+
+        req.on('end', function() {
+            try {
+                // Get the route
+                var route = this._findRoute(req);
+
+                // Attach the received payload
+                req.payload = payload;
+
+                // HANDLE IT.
+                route.handler.call(this, req, this._reply.bind(this, res));
+
+            } catch (err)  {
+
+                // Unit tests - just throw it already
+                console.error('UNIT TEST SERVER GO BOOM', err.stack);
+
+                this._reply(res, 500, {
+                    statusCode: 500,
+                    error: "Internal Server Error",
+                    message:  err.stack || "Oops"
+                });
+            }
+        }.bind(this));
+
+    }.bind(this));
+}
+
+
+/**
+ * Start the server
+ * @param callback
+ */
+FauxApiServer.prototype.start = function(callback) {
+    // Start the server
+
+    this.server.listen(this.port, '127.0.0.1', function() {
+        if (callback) callback();
+    });
+};
+
+
+/**
+ * Stop the server
+ * @param callback
+ */
+FauxApiServer.prototype.stop = function(callback) {
+    this.server.close(callback);
+};
+
+
+/**
+ * Sends the response to the client
+ * @param res
+ * @param statusCode
+ * @param payload
+ * @param options
+ * @private
+ */
+FauxApiServer.prototype._reply = function(res, statusCode, payload, options) {
+    options = options || {};
+
+    // auto copy status code to resposne object
+    if (typeof payload === "object" && !payload.statusCode) payload.statusCode = statusCode;
+
+    // write the headers
+    res.writeHead(statusCode, {
+        'Content-Type': options.contentType || 'application/json; charset=utf8'
+    });
+
+    // write the response payload
+    res.end(options.raw ? payload : JSON.stringify(payload));
+};
+
+
+/**
+ * Matches a route in the list
+ * @param req
+ * @return {T|{path, method, handler}|{path: (string|null|*|string), method: *, handler: handler}}
+ * @private
+ */
+FauxApiServer.prototype._findRoute = function(req) {
+
+    var uri = url.parse(req.url),
+        query = qs.parse(uri.query || "");
+
+    req.uri = uri;
+    req.query = query;
+
+    // Find the first route that matches the spec
+    var route = this.routes.find(function(route) {
+        return req.method == route.method && uri.pathname == route.path;
+    }, this);
+
+    // Return the matching route or not found if none matched
+    return route || this._getNotFoundRoute(req);
+};
+
+
+/**
+ * Returns the generic not found route handler
+ * @param req
+ * @return {{path: (string|null|*|string), method: *, handler: handler}}
+ * @private
+ */
+FauxApiServer.prototype._getNotFoundRoute = function(req) {
+    return {
+        path: req.uri.pathname,
+        method: req.method,
+        handler: function(req, reply) {
+            reply(404, {
+                statusCode: 404,
+                error: "Not Found"
+            });
+        }
+    };
 };

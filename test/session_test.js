@@ -7,7 +7,7 @@
  * https://okanjo.com
  * support@okanjo.com
  *
- * https://github.com/okanjo/okanjo-nodejs-lite
+ * https://github.com/okanjo/okanjo-nodejs
  *
  * ----
  *

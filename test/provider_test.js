@@ -7,7 +7,7 @@
  * https://okanjo.com
  * support@okanjo.com
  *
- * https://github.com/okanjo/okanjo-nodejs-lite
+ * https://github.com/okanjo/okanjo-nodejs
  *
  * ----
  *
@@ -41,7 +41,8 @@ var should = require('should');
 describe('Provider', function() {
 
 
-    var Client = require('../lib/client');
+    var Client = require('../lib/client'),
+        Provider = require('../lib/provider');
 
     it('should fire the callback when executed', function(done) {
 
@@ -51,11 +52,17 @@ describe('Provider', function() {
         };
 
         var api = new Client({
-            key: "ks_asdasd"
+            key: "ks_asdasd",
+            provider: Provider
         });
 
         api.accounts.create(data, function(err, res) {
-            console.log(arguments);
+
+            should(err).be.instanceof(Error);
+            err.message.should.match(/not implemented/i);
+
+            should(res).be.empty();
+
             done();
         })
 

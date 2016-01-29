@@ -1,5 +1,5 @@
 /**
- * Date: 1/27/16 8:56 AM
+ * Date: 1/28/16 12:43 PM
  *
  * ----
  *
@@ -7,7 +7,7 @@
  * https://okanjo.com
  * support@okanjo.com
  *
- * https://github.com/okanjo/okanjo-nodejs-lite
+ * https://github.com/okanjo/okanjo-nodejs
  *
  * ----
  *
@@ -39,61 +39,21 @@
 var should = require('should');
 
 
-describe('Query', function() {
-
+describe('Browser Mode', function() {
 
     var Client = require('../lib/client'),
-        Query = require('../lib/query');
+        Provider = require('../lib/provider');
 
-    it('can initialize with no extensions', function() {
-
-        var q = new Query();
-        q.should.be.instanceof(Query);
-
+    before(function() {
+        process.browser = true;
     });
 
-    it('can paginate a collection', function() {
+    after(function() {
+        delete process.browser;
+    });
 
+    it('should select the correct transport provider', function() {
         var api = new Client();
-
-        var q = api.sessions.list().skip(1).take(2);
-
-        q.query.skip.should.equal(1);
-        q.query.take.should.equal(2);
-
+        api.provider.should.be.instanceof(Provider);
     });
-
-    it('helper functions work', function() {
-
-        var q = new Query();
-
-        q.setMethod('DERP');
-        q.method.should.equal('DERP');
-
-        q.setPath('/path/to/{beer}');
-        q.path.should.equal('/path/to/{beer}');
-
-        q.setPathParams({ beer: 'pale ale' });
-        q.pathParams.should.be.an.Object();
-        q.pathParams.beer.should.equal('pale ale');
-
-        q.getRealPath().should.equal('/path/to/pale%20ale');
-
-        should(q.query).be.empty();
-        q.where({ free: true });
-        q.query.free.should.be.exactly(true);
-
-        should(q.payload).be.empty();
-        q.data({ head: 'full' });
-        q.payload.head.should.be.equal('full');
-
-        should(q.query.skip).be.empty();
-        q.skip(1);
-        q.query.skip.should.be.equal(1);
-
-        should(q.query.take).be.empty();
-        q.take(1);
-        q.query.take.should.be.equal(1);
-    });
-
 });
