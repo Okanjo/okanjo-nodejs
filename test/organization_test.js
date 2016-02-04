@@ -90,7 +90,7 @@ describe('Organizations', function() {
             payload: null
         });
     });
-/*
+
     it('update', function() {
         var q = api.organizations.update("org_123", { meta: { source: "unit test" }});
         test.verifyQuerySpec(q, {
@@ -101,5 +101,4 @@ describe('Organizations', function() {
         });
     });
 
-*/
 });

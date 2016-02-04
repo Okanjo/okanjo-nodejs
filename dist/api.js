@@ -572,9 +572,7 @@ function registerMethods(Client) {
                 },
                 query: params
             }, callback);
-        }
-
-        /*,
+        },
 
         /**
          * Updates an organization
@@ -583,7 +581,7 @@ function registerMethods(Client) {
          * @param {requestCallback} callback
          * @memberof Client.organization#
          */
-        /*
+
         update: function(organizationId, params, callback) {
             return Client._makeRequest({
                 method: 'PUT',
@@ -593,7 +591,7 @@ function registerMethods(Client) {
                 },
                 payload: params
             }, callback);
-        } */
+        }
     };
 }
 
