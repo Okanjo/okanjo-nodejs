@@ -190,7 +190,7 @@ jQueryProvider.prototype.execute = function(query, callback) {
  */
 
 module.exports = jQueryProvider;
-},{"../provider":1,"util":14}],3:[function(require,module,exports){
+},{"../provider":1,"util":15}],3:[function(require,module,exports){
 /*
  * Date: 1/26/16 11:59 AM
  *
@@ -399,7 +399,7 @@ Query.prototype.setSessionToken = function(sessionToken) { this.sessionToken = s
 
 
 module.exports = Query;
-},{"./util":6,"querystring":12}],4:[function(require,module,exports){
+},{"./util":7,"querystring":13}],4:[function(require,module,exports){
 /*
  * Date: 1/26/16 11:59 AM
  *
@@ -517,6 +517,135 @@ function registerMethods(Client) {
 
     /**
      * Session Methods
+     * @namespace Client.organizations
+     */
+    Client.organizations = {
+
+        /**
+         * Creates a new organization (e.g. sign-in)
+         * @param {object} params
+         * @param {requestCallback} callback
+         * @memberof Client.organizations#
+         */
+        create: function(params, callback) {
+            return Client._makeRequest({
+                method: 'POST',
+                path: '/organizations',
+                payload: params
+            }, callback);
+        },
+
+        /**
+         * Retrieves an organization.
+         * @param {string} organizationId
+         * @param {requestCallback} callback
+         * @memberof Client.organizations#
+         */
+        retrieve: function(organizationId, callback) {
+            return Client._makeRequest({
+                method: 'GET',
+                path: '/organizations/{organizationId}',
+                pathParams: {
+                    organizationId: organizationId
+                }
+            }, callback);
+        },
+
+        /**
+         * Lists organizations.
+         * @param {string} organizationId
+         * @param [params] Query filter criteria
+         * @param {requestCallback} callback
+         * @memberof Client.organizations#
+         */
+        list: function(organizationId, params, callback) {
+            if (typeof params === "function") {
+                callback = params;
+                params = undefined;
+            }
+
+            return Client._makeRequest({
+                method: 'GET',
+                path: '/organizations',
+                pathParams: {
+                    organizationId: organizationId
+                },
+                query: params
+            }, callback);
+        }
+
+        /*,
+
+        /**
+         * Updates an organization
+         * @param {string} organizationId
+         * @param {object|null} params
+         * @param {requestCallback} callback
+         * @memberof Client.organization#
+         */
+        /*
+        update: function(organizationId, params, callback) {
+            return Client._makeRequest({
+                method: 'PUT',
+                path: '/organizations/{organizationId}',
+                pathParams: {
+                    organizationId: organizationId
+                },
+                payload: params
+            }, callback);
+        } */
+    };
+}
+
+module.exports = registerMethods;
+},{}],6:[function(require,module,exports){
+/*
+ * Date: 1/26/16 11:59 AM
+ *
+ * ----
+ *
+ * (c) Okanjo Partners Inc
+ * https://okanjo.com
+ * support@okanjo.com
+ *
+ * https://github.com/okanjo/okanjo-nodejs
+ *
+ * ----
+ *
+ * TL;DR? see: http://www.tldrlegal.com/license/mit-license
+ *
+ * The MIT License (MIT)
+ * Copyright (c) 2013 Okanjo Partners Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+
+/**
+ * Extends the client object to include resource routes
+ * @param {Client} Client
+ * @private
+ */
+function registerMethods(Client) {
+
+    /**
+     * Session Methods
      * @namespace Client.sessions
      */
     Client.sessions = {
@@ -556,11 +685,17 @@ function registerMethods(Client) {
         /**
          * Lists sessions
          * @param {string} accountId
-         * @param params
+         * @param [params] Query filter criteria
          * @param {requestCallback} callback
          * @memberof Client.sessions#
          */
         list: function(accountId, params, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof params === "function") {
+                callback = params;
+                params = undefined;
+            }
+
             return Client._makeRequest({
                 method: 'GET',
                 path: '/accounts/{accountId}/sessions',
@@ -595,26 +730,24 @@ function registerMethods(Client) {
          * Ends a session (e.g. sign-out)
          * @param {string} accountId
          * @param {string} sessionId
-         * @param {object|null} params
          * @param {requestCallback} callback
          * @memberof Client.sessions#
          */
-        delete: function(accountId, sessionId, params, callback) {
+        delete: function(accountId, sessionId, callback) {
             return Client._makeRequest({
                 method: 'DELETE',
                 path: '/accounts/{accountId}/sessions/{sessionId}',
                 pathParams: {
                     accountId: accountId,
                     sessionId: sessionId
-                },
-                payload: params
+                }
             }, callback);
         }
     };
 }
 
 module.exports = registerMethods;
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*
  * Date: 1/26/16 12:01 PM
  *
@@ -718,9 +851,9 @@ module.exports = {
     copy: copy,
     buildPath: buildPath
 };
-},{}],7:[function(require,module,exports){
-
 },{}],8:[function(require,module,exports){
+
+},{}],9:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -745,7 +878,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -838,7 +971,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -924,7 +1057,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1011,20 +1144,20 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":10,"./encode":11}],13:[function(require,module,exports){
+},{"./decode":11,"./encode":12}],14:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -1614,7 +1747,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":13,"_process":9,"inherits":8}],"okanjo":[function(require,module,exports){
+},{"./support/isBuffer":14,"_process":10,"inherits":9}],"okanjo":[function(require,module,exports){
 (function (process){
 /*
  * Date: 1/26/16 11:59 AM
@@ -1696,6 +1829,7 @@ function Client(config) {
     // Bind resources to the client
     require('./resources/accounts')(this);
     require('./resources/sessions')(this);
+    require('./resources/organizations')(this);
 }
 
 /**
@@ -1737,4 +1871,4 @@ Client.prototype._makeRequest = function(spec, callback) {
 
 module.exports = Client;
 }).call(this,require('_process'))
-},{"./provider":1,"./providers/http_provider":7,"./providers/jquery_provider":2,"./query":3,"./resources/accounts":4,"./resources/sessions":5,"_process":9}]},{},[]);
+},{"./provider":1,"./providers/http_provider":8,"./providers/jquery_provider":2,"./query":3,"./resources/accounts":4,"./resources/organizations":5,"./resources/sessions":6,"_process":10}]},{},[]);

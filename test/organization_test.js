@@ -36,8 +36,7 @@
  */
 
 
-
-describe('Sessions', function() {
+describe('Organizations', function() {
 
     var Query = require('../lib/query'),
         Client = require('../lib/client'),
@@ -48,20 +47,20 @@ describe('Sessions', function() {
     });
 
     it('create', function() {
-        var q = api.sessions.create({ email: "joe@okanjo.com", password: "password" });
+        var q = api.organizations.create({ name: "Acme", status: "active" });
         test.verifyQuerySpec(q, {
             method: 'POST',
-            path: '/accounts/sessions',
+            path: '/organizations',
             query: null,
-            payload: { email: "joe@okanjo.com", password: "password" }
+            payload: { name: "Acme", status: "active" }
         });
     });
 
     it('retrieve', function() {
-        var q = api.sessions.retrieve("ac_123", "ses_123");
+        var q = api.organizations.retrieve("org_123");
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/accounts/ac_123/sessions/ses_123',
+            path: '/organizations/org_123',
             query: null,
             payload: null
         });
@@ -69,49 +68,38 @@ describe('Sessions', function() {
 
 
     it('list', function(done) {
-        var q = api.sessions.list("ac_123", { status: "ended" });
+        var q = api.organizations.list("org_123", { name: "Acme" });
 
         q.should.be.instanceof(Query);
-
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/accounts/ac_123/sessions',
-            query: { status: 'ended' },
+            path: '/organizations',
+            query: { name: 'Acme' },
             payload: null
         });
 
-        q = api.sessions.list("ac_123", function() {
+        q = api.organizations.list("org_123", function() {
             done();
         });
-
         q.should.be.instanceof(Query);
 
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/accounts/ac_123/sessions',
+            path: '/organizations',
             query: null,
             payload: null
         });
     });
-
+/*
     it('update', function() {
-        var q = api.sessions.update("ac_123", "ses_123", { meta: { source: "unit test" }});
+        var q = api.organizations.update("org_123", { meta: { source: "unit test" }});
         test.verifyQuerySpec(q, {
             method: 'PUT',
-            path: '/accounts/ac_123/sessions/ses_123',
+            path: '/organizations/org_123',
             query: null,
             payload: { meta: { source: "unit test" }}
         });
     });
 
-    it('delete', function() {
-        var q = api.sessions.delete("ac_123", "ses_123");
-        test.verifyQuerySpec(q, {
-            method: 'DELETE',
-            path: '/accounts/ac_123/sessions/ses_123',
-            query: null,
-            payload: null
-        });
-    });
-
+*/
 });
