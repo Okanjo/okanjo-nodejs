@@ -553,12 +553,11 @@ function registerMethods(Client) {
 
         /**
          * Lists organizations.
-         * @param {string} organizationId
          * @param [params] Query filter criteria
          * @param {requestCallback} callback
          * @memberof Client.organizations#
          */
-        list: function(organizationId, params, callback) {
+        list: function(params, callback) {
             if (typeof params === "function") {
                 callback = params;
                 params = undefined;
@@ -567,9 +566,6 @@ function registerMethods(Client) {
             return Client._makeRequest({
                 method: 'GET',
                 path: '/organizations',
-                pathParams: {
-                    organizationId: organizationId
-                },
                 query: params
             }, callback);
         },
@@ -592,6 +588,7 @@ function registerMethods(Client) {
                 payload: params
             }, callback);
         }
+
     };
 }
 

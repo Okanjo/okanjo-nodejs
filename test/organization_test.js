@@ -68,7 +68,7 @@ describe('Organizations', function() {
 
 
     it('list', function(done) {
-        var q = api.organizations.list("org_123", { name: "Acme" });
+        var q = api.organizations.list({ name: "Acme" });
 
         q.should.be.instanceof(Query);
         test.verifyQuerySpec(q, {
@@ -78,7 +78,7 @@ describe('Organizations', function() {
             payload: null
         });
 
-        q = api.organizations.list("org_123", function() {
+        q = api.organizations.list(function() {
             done();
         });
         q.should.be.instanceof(Query);
