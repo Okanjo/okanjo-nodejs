@@ -190,7 +190,7 @@ jQueryProvider.prototype.execute = function(query, callback) {
  */
 
 module.exports = jQueryProvider;
-},{"../provider":1,"util":15}],3:[function(require,module,exports){
+},{"../provider":1,"util":16}],3:[function(require,module,exports){
 /*
  * Date: 1/26/16 11:59 AM
  *
@@ -399,7 +399,7 @@ Query.prototype.setSessionToken = function(sessionToken) { this.sessionToken = s
 
 
 module.exports = Query;
-},{"./util":7,"querystring":13}],4:[function(require,module,exports){
+},{"./util":8,"querystring":14}],4:[function(require,module,exports){
 /*
  * Date: 1/26/16 11:59 AM
  *
@@ -641,6 +641,139 @@ function registerMethods(Client) {
 
     /**
      * Session Methods
+     * @namespace Client.properties
+     */
+    Client.properties = {
+
+        /**
+         * Creates a new organization (e.g. sign-in)
+         * @param {string} organizationId
+         * @param {object} params
+         * @param {requestCallback} callback
+         * @memberof Client.properties#
+         */
+        create: function(organizationId, params, callback) {
+            return Client._makeRequest({
+                method: 'POST',
+                path: '/properties',
+                payload: params
+            }, callback);
+        },
+
+        /**
+         * Retrieves an organization.
+         * @param {string} organizationId
+         * @param {string} propertyId
+         * @param {requestCallback} callback
+         * @memberof Client.properties#
+         */
+        retrieve: function(organizationId, propertyId, callback) {
+            return Client._makeRequest({
+                method: 'GET',
+                path: '/properties/{propertyId}?organizationId={organizationId}',
+                pathParams: {
+                    organizationId: organizationId,
+                    propertyId: propertyId
+                }
+            }, callback);
+        },
+
+        /**
+         * Lists organizations.
+         * @param {string} organizationId
+         * @param [params] Query filter criteria
+         * @param {requestCallback} callback
+         * @memberof Client.properties#
+         */
+        list: function(organizationId, params, callback) {
+            if (typeof params === "function") {
+                callback = params;
+                params = undefined;
+            }
+
+            return Client._makeRequest({
+                method: 'GET',
+                path: '/properties?organizationId={organizationId}',
+                query: params,
+                pathParams: {
+                    organizationId: organizationId
+                }
+            }, callback);
+        },
+
+        /**
+         * Updates an organization
+         * @param {string} organizationId
+         * @param {string} propertyId
+         * @param {object|null} params
+         * @param {requestCallback} callback
+         * @memberof Client.properties#
+         */
+
+        update: function(organizationId, propertyId, params, callback) {
+            return Client._makeRequest({
+                method: 'PUT',
+                path: '/properties/{propertyId}?organizationId={organizationId}',
+                pathParams: {
+                    organizationId: organizationId,
+                    propertyId: propertyId
+                },
+                payload: params
+            }, callback);
+        }
+
+    };
+}
+
+module.exports = registerMethods;
+},{}],7:[function(require,module,exports){
+/*
+ * Date: 1/26/16 11:59 AM
+ *
+ * ----
+ *
+ * (c) Okanjo Partners Inc
+ * https://okanjo.com
+ * support@okanjo.com
+ *
+ * https://github.com/okanjo/okanjo-nodejs
+ *
+ * ----
+ *
+ * TL;DR? see: http://www.tldrlegal.com/license/mit-license
+ *
+ * The MIT License (MIT)
+ * Copyright (c) 2013 Okanjo Partners Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+
+/**
+ * Extends the client object to include resource routes
+ * @param {Client} Client
+ * @private
+ */
+function registerMethods(Client) {
+
+    /**
+     * Session Methods
      * @namespace Client.sessions
      */
     Client.sessions = {
@@ -742,7 +875,7 @@ function registerMethods(Client) {
 }
 
 module.exports = registerMethods;
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /*
  * Date: 1/26/16 12:01 PM
  *
@@ -846,9 +979,9 @@ module.exports = {
     copy: copy,
     buildPath: buildPath
 };
-},{}],8:[function(require,module,exports){
-
 },{}],9:[function(require,module,exports){
+
+},{}],10:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -873,7 +1006,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -966,7 +1099,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1052,7 +1185,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1139,20 +1272,20 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":11,"./encode":12}],14:[function(require,module,exports){
+},{"./decode":12,"./encode":13}],15:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -1742,7 +1875,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":14,"_process":10,"inherits":9}],"okanjo":[function(require,module,exports){
+},{"./support/isBuffer":15,"_process":11,"inherits":10}],"okanjo":[function(require,module,exports){
 (function (process){
 /*
  * Date: 1/26/16 11:59 AM
@@ -1825,6 +1958,7 @@ function Client(config) {
     require('./resources/accounts')(this);
     require('./resources/sessions')(this);
     require('./resources/organizations')(this);
+    require('./resources/properties')(this);
 }
 
 /**
@@ -1866,4 +2000,4 @@ Client.prototype._makeRequest = function(spec, callback) {
 
 module.exports = Client;
 }).call(this,require('_process'))
-},{"./provider":1,"./providers/http_provider":8,"./providers/jquery_provider":2,"./query":3,"./resources/accounts":4,"./resources/organizations":5,"./resources/sessions":6,"_process":10}]},{},[]);
+},{"./provider":1,"./providers/http_provider":9,"./providers/jquery_provider":2,"./query":3,"./resources/accounts":4,"./resources/organizations":5,"./resources/properties":6,"./resources/sessions":7,"_process":11}]},{},[]);
