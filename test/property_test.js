@@ -48,12 +48,12 @@ describe('Properties', function() {
 
     it('create', function() {
 
-        var q = api.properties.create("org_123", { name: "Acme", status: "active", organizationId: "org_123" });
+        var q = api.properties.create("org_123", { name: "Acme Property", status: "active" });
         test.verifyQuerySpec(q, {
             method: 'POST',
-            path: '/properties',
+            path: '/properties?organizationId=org_123',
             query: null,
-            payload: { name: "Acme", status: "active", organizationId: "org_123" }
+            payload: { name: "Acme Property", status: "active" }
         });
     });
 

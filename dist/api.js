@@ -655,8 +655,11 @@ function registerMethods(Client) {
         create: function(organizationId, params, callback) {
             return Client._makeRequest({
                 method: 'POST',
-                path: '/properties',
-                payload: params
+                path: '/properties?organizationId={organizationId}',
+                payload: params,
+                pathParams: {
+                    organizationId: organizationId
+                }
             }, callback);
         },
 
