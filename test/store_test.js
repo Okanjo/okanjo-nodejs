@@ -139,7 +139,6 @@ describe('Stores', function() {
         });
     });
 
-
     it('list', function(done) {
 
         // Org
@@ -150,6 +149,17 @@ describe('Stores', function() {
             method: 'GET',
             path: '/stores?organizationId=org_123',
             query: {name: 'Acme Store'},
+            payload: null
+        });
+
+        // Org
+        var q = api.stores.list("org_123");
+
+        q.should.be.instanceof(Query);
+        test.verifyQuerySpec(q, {
+            method: 'GET',
+            path: '/stores?organizationId=org_123',
+            query: null,
             payload: null
         });
 
@@ -164,7 +174,6 @@ describe('Stores', function() {
             payload: null
         });
 
-
         // Org, params, callback
         q = api.stores.list("org_123", {name: 'Acme Store'}, function() {
             console.log("List: Org, params, callback");
@@ -178,7 +187,6 @@ describe('Stores', function() {
             payload: null
         });
 
-
         // Org, callback
         q = api.stores.list("org_123", function() {
             console.log("List: Org, callback");
@@ -191,7 +199,6 @@ describe('Stores', function() {
             query: null,
             payload: null
         });
-
 
         // Org, Prop, params
         q = api.stores.list("org_123", "prop_123", {name: 'Acme'});
