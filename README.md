@@ -37,7 +37,7 @@ And use the API like so:
 ```js
 
 // Okanjo namespace
-var okanjo = require('okanjo');
+var ok = require('okanjo');
 
 // Create the client api instance
 var api = new ok.clients.MarketplaceClient({
@@ -115,7 +115,7 @@ We emit log events when stuff happens in the client. To check out what's going o
 ```js
 
 // Okanjo namespace
-var okanjo = require('okanjo');
+var ok = require('okanjo');
 
 // Create the marketplace client api instance
 var api = new ok.clients.MarketplaceClient({
