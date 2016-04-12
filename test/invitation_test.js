@@ -36,7 +36,7 @@
  */
 
 
-describe('Properties', function() {
+describe('Invitations', function() {
 
     var Query = require('../lib/query'),
         Client = require('../lib/client'),
@@ -47,62 +47,37 @@ describe('Properties', function() {
     });
 
     it('create', function() {
-
-        var q = api.properties.create({ name: "Acme Property", status: "active" });
+        var q = api.invitations.create({ email: "email@acme.com", roleId: "role_123" });
         test.verifyQuerySpec(q, {
             method: 'POST',
-            path: '/properties',
+            path: '/invitations',
             query: null,
-            payload: { name: "Acme Property", status: "active" }
+            payload: { email: "email@acme.com", roleId: "role_123" }
         });
     });
-
-    it('retrieve', function() {
-        var q = api.properties.retrieve("prop_123");
-        test.verifyQuerySpec(q, {
-            method: 'GET',
-            path: '/properties/prop_123',
-            query: null,
-            payload: null
-        });
-    });
-
 
     it('list', function(done) {
-        var q = api.properties.list({name: 'Acme'});
+        var q = api.invitations.list({ email: "email@acme.com" });
 
         q.should.be.instanceof(Query);
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/properties',
-            query: {name: 'Acme'},
+            path: '/invitations',
+            query: { email: "email@acme.com" },
             payload: null
         });
 
-        q = api.properties.list(function() {
+        q = api.invitations.list(function() {
             done();
         });
         q.should.be.instanceof(Query);
 
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/properties',
+            path: '/invitations',
             query: null,
             payload: null
         });
     });
-
-    it('update', function() {
-        var q = api.properties.update("prop_123", { meta: { source: "unit test" }});
-        test.verifyQuerySpec(q, {
-            method: 'PUT',
-            path: '/properties/prop_123',
-            query: null,
-            payload: { meta: { source: "unit test" }},
-            pathParams: {
-                propertyId: "prop_123"
-            }
-        });
-    });
-
+    
 });

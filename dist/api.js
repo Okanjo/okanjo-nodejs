@@ -190,7 +190,7 @@ jQueryProvider.prototype.execute = function(query, callback) {
  */
 
 module.exports = jQueryProvider;
-},{"../provider":1,"util":17}],3:[function(require,module,exports){
+},{"../provider":1,"util":19}],3:[function(require,module,exports){
 /*
  * Date: 1/26/16 11:59 AM
  *
@@ -399,7 +399,7 @@ Query.prototype.setSessionToken = function(sessionToken) { this.sessionToken = s
 
 
 module.exports = Query;
-},{"./util":9,"querystring":15}],4:[function(require,module,exports){
+},{"./util":11,"querystring":17}],4:[function(require,module,exports){
 /*
  * Date: 1/26/16 11:59 AM
  *
@@ -463,13 +463,140 @@ function registerMethods(Client) {
                 path: '/accounts',
                 payload: params
             }, callback);
+        },
+
+        /**
+         * Lists accounts.
+         * @param [params] Query filter criteria
+         * @param {requestCallback} callback
+         * @memberof Client.accounts#
+         */
+        list: function(params, callback) {
+            if (typeof params === "function") {
+                callback = params;
+                params = undefined;
+            }
+
+            return Client._makeRequest({
+                method: 'GET',
+                path: '/accounts',
+                query: params
+            }, callback);
+        },
+
+        /**
+         * Retrieve an accounts access control list.
+         * @param {string} accountId
+         * @param {requestCallback} callback
+         * @memberof Client.accounts#
+         */
+        acl: function(accountId, callback) {
+
+            return Client._makeRequest({
+                method: 'GET',
+                path: '/accounts/{accountId}/acl',
+                pathParams: {
+                    accountId: accountId
+                }
+            }, callback);
         }
+
     };
 
 }
 
 module.exports = registerMethods;
 },{}],5:[function(require,module,exports){
+/*
+ * Date: 1/26/16 11:59 AM
+ *
+ * ----
+ *
+ * (c) Okanjo Partners Inc
+ * https://okanjo.com
+ * support@okanjo.com
+ *
+ * https://github.com/okanjo/okanjo-nodejs
+ *
+ * ----
+ *
+ * TL;DR? see: http://www.tldrlegal.com/license/mit-license
+ *
+ * The MIT License (MIT)
+ * Copyright (c) 2013 Okanjo Partners Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+
+/**
+ * Extends the client object to include resource routes
+ * @param {Client} Client
+ * @private
+ */
+function registerMethods(Client) {
+
+    /**
+     * Session Methods
+     * @namespace Client.invitations
+     */
+    Client.invitations = {
+
+        /**
+         * Creates a new invitation (e.g. sign-in)
+         * @param {object} params
+         * @param {requestCallback} callback
+         * @memberof Client.invitations#
+         */
+        create: function(params, callback) {
+            return Client._makeRequest({
+                method: 'POST',
+                path: '/invitations',
+                payload: params
+            }, callback);
+        },
+
+
+        /**
+         * Lists invitations.
+         * @param [params] Query filter criteria
+         * @param {requestCallback} callback
+         * @memberof Client.invitations#
+         */
+        list: function(params, callback) {
+            if (typeof params === "function") {
+                callback = params;
+                params = undefined;
+            }
+
+            return Client._makeRequest({
+                method: 'GET',
+                path: '/invitations',
+                query: params
+            }, callback);
+        }
+        
+    };
+}
+
+module.exports = registerMethods;
+},{}],6:[function(require,module,exports){
 /*
  * Date: 1/26/16 11:59 AM
  *
@@ -593,7 +720,7 @@ function registerMethods(Client) {
 }
 
 module.exports = registerMethods;
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*
  * Date: 1/26/16 11:59 AM
  *
@@ -647,35 +774,29 @@ function registerMethods(Client) {
 
         /**
          * Creates a new property.
-         * @param {string} organizationId
          * @param {object} params
          * @param {requestCallback} callback
          * @memberof Client.properties#
          */
-        create: function(organizationId, params, callback) {
+        create: function(params, callback) {
             return Client._makeRequest({
                 method: 'POST',
-                path: '/organizations/{organizationId}/properties',
-                payload: params,
-                pathParams: {
-                    organizationId: organizationId
-                }
+                path: '/properties',
+                payload: params
             }, callback);
         },
 
         /**
          * Retrieves a property.
-         * @param {string} organizationId
          * @param {string} propertyId
          * @param {requestCallback} callback
          * @memberof Client.properties#
          */
-        retrieve: function(organizationId, propertyId, callback) {
+        retrieve: function(propertyId, callback) {
             return Client._makeRequest({
                 method: 'GET',
-                path: '/properties/{propertyId}?organizationId={organizationId}',
+                path: '/properties/{propertyId}',
                 pathParams: {
-                    organizationId: organizationId,
                     propertyId: propertyId
                 }
             }, callback);
@@ -683,12 +804,11 @@ function registerMethods(Client) {
 
         /**
          * Lists properties.
-         * @param {string} organizationId
          * @param [params] Query filter criteria
          * @param {requestCallback} callback
          * @memberof Client.properties#
          */
-        list: function(organizationId, params, callback) {
+        list: function(params, callback) {
             if (typeof params === "function") {
                 callback = params;
                 params = undefined;
@@ -696,29 +816,24 @@ function registerMethods(Client) {
 
             return Client._makeRequest({
                 method: 'GET',
-                path: '/properties?organizationId={organizationId}',
-                query: params,
-                pathParams: {
-                    organizationId: organizationId
-                }
+                path: '/properties',
+                query: params
             }, callback);
         },
 
         /**
          * Updates a property.
-         * @param {string} organizationId
          * @param {string} propertyId
          * @param {object|null} params
          * @param {requestCallback} callback
          * @memberof Client.properties#
          */
 
-        update: function(organizationId, propertyId, params, callback) {
+        update: function(propertyId, params, callback) {
             return Client._makeRequest({
                 method: 'PUT',
-                path: '/properties/{propertyId}?organizationId={organizationId}',
+                path: '/properties/{propertyId}',
                 pathParams: {
-                    organizationId: organizationId,
                     propertyId: propertyId
                 },
                 payload: params
@@ -729,7 +844,112 @@ function registerMethods(Client) {
 }
 
 module.exports = registerMethods;
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
+/*
+ * Date: 1/26/16 11:59 AM
+ *
+ * ----
+ *
+ * (c) Okanjo Partners Inc
+ * https://okanjo.com
+ * support@okanjo.com
+ *
+ * https://github.com/okanjo/okanjo-nodejs
+ *
+ * ----
+ *
+ * TL;DR? see: http://www.tldrlegal.com/license/mit-license
+ *
+ * The MIT License (MIT)
+ * Copyright (c) 2013 Okanjo Partners Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+
+/**
+ * Extends the client object to include resource routes
+ * @param {Client} Client
+ * @private
+ */
+function registerMethods(Client) {
+
+    /**
+     * Session Methods
+     * @namespace Client.roles
+     */
+    Client.roles = {
+
+        /**
+         * Creates a new role (e.g. sign-in)
+         * @param {object} params
+         * @param {requestCallback} callback
+         * @memberof Client.roles#
+         */
+        create: function(params, callback) {
+            return Client._makeRequest({
+                method: 'POST',
+                path: '/roles',
+                payload: params
+            }, callback);
+        },
+
+        /**
+         * Retrieves an role.
+         * @param {string} roleId
+         * @param {requestCallback} callback
+         * @memberof Client.roles#
+         */
+        retrieve: function(roleId, callback) {
+            return Client._makeRequest({
+                method: 'GET',
+                path: '/roles/{roleId}',
+                pathParams: {
+                    roleId: roleId
+                }
+            }, callback);
+        },
+
+        /**
+         * Lists roles.
+         * @param [params] Query filter criteria
+         * @param {requestCallback} callback
+         * @memberof Client.roles#
+         */
+        list: function(params, callback) {
+            if (typeof params === "function") {
+                callback = params;
+                params = undefined;
+            }
+
+            return Client._makeRequest({
+                method: 'GET',
+                path: '/roles',
+                query: params
+            }, callback);
+        }
+
+    };
+}
+
+module.exports = registerMethods;
+},{}],9:[function(require,module,exports){
 /*
  * Date: 1/26/16 11:59 AM
  *
@@ -878,7 +1098,7 @@ function registerMethods(Client) {
 }
 
 module.exports = registerMethods;
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /*
  * Date: 1/26/16 11:59 AM
  *
@@ -932,145 +1152,68 @@ function registerMethods(Client) {
 
         /**
          * Creates a new store
-         * @param {string} organizationId
-         * @param {string} [propertyId]
          * @param {object} [params]
          * @param {requestCallback} callback
          * @memberof Client.stores#
          */
-        create: function(organizationId, propertyId, params, callback) {
-            var propString = '';
-            if (typeof params === "function") {
-                callback = params;
-                params = undefined;
-            }
-
-            // If no propertyId, but params
-            if (typeof propertyId === "object") {
-                params = propertyId;
-                propertyId = undefined;
-
-            } else {
-                propString = "properties/{propertyId}/";
-
-            }
-
+        create: function(params, callback) {
             return Client._makeRequest({
                 method: 'POST',
-                path: '/organizations/{organizationId}/'+propString+'stores',
-                payload: params,
-                pathParams: {
-                    organizationId: organizationId,
-                    propertyId: propertyId
-                }
+                path: '/stores',
+                payload: params
             }, callback);
         },
 
         /**
          * Retrieves a store.
          * @param {string} storeId
-         * @param {string} organizationId
-         * @param {string} [propertyId]
          * @param {requestCallback} callback
          * @memberof Client.stores#
          */
-        retrieve: function(storeId, organizationId, propertyId, callback) {
-            var propString = '';
-
-            if (propertyId) {
-                if (typeof propertyId === "function") {
-                    callback = propertyId;
-                    propertyId = undefined;
-                } else {
-                    propString = "&propertyId={propertyId}";
-                }
-            }
+        retrieve: function(storeId, callback) {
 
             return Client._makeRequest({
                 method: 'GET',
-                path: '/stores/{storeId}?organizationId={organizationId}'+propString,
+                path: '/stores/{storeId}',
                 pathParams: {
-                    organizationId: organizationId,
-                    propertyId: propertyId,
                     storeId: storeId
                 }
             }, callback);
+
         },
 
         /**
          * Lists stores.
-         * @param {string} organizationId
-         * @param {string} [propertyId]
          * @param {object|null} [params]
          * @param {requestCallback} callback
          * @memberof Client.stores#
          */
-        list: function(organizationId, propertyId, params, callback) {
-            var propString = '';
+        list: function(params, callback) {
             if (typeof params === "function") {
-                console.log("Params is function");
                 callback = params;
                 params = undefined;
             }
 
-            if (propertyId) {
-                if (typeof propertyId === "function") {
-                    console.log("Prop ID is function");
-                    callback = propertyId;
-                    params = undefined;
-                    propertyId = undefined;
-
-                } else if (typeof propertyId === "object") {
-                    console.log("Prop ID is object");
-                    params = propertyId;
-                    propertyId = undefined;
-
-                } else  {
-                    propString = "&propertyId={propertyId}";
-                }
-            }
             return Client._makeRequest({
                 method: 'GET',
-                path: '/stores?organizationId={organizationId}'+propString,
-                query: params,
-                pathParams: {
-                    organizationId: organizationId,
-                    propertyId: propertyId
-                }
+                path: '/stores',
+                query: params
             }, callback);
         },
 
         /**
          * Updates a store
          * @param {string} storeId
-         * @param {string} organizationId
-         * @param {string} [propertyId]
          * @param {object|null} [params]
          * @param {requestCallback} callback
          * @memberof Client.stores#
          */
 
-        update: function(storeId, organizationId, propertyId, params, callback) {
-            var propString = '';
-            if (typeof params === "function") {
-                callback = params;
-                params = undefined;
-            }
-
-            if (typeof propertyId === "object") {
-                params = propertyId;
-                propertyId = undefined;
-
-            } else {
-                propString = "&propertyId={propertyId}";
-            }
-
+        update: function(storeId, params, callback) {
             return Client._makeRequest({
                 method: 'PUT',
-                path: '/stores/{storeId}?organizationId={organizationId}'+propString,
+                path: '/stores/{storeId}',
                 pathParams: {
-                    organizationId: organizationId,
-                    propertyId: propertyId,
                     storeId: storeId
                 },
                 payload: params
@@ -1081,7 +1224,7 @@ function registerMethods(Client) {
 }
 
 module.exports = registerMethods;
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /*
  * Date: 1/26/16 12:01 PM
  *
@@ -1185,9 +1328,9 @@ module.exports = {
     copy: copy,
     buildPath: buildPath
 };
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -1212,7 +1355,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -1305,7 +1448,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1391,7 +1534,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1478,20 +1621,20 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":13,"./encode":14}],16:[function(require,module,exports){
+},{"./decode":15,"./encode":16}],18:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -2081,7 +2224,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":16,"_process":12,"inherits":11}],"okanjo":[function(require,module,exports){
+},{"./support/isBuffer":18,"_process":14,"inherits":13}],"okanjo":[function(require,module,exports){
 (function (process){
 /*
  * Date: 1/26/16 11:59 AM
@@ -2166,6 +2309,8 @@ function Client(config) {
     require('./resources/organizations')(this);
     require('./resources/properties')(this);
     require('./resources/stores')(this);
+    require('./resources/invitations')(this);
+    require('./resources/roles')(this);
 }
 
 /**
@@ -2207,4 +2352,4 @@ Client.prototype._makeRequest = function(spec, callback) {
 
 module.exports = Client;
 }).call(this,require('_process'))
-},{"./provider":1,"./providers/http_provider":10,"./providers/jquery_provider":2,"./query":3,"./resources/accounts":4,"./resources/organizations":5,"./resources/properties":6,"./resources/sessions":7,"./resources/stores":8,"_process":12}]},{},[]);
+},{"./provider":1,"./providers/http_provider":12,"./providers/jquery_provider":2,"./query":3,"./resources/accounts":4,"./resources/invitations":5,"./resources/organizations":6,"./resources/properties":7,"./resources/roles":8,"./resources/sessions":9,"./resources/stores":10,"_process":14}]},{},[]);

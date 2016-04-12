@@ -36,7 +36,7 @@
  */
 
 
-describe('Properties', function() {
+describe('Roles', function() {
 
     var Query = require('../lib/query'),
         Client = require('../lib/client'),
@@ -47,61 +47,46 @@ describe('Properties', function() {
     });
 
     it('create', function() {
-
-        var q = api.properties.create({ name: "Acme Property", status: "active" });
+        var q = api.roles.create({ propertyId: "prop_123", organizationId: "org_123" });
         test.verifyQuerySpec(q, {
             method: 'POST',
-            path: '/properties',
+            path: '/roles',
             query: null,
-            payload: { name: "Acme Property", status: "active" }
+            payload: { propertyId: "prop_123", organizationId: "org_123" }
         });
     });
 
     it('retrieve', function() {
-        var q = api.properties.retrieve("prop_123");
+        var q = api.roles.retrieve("role_123");
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/properties/prop_123',
+            path: '/roles/role_123',
             query: null,
             payload: null
         });
     });
 
-
     it('list', function(done) {
-        var q = api.properties.list({name: 'Acme'});
+        var q = api.roles.list({ propertyId: "prop_123" });
 
         q.should.be.instanceof(Query);
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/properties',
-            query: {name: 'Acme'},
+            path: '/roles',
+            query: { propertyId: "prop_123" },
             payload: null
         });
 
-        q = api.properties.list(function() {
+        q = api.roles.list(function() {
             done();
         });
         q.should.be.instanceof(Query);
 
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/properties',
+            path: '/roles',
             query: null,
             payload: null
-        });
-    });
-
-    it('update', function() {
-        var q = api.properties.update("prop_123", { meta: { source: "unit test" }});
-        test.verifyQuerySpec(q, {
-            method: 'PUT',
-            path: '/properties/prop_123',
-            query: null,
-            payload: { meta: { source: "unit test" }},
-            pathParams: {
-                propertyId: "prop_123"
-            }
         });
     });
 

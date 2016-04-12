@@ -41,248 +41,71 @@ describe('Stores', function() {
     var Query = require('../lib/query'),
         Client = require('../lib/client'),
         test = require('./common');
+        data = {
+            name: "Stu's Store",
+            storeId: "store_123",
+            organizationId: "org_123",
+            propertyId: "prop_123",
+            status: "active"
+        };
 
     var api = new Client({
         key: "ks_asdasd"
     });
 
     it('create', function() {
-
-        // Org, Params
-        var q = api.stores.create("org_123", { name: "Acme Store", status: "active" });
-        q.should.be.instanceof(Query);
+        var q = api.stores.create({name: "Store", status: "active"});
         test.verifyQuerySpec(q, {
             method: 'POST',
-            path: '/organizations/org_123/stores',
+            path: '/stores',
             query: null,
-            payload: { name: "Acme Store", status: "active" }
-        });
-
-        // Org, Prop, Params
-        q = api.stores.create("org_123", "prop_123", { name: "Acme Store", status: "active" });
-        q.should.be.instanceof(Query);
-        test.verifyQuerySpec(q, {
-            method: 'POST',
-            path: '/organizations/org_123/properties/prop_123/stores',
-            query: null,
-            payload: { name: "Acme Store", status: "active" }
-        });
-
-        // Org, Params, Callback
-        q = api.stores.create("org_123", { name: "Acme Store", status: "active" }, function() {
-            console.log("Retrieve: Org, params, callback");
-        });
-        q.should.be.instanceof(Query);
-        test.verifyQuerySpec(q, {
-            method: 'POST',
-            path: '/organizations/org_123/stores',
-            query: null,
-            payload: { name: "Acme Store", status: "active" }
-        });
-
-        // Org, Prop, Params, Callback
-        q = api.stores.create("org_123", "prop_123", { name: "Acme Store", status: "active" }, function() {
-            console.log("Create: Org, Prop, params, callback");
-        });
-        q.should.be.instanceof(Query);
-        test.verifyQuerySpec(q, {
-            method: 'POST',
-            path: '/organizations/org_123/properties/prop_123/stores',
-            query: null,
-            payload: { name: "Acme Store", status: "active" }
+            payload: {name: "Store", status: "active"}
         });
     });
 
     it('retrieve', function() {
-        // Store, Org
-        var q = api.stores.retrieve("store_123", "org_123");
-        q.should.be.instanceof(Query);
+        var q = api.stores.retrieve("store_123");
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/stores/store_123?organizationId=org_123',
-            query: null,
-            payload: null
-        });
-
-        // Store, Org, Prop
-        q = api.stores.retrieve("store_123", "org_123", "prop_123");
-        q.should.be.instanceof(Query);
-        test.verifyQuerySpec(q, {
-            method: 'GET',
-            path: '/stores/store_123?organizationId=org_123&propertyId=prop_123',
-            query: null,
-            payload: null
-        });
-
-        // Store, Org, callback
-        q = api.stores.retrieve("store_123", "org_123", function() {
-            console.log("Retrieve: Org, callback");
-        });
-        q.should.be.instanceof(Query);
-        test.verifyQuerySpec(q, {
-            method: 'GET',
-            path: '/stores/store_123?organizationId=org_123',
-            query: null,
-            payload: null
-        });
-
-        // Store, Org, Prop, callback
-        q = api.stores.retrieve("store_123", "org_123", "prop_123", function() {
-            console.log("Retrieve: Org, params, callback");
-        });
-        q.should.be.instanceof(Query);
-        test.verifyQuerySpec(q, {
-            method: 'GET',
-            path: '/stores/store_123?organizationId=org_123&propertyId=prop_123',
+            path: '/stores/store_123',
+            pathParams: {
+                storeId: "store_123"
+            },
             query: null,
             payload: null
         });
     });
 
+
     it('list', function(done) {
-
-        // Org
-        var q = api.stores.list("org_123", {name: 'Acme Store'});
+        var q = api.stores.list({ status: "active" });
 
         q.should.be.instanceof(Query);
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/stores?organizationId=org_123',
-            query: {name: 'Acme Store'},
+            path: '/stores',
+            query: { status: "active" },
             payload: null
         });
 
-        // Org
-        var q = api.stores.list("org_123");
-
-        q.should.be.instanceof(Query);
-        test.verifyQuerySpec(q, {
-            method: 'GET',
-            path: '/stores?organizationId=org_123',
-            query: null,
-            payload: null
-        });
-
-        // Org, params
-        var q = api.stores.list("org_123", {name: 'Acme Store'});
-
-        q.should.be.instanceof(Query);
-        test.verifyQuerySpec(q, {
-            method: 'GET',
-            path: '/stores?organizationId=org_123',
-            query: {name: 'Acme Store'},
-            payload: null
-        });
-
-        // Org, params, callback
-        q = api.stores.list("org_123", {name: 'Acme Store'}, function() {
-            console.log("List: Org, params, callback");
-        });
-        q.should.be.instanceof(Query);
-
-        test.verifyQuerySpec(q, {
-            method: 'GET',
-            path: '/stores?organizationId=org_123',
-            query: {name: 'Acme Store'},
-            payload: null
-        });
-
-        // Org, callback
-        q = api.stores.list("org_123", function() {
-            console.log("List: Org, callback");
-        });
-        q.should.be.instanceof(Query);
-
-        test.verifyQuerySpec(q, {
-            method: 'GET',
-            path: '/stores?organizationId=org_123',
-            query: null,
-            payload: null
-        });
-
-        // Org, Prop, params
-        q = api.stores.list("org_123", "prop_123", {name: 'Acme'});
-
-        q.should.be.instanceof(Query);
-        test.verifyQuerySpec(q, {
-            method: 'GET',
-            path: '/stores?organizationId=org_123&propertyId=prop_123',
-            query: {name: 'Acme'},
-            payload: null
-        });
-
-        // Org, Prop, params, callback
-        q = api.stores.list("org_123", "prop_123", {name: 'Acme'}, function() {
-            console.log("List: Org, Prop, params, callback");
-        });
-
-        q.should.be.instanceof(Query);
-        test.verifyQuerySpec(q, {
-            method: 'GET',
-            path: '/stores?organizationId=org_123&propertyId=prop_123',
-            query: {name: 'Acme'},
-            payload: null
-        });
-
-
-        // Org, Prop, callback
-        q = api.stores.list("org_123", "prop_123", function() {
+        q = api.stores.list(function() {
             done();
         });
         q.should.be.instanceof(Query);
 
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/stores?organizationId=org_123&propertyId=prop_123',
+            path: '/stores',
             query: null,
             payload: null
         });
-
     });
 
     it('update', function() {
-
-        // store, org, params
-        var q = api.stores.update("store_123", "org_123", { meta: { source: "unit test" }});
-        q.should.be.instanceof(Query);
+        var q = api.stores.update("store_123", { meta: { source: "unit test" }});
         test.verifyQuerySpec(q, {
             method: 'PUT',
-            path: '/stores/store_123?organizationId=org_123',
-            query: null,
-            payload: { meta: { source: "unit test" }}
-        });
-
-        // store, org, prop, params
-        q = api.stores.update("store_123", "org_123", "prop_123", { meta: { source: "unit test" }});
-        q.should.be.instanceof(Query);
-        test.verifyQuerySpec(q, {
-            method: 'PUT',
-            path: '/stores/store_123?organizationId=org_123&propertyId=prop_123',
-            query: null,
-            payload: { meta: { source: "unit test" }}
-        });
-
-        // store, org, params, callback
-        q = api.stores.update("store_123", "org_123", { meta: { source: "unit test" }}, function() {
-            console.log("Update: Org, params, callback");
-        });
-        q.should.be.instanceof(Query);
-        test.verifyQuerySpec(q, {
-            method: 'PUT',
-            path: '/stores/store_123?organizationId=org_123',
-            query: null,
-            payload: { meta: { source: "unit test" }}
-        });
-
-        // store, org, prop, params, callback
-        q = api.stores.update("store_123", "org_123", "prop_123", { meta: { source: "unit test" }}, function() {
-            console.log("Update: Org, Prop, params, callback");
-        });
-
-        q.should.be.instanceof(Query);
-        test.verifyQuerySpec(q, {
-            method: 'PUT',
-            path: '/stores/store_123?organizationId=org_123&propertyId=prop_123',
+            path: '/stores/store_123',
             query: null,
             payload: { meta: { source: "unit test" }}
         });

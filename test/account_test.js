@@ -41,7 +41,8 @@ var should = require('should');
 describe('Accounts', function() {
 
     var Query = require('../lib/query'),
-        Client = require('../lib/client');
+        Client = require('../lib/client'),
+        test = require('./common');
 
     var api = new Client({
         key: "ks_asdasd"
@@ -58,9 +59,52 @@ describe('Accounts', function() {
 
         q.should.be.instanceof(Query);
 
-        q.payload.should.deepEqual(data);
-
-        //console.log(q);
+        // q.payload.should.deepEqual(data);
+        test.verifyQuerySpec(q, {
+            method: 'POST',
+            path: '/accounts',
+            query: null,
+            payload: data
+        });
 
     });
+
+    it('list', function(done) {
+        var q = api.accounts.list({ status: "active" });
+
+        q.should.be.instanceof(Query);
+        
+        test.verifyQuerySpec(q, {
+            method: 'GET',
+            path: '/accounts',
+            query: { status: "active" },
+            payload: null
+        });
+
+        q = api.accounts.list(function() {
+            done();
+        });
+        
+        q.should.be.instanceof(Query);
+
+        test.verifyQuerySpec(q, {
+            method: 'GET',
+            path: '/accounts',
+            query: null,
+            payload: null
+        });
+    });
+
+    it('acl', function() {
+        var q = api.accounts.acl("acc_123");
+
+        q.should.be.instanceof(Query);
+        test.verifyQuerySpec(q, {
+            method: 'GET',
+            path: '/accounts/acc_123/acl',
+            query: null,
+            payload: null
+        });
+    });
+
 });
