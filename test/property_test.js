@@ -35,10 +35,8 @@
  * SOFTWARE.
  */
 
-var should = require('should');
 
-
-describe('Accounts', function() {
+describe('Properties', function() {
 
     var Query = require('../lib/query'),
         Client = require('../lib/client'),
@@ -50,60 +48,60 @@ describe('Accounts', function() {
 
     it('create', function() {
 
-        var data = {
-            email: "joe@okanjo.com",
-            password: "password"
-        };
-
-        var q = api.accounts.create(data);
-
-        q.should.be.instanceof(Query);
-
-        // q.payload.should.deepEqual(data);
+        var q = api.properties.create({ name: "Acme Property", status: "active" });
         test.verifyQuerySpec(q, {
             method: 'POST',
-            path: '/accounts',
+            path: '/properties',
             query: null,
-            payload: data
+            payload: { name: "Acme Property", status: "active" }
         });
-
     });
+
+    it('retrieve', function() {
+        var q = api.properties.retrieve("prop_123");
+        test.verifyQuerySpec(q, {
+            method: 'GET',
+            path: '/properties/prop_123',
+            query: null,
+            payload: null
+        });
+    });
+
 
     it('list', function(done) {
-        var q = api.accounts.list({ status: "active" });
+        var q = api.properties.list({name: 'Acme'});
 
         q.should.be.instanceof(Query);
-        
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/accounts',
-            query: { status: "active" },
+            path: '/properties',
+            query: {name: 'Acme'},
             payload: null
         });
 
-        q = api.accounts.list(function() {
+        q = api.properties.list(function() {
             done();
         });
-        
         q.should.be.instanceof(Query);
 
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/accounts',
+            path: '/properties',
             query: null,
             payload: null
         });
     });
 
-    it('acl', function() {
-        var q = api.accounts.acl("acc_123");
-
-        q.should.be.instanceof(Query);
+    it('update', function() {
+        var q = api.properties.update("prop_123", { meta: { source: "unit test" }});
         test.verifyQuerySpec(q, {
-            method: 'GET',
-            path: '/accounts/acc_123/acl',
+            method: 'PUT',
+            path: '/properties/prop_123',
             query: null,
-            payload: null
+            payload: { meta: { source: "unit test" }},
+            pathParams: {
+                propertyId: "prop_123"
+            }
         });
     });
 

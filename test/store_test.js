@@ -35,75 +35,79 @@
  * SOFTWARE.
  */
 
-var should = require('should');
 
-
-describe('Accounts', function() {
+describe('Stores', function() {
 
     var Query = require('../lib/query'),
         Client = require('../lib/client'),
         test = require('./common');
+        data = {
+            name: "Stu's Store",
+            storeId: "store_123",
+            organizationId: "org_123",
+            propertyId: "prop_123",
+            status: "active"
+        };
 
     var api = new Client({
         key: "ks_asdasd"
     });
 
     it('create', function() {
-
-        var data = {
-            email: "joe@okanjo.com",
-            password: "password"
-        };
-
-        var q = api.accounts.create(data);
-
-        q.should.be.instanceof(Query);
-
-        // q.payload.should.deepEqual(data);
+        var q = api.stores.create({name: "Store", status: "active"});
         test.verifyQuerySpec(q, {
             method: 'POST',
-            path: '/accounts',
+            path: '/stores',
             query: null,
-            payload: data
+            payload: {name: "Store", status: "active"}
         });
-
     });
 
-    it('list', function(done) {
-        var q = api.accounts.list({ status: "active" });
-
-        q.should.be.instanceof(Query);
-        
+    it('retrieve', function() {
+        var q = api.stores.retrieve("store_123");
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/accounts',
+            path: '/stores/store_123',
+            pathParams: {
+                storeId: "store_123"
+            },
+            query: null,
+            payload: null
+        });
+    });
+
+
+    it('list', function(done) {
+        var q = api.stores.list({ status: "active" });
+
+        q.should.be.instanceof(Query);
+        test.verifyQuerySpec(q, {
+            method: 'GET',
+            path: '/stores',
             query: { status: "active" },
             payload: null
         });
 
-        q = api.accounts.list(function() {
+        q = api.stores.list(function() {
             done();
         });
-        
         q.should.be.instanceof(Query);
 
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/accounts',
+            path: '/stores',
             query: null,
             payload: null
         });
     });
 
-    it('acl', function() {
-        var q = api.accounts.acl("acc_123");
-
-        q.should.be.instanceof(Query);
+    it('update', function() {
+        var q = api.stores.update("store_123", { meta: { source: "unit test" }});
         test.verifyQuerySpec(q, {
-            method: 'GET',
-            path: '/accounts/acc_123/acl',
+            method: 'PUT',
+            path: '/stores/store_123',
             query: null,
-            payload: null
+            payload: { meta: { source: "unit test" }}
         });
     });
 

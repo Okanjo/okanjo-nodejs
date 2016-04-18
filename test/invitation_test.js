@@ -35,10 +35,8 @@
  * SOFTWARE.
  */
 
-var should = require('should');
 
-
-describe('Accounts', function() {
+describe('Invitations', function() {
 
     var Query = require('../lib/query'),
         Client = require('../lib/client'),
@@ -49,62 +47,37 @@ describe('Accounts', function() {
     });
 
     it('create', function() {
-
-        var data = {
-            email: "joe@okanjo.com",
-            password: "password"
-        };
-
-        var q = api.accounts.create(data);
-
-        q.should.be.instanceof(Query);
-
-        // q.payload.should.deepEqual(data);
+        var q = api.invitations.create({ email: "email@acme.com", roleId: "role_123" });
         test.verifyQuerySpec(q, {
             method: 'POST',
-            path: '/accounts',
+            path: '/invitations',
             query: null,
-            payload: data
+            payload: { email: "email@acme.com", roleId: "role_123" }
         });
-
     });
 
     it('list', function(done) {
-        var q = api.accounts.list({ status: "active" });
+        var q = api.invitations.list({ email: "email@acme.com" });
 
         q.should.be.instanceof(Query);
-        
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/accounts',
-            query: { status: "active" },
+            path: '/invitations',
+            query: { email: "email@acme.com" },
             payload: null
         });
 
-        q = api.accounts.list(function() {
+        q = api.invitations.list(function() {
             done();
         });
-        
         q.should.be.instanceof(Query);
 
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/accounts',
+            path: '/invitations',
             query: null,
             payload: null
         });
     });
-
-    it('acl', function() {
-        var q = api.accounts.acl("acc_123");
-
-        q.should.be.instanceof(Query);
-        test.verifyQuerySpec(q, {
-            method: 'GET',
-            path: '/accounts/acc_123/acl',
-            query: null,
-            payload: null
-        });
-    });
-
+    
 });
