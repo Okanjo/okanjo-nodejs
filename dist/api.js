@@ -508,7 +508,7 @@ function registerMethods(Client) {
 module.exports = registerMethods;
 },{}],5:[function(require,module,exports){
 /*
- * Date: 1/26/16 11:59 AM
+ * Date: 4/22/16 03:03 PM
  *
  * ----
  *
@@ -722,7 +722,7 @@ function registerMethods(Client) {
 module.exports = registerMethods;
 },{}],7:[function(require,module,exports){
 /*
- * Date: 1/26/16 11:59 AM
+ * Date: 4/22/16 03:03 PM
  *
  * ----
  *
@@ -846,7 +846,7 @@ function registerMethods(Client) {
 module.exports = registerMethods;
 },{}],8:[function(require,module,exports){
 /*
- * Date: 1/26/16 11:59 AM
+ * Date: 4/22/16 03:03 PM
  *
  * ----
  *
@@ -895,21 +895,7 @@ function registerMethods(Client) {
      * @namespace Client.roles
      */
     Client.roles = {
-
-        /**
-         * Creates a new role (e.g. sign-in)
-         * @param {object} params
-         * @param {requestCallback} callback
-         * @memberof Client.roles#
-         */
-        create: function(params, callback) {
-            return Client._makeRequest({
-                method: 'POST',
-                path: '/roles',
-                payload: params
-            }, callback);
-        },
-
+        
         /**
          * Retrieves an role.
          * @param {string} roleId
@@ -1100,7 +1086,7 @@ function registerMethods(Client) {
 module.exports = registerMethods;
 },{}],10:[function(require,module,exports){
 /*
- * Date: 1/26/16 11:59 AM
+ * Date: 4/22/16 03:03 PM
  *
  * ----
  *
