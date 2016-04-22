@@ -1,5 +1,5 @@
 /**
- * Date: 1/26/16 2:48 PM
+ * Date: 4/22/16 03:03 PM
  *
  * ----
  *
@@ -44,16 +44,6 @@ describe('Roles', function() {
 
     var api = new Client({
         key: "ks_asdasd"
-    });
-
-    it('create', function() {
-        var q = api.roles.create({ propertyId: "prop_123", organizationId: "org_123" });
-        test.verifyQuerySpec(q, {
-            method: 'POST',
-            path: '/roles',
-            query: null,
-            payload: { propertyId: "prop_123", organizationId: "org_123" }
-        });
     });
 
     it('retrieve', function() {
