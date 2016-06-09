@@ -895,7 +895,7 @@ function registerMethods(Client) {
      * @namespace Client.roles
      */
     Client.roles = {
-        
+
         /**
          * Retrieves an role.
          * @param {string} roleId
@@ -929,7 +929,37 @@ function registerMethods(Client) {
                 path: '/roles',
                 query: params
             }, callback);
+        },
+
+        addTo: function(roleId, params, callback) {
+            if (typeof params === "function") {
+                callback = params;
+                params = undefined;
+            }
+            
+            return Client._makeRequest({
+                method: 'POST',
+                path: '/roles/{roleId}/members',
+                pathParams: {
+                    roleId: roleId
+                },
+                payload: params
+            }, callback);
+        },
+
+        removeFrom: function(roleId, accountId, callback) {
+            return Client._makeRequest({
+                method: 'DELETE',
+                path: '/roles/{roleId}/members',
+                pathParams: {
+                    roleId: roleId
+                },
+                payload: {
+                    accountId: accountId
+                }
+            }, callback);
         }
+
 
     };
 }
@@ -2280,9 +2310,6 @@ function Client(config) {
         if (process.browser) {
             // Running in browser - default to proxy mode
             this.provider = new (require('./providers/jquery_provider'))(this);
-        } else /* istanbul ignore else: We manually test the HTTP provider case */ if (process.env.LOADED_MOCHA_OPTS) {
-            // Running in unit tests - default to abstract provider (don't fire requests)
-            this.provider = new Provider(this);
         } else {
             // Running in Node - Use the HTTP provider by default to make real requests
             this.provider = new (require('./providers/http_provider'))(this);
