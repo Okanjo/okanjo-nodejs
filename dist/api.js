@@ -466,11 +466,31 @@ function registerMethods(Client) {
         },
 
         /**
+         * Updates accounts
+         * @param accountId The account
+         * @param params params passed.
+         * @param callback
+         * @returns {Query}
+         */
+
+        update: function(accountId, params, callback) {
+            return Client._makeRequest({
+                method: 'PUT',
+                path: '/accounts/{accountId}',
+                pathParams: {
+                    accountId: accountId
+                },
+                payload: params
+            }, callback);
+        },
+
+        /**
          * Lists accounts.
          * @param [params] Query filter criteria
          * @param {requestCallback} callback
          * @memberof Client.accounts#
          */
+        
         list: function(params, callback) {
             if (typeof params === "function") {
                 callback = params;
@@ -2280,9 +2300,6 @@ function Client(config) {
         if (process.browser) {
             // Running in browser - default to proxy mode
             this.provider = new (require('./providers/jquery_provider'))(this);
-        } else /* istanbul ignore else: We manually test the HTTP provider case */ if (process.env.LOADED_MOCHA_OPTS) {
-            // Running in unit tests - default to abstract provider (don't fire requests)
-            this.provider = new Provider(this);
         } else {
             // Running in Node - Use the HTTP provider by default to make real requests
             this.provider = new (require('./providers/http_provider'))(this);
