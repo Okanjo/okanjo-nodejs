@@ -931,7 +931,7 @@ function registerMethods(Client) {
             }, callback);
         },
 
-        addTo: function(roleId, params, callback) {
+        addMember: function(roleId, params, callback) {
             if (typeof params === "function") {
                 callback = params;
                 params = undefined;
@@ -947,16 +947,15 @@ function registerMethods(Client) {
             }, callback);
         },
 
-        removeFrom: function(roleId, accountId, callback) {
+        removeMember: function(roleId, accountId, callback) {
             return Client._makeRequest({
                 method: 'DELETE',
-                path: '/roles/{roleId}/members',
+                path: '/roles/{roleId}/members/{accountId}',
                 pathParams: {
-                    roleId: roleId
-                },
-                payload: {
+                    roleId: roleId,
                     accountId: accountId
-                }
+                },
+                payload: null
             }, callback);
         }
 

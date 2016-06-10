@@ -100,9 +100,9 @@ describe('Roles', function() {
         });
     });
 
-    it('addTo', function(done) {
+    it('addMember', function(done) {
 
-        var q = api.roles.addTo("role_123", {email: "joe@okanjo.com"});
+        var q = api.roles.addMember("role_123", {email: "joe@okanjo.com"});
 
         q.should.be.instanceof(Query);
         test.verifyQuerySpec(q, {
@@ -114,7 +114,7 @@ describe('Roles', function() {
             }
         });
 
-        q = api.roles.addTo("role_123", {accountId: "acc_123"});
+        q = api.roles.addMember("role_123", {accountId: "acc_123"});
 
         q.should.be.instanceof(Query);
         test.verifyQuerySpec(q, {
@@ -126,7 +126,7 @@ describe('Roles', function() {
             }
         });
 
-        q = api.roles.addTo("role_123", function() {
+        q = api.roles.addMember("role_123", function() {
             // Because earlier done() calls are selfish and mean.
             setTimeout(function() {
                 done();
@@ -142,18 +142,16 @@ describe('Roles', function() {
         });
     });
 
-    it('removeFrom', function() {
+    it('removeMember', function() {
 
-        var q = api.roles.removeFrom("role_123", "acc_123");
+        var q = api.roles.removeMember("role_123", "acc_123");
 
         q.should.be.instanceof(Query);
         test.verifyQuerySpec(q, {
             method: 'DELETE',
-            path: '/roles/role_123/members',
+            path: '/roles/role_123/members/acc_123',
             query: null,
-            payload: {
-                accountId: "acc_123"
-            }
+            payload: null
         });
     });
 });
