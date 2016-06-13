@@ -95,6 +95,37 @@ describe('Accounts', function() {
         });
     });
 
+    it('update', function() {
+        var q = api.accounts.update("acc_123", {
+            first_name: "Joe",
+            last_name: "Okanjo",
+            email: "joe@okanjo.com",
+            password: "password",
+            meta: {
+                source: "unit test"
+            }
+        });
+
+        test.verifyQuerySpec(q, {
+            method: 'PUT',
+            path: '/accounts/acc_123',
+            query: null,
+            payload: {
+                first_name: "Joe",
+                last_name: "Okanjo",
+                email: "joe@okanjo.com",
+                password: "password",
+                meta: {
+                    source: "unit test"
+                }
+            },
+            pathParams: {
+                accountId: "acc_123"
+            }
+        });
+
+    });
+
     it('acl', function() {
         var q = api.accounts.acl("acc_123");
 
