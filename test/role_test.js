@@ -67,11 +67,31 @@ describe('Roles', function() {
             payload: null
         });
 
+        q = api.roles.list({ organizationId: "org_123" });
+
+        q.should.be.instanceof(Query);
+        test.verifyQuerySpec(q, {
+            method: 'GET',
+            path: '/roles',
+            query: { organizationId: "org_123" },
+            payload: null
+        });
+
+        q = api.roles.list({ storeId: "store_123" });
+
+        q.should.be.instanceof(Query);
+        test.verifyQuerySpec(q, {
+            method: 'GET',
+            path: '/roles',
+            query: { storeId: "store_123" },
+            payload: null
+        });
+
         q = api.roles.list(function() {
             done();
         });
-        q.should.be.instanceof(Query);
 
+        q.should.be.instanceof(Query);
         test.verifyQuerySpec(q, {
             method: 'GET',
             path: '/roles',
@@ -80,4 +100,58 @@ describe('Roles', function() {
         });
     });
 
+    it('addMember', function(done) {
+
+        var q = api.roles.addMember("role_123", {email: "joe@okanjo.com"});
+
+        q.should.be.instanceof(Query);
+        test.verifyQuerySpec(q, {
+            method: 'POST',
+            path: '/roles/role_123/members',
+            query: null,
+            payload: {
+                email: "joe@okanjo.com"
+            }
+        });
+
+        q = api.roles.addMember("role_123", {accountId: "acc_123"});
+
+        q.should.be.instanceof(Query);
+        test.verifyQuerySpec(q, {
+            method: 'POST',
+            path: '/roles/role_123/members',
+            query: null,
+            payload: {
+                accountId: "acc_123"
+            }
+        });
+
+        q = api.roles.addMember("role_123", function() {
+            // Because earlier done() calls are selfish and mean.
+            setTimeout(function() {
+                done();
+            }, 010);
+        });
+
+        q.should.be.instanceof(Query);
+        test.verifyQuerySpec(q, {
+            method: 'POST',
+            path: '/roles/role_123/members',
+            query: null,
+            payload: null
+        });
+    });
+
+    it('removeMember', function() {
+
+        var q = api.roles.removeMember("role_123", "acc_123");
+
+        q.should.be.instanceof(Query);
+        test.verifyQuerySpec(q, {
+            method: 'DELETE',
+            path: '/roles/role_123/members/acc_123',
+            query: null,
+            payload: null
+        });
+    });
 });
