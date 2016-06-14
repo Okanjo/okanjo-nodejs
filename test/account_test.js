@@ -69,6 +69,17 @@ describe('Accounts', function() {
 
     });
 
+    it('retrieve', function() {
+        var q = api.accounts.retrieve("acc_123");
+        test.verifyQuerySpec(q, {
+            method: 'GET',
+            path: '/organizations/acc_123',
+            query: null,
+            payload: null
+        });
+    });
+
+
     it('list', function(done) {
         var q = api.accounts.list({ status: "active" });
 
@@ -138,4 +149,17 @@ describe('Accounts', function() {
         });
     });
 
+    it('resetPasssword', function() {
+        var q = api.accounts.resetPassword({email: "joe@okanjo.com"});
+
+        q.should.be.instanceof(Query);
+        test.verifyQuerySpec(q, {
+            method: 'GET',
+            path: '/accounts/reset',
+            query: {
+                email: "joe@okanjo.com"
+            },
+            payload: null
+        });
+    });
 });
