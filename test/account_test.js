@@ -73,7 +73,7 @@ describe('Accounts', function() {
         var q = api.accounts.retrieve("acc_123");
         test.verifyQuerySpec(q, {
             method: 'GET',
-            path: '/organizations/acc_123',
+            path: '/accounts/acc_123',
             query: null,
             payload: null
         });
@@ -150,7 +150,7 @@ describe('Accounts', function() {
     });
 
     it('resetPasssword', function() {
-        var q = api.accounts.resetPassword({email: "joe@okanjo.com"});
+        var q = api.accounts.resetPassword("joe@okanjo.com");
 
         q.should.be.instanceof(Query);
         test.verifyQuerySpec(q, {

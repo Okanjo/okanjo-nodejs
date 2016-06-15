@@ -466,21 +466,18 @@ function registerMethods(Client) {
         },
 
         /**
-         * Updates accounts
-         * @param accountId The account
-         * @param params params passed.
-         * @param callback
-         * @returns {Query}
+         * Retrieves an account.
+         * @param {string} accountId
+         * @param {requestCallback} callback
+         * @memberof Client.accounts#
          */
-
-        update: function(accountId, params, callback) {
+        retrieve: function(accountId, callback) {
             return Client._makeRequest({
-                method: 'PUT',
+                method: 'GET',
                 path: '/accounts/{accountId}',
                 pathParams: {
                     accountId: accountId
-                },
-                payload: params
+                }
             }, callback);
         },
 
@@ -501,6 +498,42 @@ function registerMethods(Client) {
                 method: 'GET',
                 path: '/accounts',
                 query: params
+            }, callback);
+        },
+
+        /**
+         * Updates accounts
+         * @param accountId The account
+         * @param params params passed.
+         * @param callback
+         * @returns {Query}
+         */
+
+        update: function(accountId, params, callback) {
+            return Client._makeRequest({
+                method: 'PUT',
+                path: '/accounts/{accountId}',
+                pathParams: {
+                    accountId: accountId
+                },
+                payload: params
+            }, callback);
+        },
+
+        /**
+         * Retrieve an accounts access control list.
+         * @param {string} accountId
+         * @param {requestCallback} callback
+         * @memberof Client.accounts#
+         */
+        resetPassword: function(email, callback) {
+
+            return Client._makeRequest({
+                method: 'GET',
+                path: '/accounts/reset',
+                query: {
+                    email: email
+                }
             }, callback);
         },
 
