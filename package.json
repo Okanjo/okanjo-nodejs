@@ -1,6 +1,6 @@
 {
   "name": "@okanjo/okanjo-sdk",
-  "version": "0.4.8",
+  "version": "0.4.10",
   "description": "Use the Okanjo API in JavaScript!",
   "main": "lib/client.js",
   "scripts": {
