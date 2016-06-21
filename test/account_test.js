@@ -138,4 +138,18 @@ describe('Accounts', function() {
         });
     });
 
+    it('resetPassword', function() {
+        var q = api.accounts.resetPassword("joe@okanjo.com");
+
+        q.should.be.instanceof(Query);
+        test.verifyQuerySpec(q, {
+            method: 'GET',
+            path: '/accounts/reset',
+            query: {
+              email: "joe@okanjo.com"
+            },
+            payload: null
+        });
+    });
+
 });
