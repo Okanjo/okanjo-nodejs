@@ -101,4 +101,17 @@ describe('Placements', function() {
         });
     });
 
+    it('delete', function() {
+        var q = api.placements.delete("pla_123");
+        test.verifyQuerySpec(q, {
+            method: 'DELETE',
+            path: '/placements/pla_123',
+            pathParams: {
+                placementId: "pla_123"
+            },
+            query: null,
+            payload: null
+        });
+    });
+
 });

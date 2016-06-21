@@ -112,4 +112,17 @@ describe('Products', function() {
         });
     });
 
+    it('delete', function() {
+        var q = api.products.delete("prod_123");
+        test.verifyQuerySpec(q, {
+            method: 'DELETE',
+            path: '/products/prod_123',
+            pathParams: {
+                placementId: "prod_123"
+            },
+            query: null,
+            payload: null
+        });
+    });
+
 });
