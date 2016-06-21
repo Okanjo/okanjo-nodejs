@@ -5,11 +5,20 @@ When stuff changes, it's described here.
 
 # 0.2.x
 
-## 2015-08-11
+## 2015-10-20 - v0.2.3
+ * Include `numFound` in the response as a dedicated property, when available
+
+## 2015-08-26 - v0.2.2
+ * Refactored FileUpload for better extensibility with testing
+ * Added async dev dependency
+ * Added missing `putUserOrderById` on marketplace client
+ * Added a basic unit tests on brands, login, media, products, stores, users, purchases, and checkout
+
+## 2015-08-11 - v0.2.1
  * Fixed incorrect method name to `getBrandByIdOrApiKey`
  * Added redirect handling for 300-level requests
 
-## 2015-07-30
+## 2015-07-30 - v0.2.0
  * Started config changes for username deprecation
  
 ## 2015-07-28

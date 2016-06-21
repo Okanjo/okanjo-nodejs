@@ -466,21 +466,18 @@ function registerMethods(Client) {
         },
 
         /**
-         * Updates accounts
-         * @param accountId The account
-         * @param params params passed.
-         * @param callback
-         * @returns {Query}
+         * Retrieves an account.
+         * @param {string} accountId
+         * @param {requestCallback} callback
+         * @memberof Client.accounts#
          */
-
-        update: function(accountId, params, callback) {
+        retrieve: function(accountId, callback) {
             return Client._makeRequest({
-                method: 'PUT',
+                method: 'GET',
                 path: '/accounts/{accountId}',
                 pathParams: {
                     accountId: accountId
-                },
-                payload: params
+                }
             }, callback);
         },
 
@@ -501,6 +498,42 @@ function registerMethods(Client) {
                 method: 'GET',
                 path: '/accounts',
                 query: params
+            }, callback);
+        },
+
+        /**
+         * Updates accounts
+         * @param accountId The account
+         * @param params params passed.
+         * @param callback
+         * @returns {Query}
+         */
+
+        update: function(accountId, params, callback) {
+            return Client._makeRequest({
+                method: 'PUT',
+                path: '/accounts/{accountId}',
+                pathParams: {
+                    accountId: accountId
+                },
+                payload: params
+            }, callback);
+        },
+
+        /**
+         * Retrieve an accounts access control list.
+         * @param {string} accountId
+         * @param {requestCallback} callback
+         * @memberof Client.accounts#
+         */
+        resetPassword: function(email, callback) {
+
+            return Client._makeRequest({
+                method: 'GET',
+                path: '/accounts/reset',
+                query: {
+                    email: email
+                }
             }, callback);
         },
 
@@ -1394,12 +1427,40 @@ if (typeof Object.create === 'function') {
 // shim for using process in browser
 
 var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+(function () {
+  try {
+    cachedSetTimeout = setTimeout;
+  } catch (e) {
+    cachedSetTimeout = function () {
+      throw new Error('setTimeout is not defined');
+    }
+  }
+  try {
+    cachedClearTimeout = clearTimeout;
+  } catch (e) {
+    cachedClearTimeout = function () {
+      throw new Error('clearTimeout is not defined');
+    }
+  }
+} ())
 var queue = [];
 var draining = false;
 var currentQueue;
 var queueIndex = -1;
 
 function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
     draining = false;
     if (currentQueue.length) {
         queue = currentQueue.concat(queue);
@@ -1415,7 +1476,7 @@ function drainQueue() {
     if (draining) {
         return;
     }
-    var timeout = setTimeout(cleanUpNextTick);
+    var timeout = cachedSetTimeout(cleanUpNextTick);
     draining = true;
 
     var len = queue.length;
@@ -1432,7 +1493,7 @@ function drainQueue() {
     }
     currentQueue = null;
     draining = false;
-    clearTimeout(timeout);
+    cachedClearTimeout(timeout);
 }
 
 process.nextTick = function (fun) {
@@ -1444,7 +1505,7 @@ process.nextTick = function (fun) {
     }
     queue.push(new Item(fun, args));
     if (queue.length === 1 && !draining) {
-        setTimeout(drainQueue, 0);
+        cachedSetTimeout(drainQueue, 0);
     }
 };
 
