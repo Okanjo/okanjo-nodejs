@@ -1,8 +1,18 @@
 {
+<<<<<<< HEAD
   "name": "@okanjo/okanjo-sdk",
   "version": "0.4.9",
   "description": "Use the Okanjo API in JavaScript!",
   "main": "lib/client.js",
+=======
+  "name": "okanjo",
+  "version": "0.2.3",
+  "description": "Okanjo JavaScript Software Development Kit",
+  "main": "./index.js",
+  "bin": {
+    "okanjo-cli": "./bin/console.js"
+  },
+>>>>>>> origin/master
   "scripts": {
     "test": "node_modules/.bin/mocha test",
     "cover": "rm -f coverage/coverage*.json && node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- -R spec && node_modules/.bin/istanbul report",
