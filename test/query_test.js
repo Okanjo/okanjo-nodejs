@@ -79,6 +79,10 @@ describe('Query', function() {
 
         q.getRealPath().should.equal('/path/to/pale%20ale');
 
+        // Make sure underscores are accepted too
+        q.setPath('/path/to/{beer_id}');
+        q.setPathParams({ beer_id: 'pale ale' });
+        q.getRealPath().should.equal('/path/to/pale%20ale');
 
         should(q.query).be.empty();
         q.where({ free: true });

@@ -465,7 +465,7 @@ function copy(destination, source) {
 }
 
 
-var extractParams = /\{([a-zA-Z]+)}/g;
+var extractParams = /\{([a-zA-Z_]+)}/g;
 
 /**
  * Builds the final URL path given replaceable param names
@@ -1571,7 +1571,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '1.0.0-rc1';
+Client.Version = '1.0.1-rc1';
 
 /**
  * Expose the Provider base class
