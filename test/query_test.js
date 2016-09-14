@@ -42,7 +42,7 @@ var should = require('should');
 describe('Query', function() {
 
 
-    var Client = require('../lib/client'),
+    var Client = require('../dist/client'),
         Query = require('../lib/query');
 
     it('can initialize with no extensions', function() {

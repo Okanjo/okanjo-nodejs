@@ -1,14 +1,14 @@
 {
   "name": "@okanjo/okanjo-sdk",
-  "version": "0.4.11",
+  "version": "1.0.0-rc1",
   "description": "Use the Okanjo API in JavaScript!",
-  "main": "lib/client.js",
+  "main": "dist/client.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha test",
+    "build": "node_modules/.bin/gulp build",
+    "test": "npm run build && node_modules/.bin/mocha test",
     "cover": "rm -f coverage/coverage*.json && node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- -R spec && node_modules/.bin/istanbul report",
     "hint": "node_modules/.bin/jshint ./lib/**/*.js",
-    "report": "npm run cover && npm run hint",
-    "browser": "./node_modules/.bin/browserify -i ./lib/providers/http_provider.js -r ./lib/client.js:okanjo  -o dist/api.js"
+    "report": "npm run build && npm run cover && npm run hint"
   },
   "repository": {
     "type": "git",
@@ -30,9 +30,20 @@
   },
   "devDependencies": {
     "browserify": "^13.0.0",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-nunjucks-render": "^2.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace": "^0.5.4",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^2.0.0",
     "istanbul": "^0.4.2",
     "jshint": "^2.9.1",
     "mocha": "^2.4.1",
-    "should": "^8.2.0"
+    "needle": "^1.1.2",
+    "should": "^8.2.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
   }
 }

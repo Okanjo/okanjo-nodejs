@@ -3,3 +3,4 @@ node_modules
 nope
 coverage
 out
+dist/partials

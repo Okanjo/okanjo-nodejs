@@ -43,7 +43,7 @@ describe('HTTP Provider', function() {
 
     var com = require('./common'),
         FauxApiServer = com.FauxApiServer,
-        Client = require('../lib/client'),
+        Client = require('../dist/client'),
         HttpProvider = require('../lib/providers/http_provider'),
         util = require('util'),
         server, api;

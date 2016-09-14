@@ -41,7 +41,7 @@ var should = require('should');
 describe('Provider', function() {
 
 
-    var Client = require('../lib/client'),
+    var Client = require('../dist/client'),
         Provider = require('../lib/provider');
 
     it('should fire the callback when executed', function(done) {

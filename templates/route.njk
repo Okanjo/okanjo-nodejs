@@ -1,0 +1,52 @@
+{% set paramList = [] -%}
+{% set hasPayload = route.arguments.payload|length > 0 -%}
+{% set hasQuery = route.arguments.query|length > 0 -%}
+{% set methodParams = [] -%}
+
+        /**
+         * {{ route.action.long_description|safe }}
+    {%- set pathParamList = "" %}
+    {%- for param in route.arguments.params %}
+        {%- set paramList = paramList.concat([param.name]) %}
+         * @param {{ '{' + param.type + '}' }} {{ param.name }} – {{ param.description }}
+    {%- endfor -%}
+    {%- if hasPayload -%}
+        {%- set methodParams = methodParams.concat(['payload']) %}
+         * @param {object} payload - Resource or parameters
+    {%- endif %}
+    {%- if hasQuery %}
+        {%- set methodParams = methodParams.concat(['query']) %}
+         * @param {object} [query] - Filter arguments
+    {%- endif %}
+    {%- set pathParamList = "" if paramList|length == 0 else paramList|join(', ') %}
+    {%- set methodParamList = ", " if paramList|length > 0 else "" %}
+    {%- set methodParamList = methodParamList + methodParams|join(', ') + (", " if methodParams|length > 0 else "") %}
+         * @param {requestCallback} callback
+         * @memberof Client.{{ route.resource.pluralized }}#
+         */
+        {{ route.action.name }}: function({{ pathParamList }}{{ methodParamList }}callback) {
+    {%- if hasQuery %}
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    {% endif %}
+            return Client._makeRequest({
+                method: '{{ route.endpoint.method|upper }}',
+                path: '{{ route.endpoint.path }}',
+    {%- if paramList|length > 0 %}
+                pathParams: {
+        {%- for param in paramList %}
+                    {{ param }}: {{ param }}{{ "" if loop.last else "," }}
+        {%- endfor %}
+                }{{ "," if hasPayload or hasQuery else "" }}
+    {%- endif %}
+    {%- if hasPayload %}
+                payload: payload{{ "," if hasQuery else "" }}
+    {%- endif %}
+    {%- if hasQuery %}
+                query: query
+    {%- endif %}
+            }, callback);
+        }{{ "" if loop.last else "," }}

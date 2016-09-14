@@ -41,7 +41,7 @@ var should = require('should');
 
 describe('Browser Mode', function() {
 
-    var Client = require('../lib/client'),
+    var Client = require('../dist/client'),
         Provider = require('../lib/provider');
 
     before(function() {

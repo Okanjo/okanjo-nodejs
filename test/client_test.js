@@ -42,7 +42,7 @@ describe('Client', function() {
     var Client;
 
     it('should require', function() {
-        Client = require('../lib/client');
+        Client = require('../dist/client');
 
         Client.should.be.a.Function();
     });
