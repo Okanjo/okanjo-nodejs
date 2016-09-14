@@ -33,6 +33,7 @@
             }
     {% endif %}
             return Client._makeRequest({
+                action: '{{ route.id }}',
                 method: '{{ route.endpoint.method|upper }}',
                 path: '{{ route.endpoint.path }}',
     {%- if paramList|length > 0 %}

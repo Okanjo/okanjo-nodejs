@@ -240,6 +240,12 @@ var sdkUtil = require('./util'),
 function Query(base, options) {
 
     /**
+     * Resource method action / route id
+     * @type {string}
+     */
+    this.action = null;
+
+    /**
      * Request method
      * @example `GET` or `PUT` or `POST` or `DELETE`
      * @type {string}
@@ -296,6 +302,7 @@ function Query(base, options) {
  */
 Query.prototype._extend = function(extra, overrideAll) {
     if (extra) {
+        if (extra.action !== undefined) this.setAction(extra.action);
         if (extra.method !== undefined) this.setMethod(extra.method);
         if (extra.path !== undefined) this.setPath(extra.path);
         if (extra.pathParams !== undefined) this.setPathParams(extra.pathParams);
@@ -332,6 +339,12 @@ Query.prototype.getFullPath = function() {
     }
 };
 
+/**
+ * Sets the method action / route id
+ * @param {string} action
+ * @return {Query}
+ */
+Query.prototype.setAction = function(action) { this.action = action; return this; };
 
 /**
  * Sets the HTTP method on the request
@@ -339,6 +352,7 @@ Query.prototype.getFullPath = function() {
  * @return {Query}
  */
 Query.prototype.setMethod = function(method) { this.method = method; return this; };
+
 
 /**
  * Sets the URL path template on the request
@@ -1571,7 +1585,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '1.0.0-rc.2';
+Client.Version = '1.0.0-rc3';
 
 /**
  * Expose the Provider base class
@@ -1628,6 +1642,7 @@ Client._bindResources = function(Client) {
          */
         create: function(payload, callback) {
             return Client._makeRequest({
+                action: 'account.create',
                 method: 'POST',
                 path: '/accounts',
                 payload: payload
@@ -1642,6 +1657,7 @@ Client._bindResources = function(Client) {
          */
         retrieve: function(account_id, callback) {
             return Client._makeRequest({
+                action: 'account.retrieve',
                 method: 'GET',
                 path: '/accounts/{account_id}',
                 pathParams: {
@@ -1664,6 +1680,7 @@ Client._bindResources = function(Client) {
             }
     
             return Client._makeRequest({
+                action: 'account.list',
                 method: 'GET',
                 path: '/accounts',
                 query: query
@@ -1679,6 +1696,7 @@ Client._bindResources = function(Client) {
          */
         update: function(account_id, payload, callback) {
             return Client._makeRequest({
+                action: 'account.update',
                 method: 'PUT',
                 path: '/accounts/{account_id}',
                 pathParams: {
@@ -1696,6 +1714,7 @@ Client._bindResources = function(Client) {
          */
         recover: function(payload, callback) {
             return Client._makeRequest({
+                action: 'account.recover',
                 method: 'POST',
                 path: '/accounts/recover',
                 payload: payload
@@ -1710,6 +1729,7 @@ Client._bindResources = function(Client) {
          */
         retrieve_acl: function(account_id, callback) {
             return Client._makeRequest({
+                action: 'account.retrieve_acl',
                 method: 'GET',
                 path: '/accounts/{account_id}/acl',
                 pathParams: {
@@ -1734,6 +1754,7 @@ Client._bindResources = function(Client) {
          */
         create: function(payload, callback) {
             return Client._makeRequest({
+                action: 'organization.create',
                 method: 'POST',
                 path: '/organizations',
                 payload: payload
@@ -1748,6 +1769,7 @@ Client._bindResources = function(Client) {
          */
         retrieve: function(org_id, callback) {
             return Client._makeRequest({
+                action: 'organization.retrieve',
                 method: 'GET',
                 path: '/organizations/{org_id}',
                 pathParams: {
@@ -1770,6 +1792,7 @@ Client._bindResources = function(Client) {
             }
     
             return Client._makeRequest({
+                action: 'organization.list',
                 method: 'GET',
                 path: '/organizations',
                 query: query
@@ -1785,6 +1808,7 @@ Client._bindResources = function(Client) {
          */
         update: function(org_id, payload, callback) {
             return Client._makeRequest({
+                action: 'organization.update',
                 method: 'PUT',
                 path: '/organizations/{org_id}',
                 pathParams: {
@@ -1810,6 +1834,7 @@ Client._bindResources = function(Client) {
          */
         create: function(payload, callback) {
             return Client._makeRequest({
+                action: 'placement.create',
                 method: 'POST',
                 path: '/placements',
                 payload: payload
@@ -1824,6 +1849,7 @@ Client._bindResources = function(Client) {
          */
         retrieve: function(placement_id, callback) {
             return Client._makeRequest({
+                action: 'placement.retrieve',
                 method: 'GET',
                 path: '/placements/{placement_id}',
                 pathParams: {
@@ -1846,6 +1872,7 @@ Client._bindResources = function(Client) {
             }
     
             return Client._makeRequest({
+                action: 'placement.list',
                 method: 'GET',
                 path: '/placements',
                 query: query
@@ -1861,6 +1888,7 @@ Client._bindResources = function(Client) {
          */
         update: function(placement_id, payload, callback) {
             return Client._makeRequest({
+                action: 'placement.update',
                 method: 'PUT',
                 path: '/placements/{placement_id}',
                 pathParams: {
@@ -1878,6 +1906,7 @@ Client._bindResources = function(Client) {
          */
         delete: function(placement_id, callback) {
             return Client._makeRequest({
+                action: 'placement.delete',
                 method: 'DELETE',
                 path: '/placements/{placement_id}',
                 pathParams: {
@@ -1902,6 +1931,7 @@ Client._bindResources = function(Client) {
          */
         create: function(payload, callback) {
             return Client._makeRequest({
+                action: 'product.create',
                 method: 'POST',
                 path: '/products',
                 payload: payload
@@ -1916,6 +1946,7 @@ Client._bindResources = function(Client) {
          */
         retrieve: function(product_id, callback) {
             return Client._makeRequest({
+                action: 'product.retrieve',
                 method: 'GET',
                 path: '/products/{product_id}',
                 pathParams: {
@@ -1938,6 +1969,7 @@ Client._bindResources = function(Client) {
             }
     
             return Client._makeRequest({
+                action: 'product.list',
                 method: 'GET',
                 path: '/products',
                 query: query
@@ -1953,6 +1985,7 @@ Client._bindResources = function(Client) {
          */
         update: function(product_id, payload, callback) {
             return Client._makeRequest({
+                action: 'product.update',
                 method: 'PUT',
                 path: '/products/{product_id}',
                 pathParams: {
@@ -1970,6 +2003,7 @@ Client._bindResources = function(Client) {
          */
         delete: function(product_id, callback) {
             return Client._makeRequest({
+                action: 'product.delete',
                 method: 'DELETE',
                 path: '/products/{product_id}',
                 pathParams: {
@@ -1994,6 +2028,7 @@ Client._bindResources = function(Client) {
          */
         retrieve: function(product_id, callback) {
             return Client._makeRequest({
+                action: 'productmatch.retrieve',
                 method: 'GET',
                 path: '/pm/products/{product_id}',
                 pathParams: {
@@ -2016,6 +2051,7 @@ Client._bindResources = function(Client) {
             }
     
             return Client._makeRequest({
+                action: 'productmatch.list',
                 method: 'GET',
                 path: '/pm/products',
                 query: query
@@ -2038,6 +2074,7 @@ Client._bindResources = function(Client) {
          */
         create: function(payload, callback) {
             return Client._makeRequest({
+                action: 'property.create',
                 method: 'POST',
                 path: '/properties',
                 payload: payload
@@ -2052,6 +2089,7 @@ Client._bindResources = function(Client) {
          */
         retrieve: function(property_id, callback) {
             return Client._makeRequest({
+                action: 'property.retrieve',
                 method: 'GET',
                 path: '/properties/{property_id}',
                 pathParams: {
@@ -2074,6 +2112,7 @@ Client._bindResources = function(Client) {
             }
     
             return Client._makeRequest({
+                action: 'property.list',
                 method: 'GET',
                 path: '/properties',
                 query: query
@@ -2089,6 +2128,7 @@ Client._bindResources = function(Client) {
          */
         update: function(property_id, payload, callback) {
             return Client._makeRequest({
+                action: 'property.update',
                 method: 'PUT',
                 path: '/properties/{property_id}',
                 pathParams: {
@@ -2114,6 +2154,7 @@ Client._bindResources = function(Client) {
          */
         retrieve: function(role_id, callback) {
             return Client._makeRequest({
+                action: 'role.retrieve',
                 method: 'GET',
                 path: '/roles/{role_id}',
                 pathParams: {
@@ -2136,6 +2177,7 @@ Client._bindResources = function(Client) {
             }
     
             return Client._makeRequest({
+                action: 'role.list',
                 method: 'GET',
                 path: '/roles',
                 query: query
@@ -2151,6 +2193,7 @@ Client._bindResources = function(Client) {
          */
         add_account: function(role_id, payload, callback) {
             return Client._makeRequest({
+                action: 'role.add_account',
                 method: 'POST',
                 path: '/roles/{role_id}/members',
                 pathParams: {
@@ -2169,6 +2212,7 @@ Client._bindResources = function(Client) {
          */
         remove_account: function(role_id, account_id, callback) {
             return Client._makeRequest({
+                action: 'role.remove_account',
                 method: 'DELETE',
                 path: '/roles/{role_id}/members/{account_id}',
                 pathParams: {
@@ -2194,6 +2238,7 @@ Client._bindResources = function(Client) {
          */
         create: function(payload, callback) {
             return Client._makeRequest({
+                action: 'session.create',
                 method: 'POST',
                 path: '/accounts/sessions',
                 payload: payload
@@ -2209,6 +2254,7 @@ Client._bindResources = function(Client) {
          */
         retrieve: function(account_id, session_id, callback) {
             return Client._makeRequest({
+                action: 'session.retrieve',
                 method: 'GET',
                 path: '/accounts/{account_id}/sessions/{session_id}',
                 pathParams: {
@@ -2233,6 +2279,7 @@ Client._bindResources = function(Client) {
             }
     
             return Client._makeRequest({
+                action: 'session.list',
                 method: 'GET',
                 path: '/accounts/{account_id}/sessions',
                 pathParams: {
@@ -2252,6 +2299,7 @@ Client._bindResources = function(Client) {
          */
         update: function(account_id, session_id, payload, callback) {
             return Client._makeRequest({
+                action: 'session.update',
                 method: 'PUT',
                 path: '/accounts/{account_id}/sessions/{session_id}',
                 pathParams: {
@@ -2271,6 +2319,7 @@ Client._bindResources = function(Client) {
          */
         delete: function(account_id, session_id, callback) {
             return Client._makeRequest({
+                action: 'session.delete',
                 method: 'DELETE',
                 path: '/accounts/{account_id}/sessions/{session_id}',
                 pathParams: {
@@ -2296,6 +2345,7 @@ Client._bindResources = function(Client) {
          */
         create: function(payload, callback) {
             return Client._makeRequest({
+                action: 'store.create',
                 method: 'POST',
                 path: '/stores',
                 payload: payload
@@ -2310,6 +2360,7 @@ Client._bindResources = function(Client) {
          */
         retrieve: function(store_id, callback) {
             return Client._makeRequest({
+                action: 'store.retrieve',
                 method: 'GET',
                 path: '/stores/{store_id}',
                 pathParams: {
@@ -2332,6 +2383,7 @@ Client._bindResources = function(Client) {
             }
     
             return Client._makeRequest({
+                action: 'store.list',
                 method: 'GET',
                 path: '/stores',
                 query: query
@@ -2347,6 +2399,7 @@ Client._bindResources = function(Client) {
          */
         update: function(store_id, payload, callback) {
             return Client._makeRequest({
+                action: 'store.update',
                 method: 'PUT',
                 path: '/stores/{store_id}',
                 pathParams: {

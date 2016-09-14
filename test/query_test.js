@@ -67,6 +67,9 @@ describe('Query', function() {
 
         var q = new Query();
 
+        q.setAction('beer.drink');
+        q.action.should.equal('beer.drink');
+
         q.setMethod('DERP');
         q.method.should.equal('DERP');
 
