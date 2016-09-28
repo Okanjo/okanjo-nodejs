@@ -5,6 +5,9 @@ When stuff changes, it's described here.
 
 # 0.2.x
 
+## 2016-09-28 - v0.2.4
+ * Really late push for protocol fix.
+
 ## 2015-10-20 - v0.2.3
  * Include `numFound` in the response as a dedicated property, when available
 
