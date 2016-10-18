@@ -95,6 +95,16 @@ describe('Utilities', function() {
         res.should.equal('/accounts/%3Cnope%3E/sessions/%3Flols');
     });
 
+
+    it('should build a path correctly with underscores', function() {
+
+        var path = '/products/{product_id}';
+
+        var res = Util.buildPath(path, { product_id: 'product_dev_12n3j123123' });
+
+        res.should.equal('/products/product_dev_12n3j123123');
+    });
+
     it('should return an error if path build is missing params', function() {
 
         var path = '/accounts/{accountId}/sessions/{sessionId}';
