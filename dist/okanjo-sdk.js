@@ -82,7 +82,7 @@ Provider.prototype.execute = function(query, callback) {
 module.exports = Provider;
 },{}],2:[function(require,module,exports){
 /*
- * Date: 1/29/16 1:45 PM
+ * Date: 10/20/16 4:30 PM
  *
  * ----
  *
@@ -126,7 +126,7 @@ var util = require('util'),
  * @param {Client} [client]
  * @constructor
  */
-function jQueryProvider(client) {
+function FetchProvider(client) {
     Provider.call(this, client);
 
     /**
@@ -144,7 +144,7 @@ function jQueryProvider(client) {
 
 }
 
-util.inherits(jQueryProvider, Provider);
+util.inherits(FetchProvider, Provider);
 
 
 /**
@@ -153,33 +153,50 @@ util.inherits(jQueryProvider, Provider);
  * @param callback – Callback to fire when request is completed
  * @abstract
  */
-jQueryProvider.prototype.execute = function(query, callback) {
-    $.ajax({
-        url: this.rpcHost,
-        method: 'POST',
-        data: JSON.stringify(query),
-        contentType: 'application/json; charset=utf-8',
-        dataType: 'json',
-        async: true
-    })
-    .done(function (data, status, xhr) {
-        if (callback) callback(null, data, { status: status, xhr: xhr });
-    })
-    .fail(function (xhr, status, err) {
-        if (xhr.responseJSON) {
-            if (callback) callback(xhr.responseJSON, null, { status: status, xhr: xhr });
-        } else {
-            if (callback) callback({
-                statusCode: 503,
-                error: err /* istanbul ignore next: not worth testing err vs stats */ || status,
-                message: "Something went wrong",
-                attributes: {
-                    source: 'okanjo.providers.jQueryProvider',
-                    jQueryErr: err
-                }
-            }, null, { status: status, xhr: xhr });
+FetchProvider.prototype.execute = function(query, callback) {
+
+    var req = {
+        method: this.rpcMethod,
+        body: JSON.stringify(query),
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8'
         }
-    });
+    };
+
+    return fetch(this.rpcHost, req)
+        .then(function(res) {
+            return res.json();
+        })
+        .then(function(res) {
+            if (res.error) {
+                // Error response from API
+                return Promise.reject(res);
+            } else {
+                // Browserify should polyfill setImmediate
+                if (callback) setImmediate(function() {
+                    callback(null, res);
+                });
+                return res.data;
+            }
+        })
+        .catch(function(err) {
+            if (!err || !err.statusCode) {
+                err = {
+                    statusCode: 503,
+                    error: (err instanceof Error ? err.message : /* istanbul ignore next: not worth testing err vs stats */ err),
+                    message: "Something went wrong",
+                    attributes: {
+                        source: 'okanjo.providers.FetchProvider',
+                        wrappedError: err
+                    }
+                };
+            }
+
+            if (callback) setImmediate(function() {
+                callback(err, null);
+            });
+        });
 };
 
 
@@ -189,7 +206,7 @@ jQueryProvider.prototype.execute = function(query, callback) {
  * @param {object|null} response
  */
 
-module.exports = jQueryProvider;
+module.exports = FetchProvider;
 },{"../provider":1,"util":12}],3:[function(require,module,exports){
 /*
  * Date: 1/26/16 11:59 AM
@@ -1571,7 +1588,8 @@ function Client(config) {
         // Detect context
         if (process.browser) {
             // Running in browser - default to proxy mode
-            this.provider = new (require('../lib/providers/jquery_provider'))(this);
+            //this.provider = new (require('../lib/providers/jquery_provider'))(this);
+            this.provider = new (require('../lib/providers/fetch_provider'))(this);
         } else {
             // Running in Node - Use the HTTP provider by default to make real requests
             this.provider = new (require('../lib/providers/http_provider'))(this);
@@ -1585,7 +1603,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '1.0.0-rc3';
+Client.Version = '1.0.0-rc4';
 
 /**
  * Expose the Provider base class
@@ -2414,4 +2432,4 @@ Client._bindResources = function(Client) {
 
 };
 }).call(this,require('_process'))
-},{"../lib/provider":1,"../lib/providers/http_provider":5,"../lib/providers/jquery_provider":2,"../lib/query":3,"_process":6}]},{},[]);
+},{"../lib/provider":1,"../lib/providers/fetch_provider":2,"../lib/providers/http_provider":5,"../lib/query":3,"_process":6}]},{},[]);

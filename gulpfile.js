@@ -75,7 +75,7 @@ Gulp.task('build_browser_client', ['build_client'], () => {
     bundler.ignore('./lib/providers/http_provider.js');
     bundler.require('./dist/client.js', { expose: 'okanjo-sdk' });
 
-    bundler.bundle()
+    return bundler.bundle()
         .pipe(VinylSource('okanjo-sdk.js'))
         .pipe(Gulp.dest('dist'))
         .pipe(VinylBuffer())

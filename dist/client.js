@@ -65,7 +65,8 @@ function Client(config) {
         // Detect context
         if (process.browser) {
             // Running in browser - default to proxy mode
-            this.provider = new (require('../lib/providers/jquery_provider'))(this);
+            //this.provider = new (require('../lib/providers/jquery_provider'))(this);
+            this.provider = new (require('../lib/providers/fetch_provider'))(this);
         } else {
             // Running in Node - Use the HTTP provider by default to make real requests
             this.provider = new (require('../lib/providers/http_provider'))(this);
@@ -79,7 +80,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '1.0.0-rc3';
+Client.Version = '1.0.0-rc4';
 
 /**
  * Expose the Provider base class

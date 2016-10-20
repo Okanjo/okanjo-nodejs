@@ -1,5 +1,5 @@
 /**
- * Date: 1/29/16 3:14 PM
+ * Date: 10/20/16 5:45 PM
  *
  * ----
  *
@@ -35,100 +35,28 @@
  * SOFTWARE.
  */
 
-global.$ = {
-
-};
-
+// Fake fetch like it would on window
+global.fetch = require('node-fetch');
 
 var should = require('should');
 
-describe('jQuery Provider', function() {
+describe('Fetch Provider', function() {
 
     var com = require('./common'),
         FauxApiServer = com.FauxApiServer,
         Client = require('../dist/client'),
         HttpProvider = require('../lib/providers/http_provider'),
-        jQueryProvider = require('../lib/providers/jquery_provider'),
+        FetchProvider = require('../lib/providers/fetch_provider'),
         util = require('util'),
         server, api;
 
     before(function(done) {
         server = new FauxApiServer();
 
-        var proxyApi = new Client({
-            host: '127.0.0.1',
-            port: server.port,
-            protocol: 'http',
-            timeout: 100,
-            provider: HttpProvider
-        });
-
-        var defaultRPCApi = new Client({
-            provider: jQueryProvider
-        });
-
-        defaultRPCApi.provider.rpcHost.should.be.a.String();
-
         api = new Client({
             rpcHost: 'http://127.0.0.1:'+server.port+'/rpc',
-            provider: jQueryProvider
+            provider: FetchProvider
         });
-
-        global.$.ajax = function(opts) {
-
-            var context = {
-                _isDone: false,
-                _opts: opts,
-                _doneCallback: null,
-                _failCallback: null,
-                _doneArgs: null,
-                _failArgs: null
-            };
-
-            /**
-             * @this context
-             */
-            context.done = function(callback) {
-                this._doneCallback = callback;
-                return this;
-            }.bind(context);
-
-            /**
-             * @this context
-             */
-            context.fail = function(callback) {
-                this._failCallback = callback;
-                return this;
-            }.bind(context);
-
-            var query = JSON.parse(opts.data);
-
-            delete query.key;
-            delete query.sessionToken;
-
-            process.nextTick(function() {
-
-                //console.log('BROKERING REQUEST', query);
-
-                proxyApi._makeRequest(query, function(err, res) {
-
-                    var xhr = {
-                            responseJSON: query.fakeHTML ? null : (err || res)
-                        },
-                        status = err ? "error" : "coo";
-
-                    if (err && context._failCallback) {
-                        context._failCallback(xhr, status, "error");
-                    } else if (context._doneCallback) {
-                        context._doneCallback(res, status, xhr);
-                    } else {
-                        console.error('NO CALLBACK :(')
-                    }
-                });
-            });
-
-            return context;
-        };
 
         server.start(done);
     });
@@ -143,18 +71,15 @@ describe('jQuery Provider', function() {
 
         // Fake proxy page (e.g. gist's fun unicorn)
         server.routes.push({
-            method: 'GET',
-            path: '/test',
+            method: 'POST',
+            path: '/rpc',
             handler: function(req, reply) {
                 if (received) received();
-                reply(200, { data: "all good!" });
+                reply(200, { statusCode: 200, data: "all good!" });
             }
         });
 
-        api._makeRequest({
-            method: 'GET',
-            path: '/test'
-        }, function(err, res) {
+        api.sessions.create({ email: "bogus@unit.test", password: "password" }, (err, res) => {
 
             should(err).be.empty();
             should(res).not.be.empty();
@@ -171,7 +96,13 @@ describe('jQuery Provider', function() {
                 path: '/test'
             });
 
-            received = done;
+            received = () => {
+
+                // Strip the route off
+                server.routes.splice(0, 1);
+                done();
+            };
+
 
             q.execute();
         });
@@ -184,18 +115,15 @@ describe('jQuery Provider', function() {
 
         // Fake proxy page (e.g. gist's fun unicorn)
         server.routes.push({
-            method: 'GET',
-            path: '/poop',
+            method: 'POST',
+            path: '/rpc',
             handler: function(req, reply) {
                 if (received) received();
-                reply(400, { data: "data no good!" });
+                reply(400, { statusCode: 400, error: "Nope", data: "data no good!" });
             }
         });
 
-        api._makeRequest({
-            method: 'GET',
-            path: '/poop'
-        }, function(err, res) {
+        api.products.list((err, res) => {
 
             should(err).not.be.empty();
             should(res).be.empty();
@@ -212,7 +140,11 @@ describe('jQuery Provider', function() {
                 path: '/poop'
             });
 
-            received = done;
+            received = () => {
+                // Strip the route off
+                server.routes.splice(0, 1);
+                done();
+            };
 
             q.execute();
         });
@@ -226,19 +158,16 @@ describe('jQuery Provider', function() {
 
         // Fake proxy page (e.g. gist's fun unicorn)
         server.routes.push({
-            method: 'GET',
-            path: '/balancer-down',
+            method: 'POST',
+            path: '/rpc',
             handler: function(req, reply) {
                 if (received) received();
 
-                reply(503, { data: "hey i'm a load balancer. Site is down!" }, { contentType: "text/html; charset=utf8" })
+                reply(503, "hey i'm a load balancer. Site is down!", { contentType: "text/html; charset=utf8", raw: true })
             }
         });
 
-        var q = api._makeRequest({
-            method: 'GET',
-            path: '/balancer-down'
-        });
+        var q = api.products.list();
 
         q.fakeHTML = true;
 
@@ -248,7 +177,7 @@ describe('jQuery Provider', function() {
             should(res).be.empty();
 
             err.statusCode.should.be.equal(503);
-            err.error.should.match(/error/i);
+            err.error.should.match(/unexpected token/i);
             err.message.should.match(/something went wrong/i);
 
             //com.log('err', err)

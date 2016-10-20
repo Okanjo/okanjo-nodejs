@@ -42,6 +42,7 @@ var should = require('should'),
     qs = require('querystring'),
     util = require('util');
 
+//noinspection JSUnusedGlobalSymbols
 module.exports = {
 
     verifyQuerySpec: function (q, spec) {
@@ -72,6 +73,7 @@ function FauxApiServer(config) {
 
     this.server = http.createServer(function(req, res) {
 
+
         var payload = "";
 
         req.on('data', function(chunk) {
@@ -80,6 +82,7 @@ function FauxApiServer(config) {
 
         req.on('end', function() {
             try {
+
                 // Get the route
                 var route = this._findRoute(req);
 
