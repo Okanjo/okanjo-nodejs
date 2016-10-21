@@ -161,6 +161,7 @@ FetchProvider.prototype.execute = function(query, callback) {
     var req = {
         method: this.rpcMethod,
         body: JSON.stringify(query),
+        credentials: 'same-origin', // preserve authentication
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json; charset=utf-8'
@@ -1684,7 +1685,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '1.0.0-rc5';
+Client.Version = '1.0.0-rc6';
 
 /**
  * Expose the Provider base class
