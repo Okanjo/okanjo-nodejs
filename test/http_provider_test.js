@@ -174,7 +174,7 @@ describe('HTTP Provider', function() {
             should(res).be.empty();
 
             err.statusCode.should.be.equal(503);
-            err.error.should.match(/invalid response received/i);
+            err.error.should.match(/Service Unavailable/i);
             err.message.should.match(/json.*html/i);
             err.data.should.match(/site is down/i);
 
@@ -183,6 +183,69 @@ describe('HTTP Provider', function() {
 
             done();
         });
+    });
+
+
+    it('handles lack of content-type gracefully', function(done) {
+
+        // Fake proxy page (e.g. gist's fun unicorn)
+        server.routes.push({
+            method: 'GET',
+            path: '/balancer-down2',
+            handler: function(req, reply) {
+                reply(503, { data: "hey i'm a load balancer. Site is down!" }, { contentType: null })
+            }
+        });
+
+        api._makeRequest({
+            method: 'GET',
+            path: '/balancer-down2'
+        }, function(err, res) {
+
+            should(err).not.be.empty();
+            should(res).be.empty();
+
+            err.statusCode.should.be.equal(503);
+            err.error.should.match(/Service Unavailable/i);
+            err.message.should.match(/content type/i);
+            err.data.should.match(/site is down/i);
+
+            //com.log('err', err)
+            //com.log('res', res)
+
+            done();
+        });
+    });
+
+
+    it('handles deals with network errors', function(done) {
+
+        const port = api.provider.port;
+        api.provider.port = 999;
+
+        api._makeRequest({
+            method: 'GET',
+            path: '/balancer-down'
+        }, function(err, res) {
+
+            should(err).not.be.empty();
+            should(res).be.empty();
+
+            err.statusCode.should.be.equal(503);
+            err.error.should.match(/ECONNREFUSED/i);
+            err.message.should.match(/something went wrong/i);
+            should(err.data).be.exactly(undefined);
+
+            //com.log('err', err)
+            //com.log('res', res
+            //
+
+            api.provider.port = port;
+
+            done();
+        });
+
+
     });
 
 
@@ -329,7 +392,7 @@ describe('HTTP Provider', function() {
             should(res).be.empty();
 
             err.statusCode.should.be.equal(301);
-            err.error.should.match(/invalid response received/i);
+            err.error.should.match(/Moved Permanently/i);
             err.message.should.match(/json.*html/i);
             err.data.should.match(/301 moved/i);
 

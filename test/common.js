@@ -146,9 +146,14 @@ FauxApiServer.prototype._reply = function(res, statusCode, payload, options) {
     if (typeof payload === "object" && !payload.statusCode) payload.statusCode = statusCode;
 
     // write the headers
-    res.writeHead(statusCode, {
-        'Content-Type': options.contentType || 'application/json; charset=utf8'
-    });
+    // if null, don't send a content type at all!
+    if (options.contentType !== null) {
+        res.writeHead(statusCode, {
+            'Content-Type': options.contentType !== undefined ? options.contentType : 'application/json; charset=utf8'
+        });
+    } else {
+        res.writeHead(statusCode, {});
+    }
 
     // write the response payload
     res.end(options.raw ? payload : JSON.stringify(payload));
