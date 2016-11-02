@@ -346,6 +346,10 @@ describe('HTTP Provider', function() {
             }
         });
 
+        api.config.onUnauthorizedResponse = function(/*err, query*/) {
+            should("THIS SHOULD NOT FIRE").should.be.exactly(false);
+        };
+
         api._makeRequest({
             method: 'POST',
             path: '/junkyard',
@@ -365,6 +369,65 @@ describe('HTTP Provider', function() {
 
 
             done();
+        });
+    });
+
+    it('handles 401 unauthorized hook', function(done) {
+        // Something blew up serializing JSON - or a man got in the middle. men, amirite?
+        server.routes.push({
+            method: 'GET',
+            path: '/unauthorized',
+            handler: function(req, reply) {
+                reply(401, { error: "Unauthorized" })
+            }
+        });
+
+        const state = {
+            hookFired: false
+        };
+
+        // No callback use-case
+        api.config.onUnauthorizedResponse = undefined;
+
+        api._makeRequest({
+            method: 'GET',
+            path: '/unauthorized'
+        }, function(err, res) {
+
+            //com.log('err', err)
+            //com.log('res', res)
+
+            should(err).be.an.Object();
+            should(res).be.empty();
+            err.statusCode.should.be.exactly(401);
+            err.error.should.be.exactly('Unauthorized');
+
+            api.config.onUnauthorizedResponse = function (err, query) {
+                should(err).be.an.Object();
+                err.statusCode.should.be.exactly(401);
+                err.error.should.be.exactly('Unauthorized');
+                query.should.be.an.Object();
+                state.hookFired = true;
+            };
+
+            api._makeRequest({
+                method: 'GET',
+                path: '/unauthorized'
+            }, function (err, res) {
+
+
+                //com.log('err', err)
+                //com.log('res', res)
+
+                should(err).be.an.Object();
+                should(res).be.empty();
+                err.statusCode.should.be.exactly(401);
+                err.error.should.be.exactly('Unauthorized');
+
+                state.hookFired.should.be.exactly(true);
+
+                done();
+            });
         });
     });
 

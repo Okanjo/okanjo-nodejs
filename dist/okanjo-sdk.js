@@ -72,6 +72,20 @@ Provider.prototype.execute = function(query, callback) {
     callback(new Error('Transport provider not implemented'), null);
 };
 
+/**
+ * Fires the client-given unauthorized hook in the event a response comes back 401-Unauthorized
+ * which generally means, your session is dead, jim.
+ * @param {object} err - The response payload
+ * @param {Query} query - The offending query
+ * @return {*}
+ * @protected
+ */
+Provider.prototype._unauthorizedHook = function(err, query) {
+    if (typeof this.client.config.onUnauthorizedResponse === "function") {
+        this.client.config.onUnauthorizedResponse(err, query);
+    }
+};
+
 
 /**
  * @callback requestCallback
@@ -197,10 +211,13 @@ FetchProvider.prototype.execute = function(query, callback) {
                 };
             }
 
+            // Check for unauthorized hook case
+            if (err.statusCode === 401) this._unauthorizedHook(err, query);
+
             if (callback) setImmediate(function() {
                 callback(err, null);
             });
-        });
+        }.bind(this));
 };
 
 
@@ -1685,7 +1702,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '1.0.0-rc7';
+Client.Version = '1.0.0-rc9';
 
 /**
  * Expose the Provider base class

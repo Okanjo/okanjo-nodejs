@@ -4,3 +4,4 @@ nope
 coverage
 out
 dist/partials
+.DS_Store
