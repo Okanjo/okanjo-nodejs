@@ -5,6 +5,9 @@ When stuff changes, it's described here.
 
 # 0.2.x
 
+## 2016-11-25 - v0.2.5
+ * Fixed edge cases when servers don't return a content type because they're lazy
+
 ## 2016-09-28 - v0.2.4
  * Really late push for protocol fix.
 
