@@ -642,6 +642,21 @@ Client._bindResources = function(Client) {
     Client.roles = {
         
         /**
+         * Creates a role for the given resource
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} callback
+         * @memberof Client.roles#
+         */
+        create: function(payload, callback) {
+            return Client._makeRequest({
+                action: 'role.create',
+                method: 'POST',
+                path: '/roles',
+                payload: payload
+            }, callback);
+        },
+        
+        /**
          * Retrieves a role.
          * @param {string} role_id – Object identifier.
          * @param {requestCallback} callback
