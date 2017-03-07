@@ -1702,7 +1702,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '1.0.0-rc10';
+Client.Version = '1.0.0-rc12';
 
 /**
  * Expose the Provider base class
@@ -2332,6 +2332,31 @@ Client._bindResources = function(Client) {
                     role_id: role_id
                 },
                 payload: payload
+            }, callback);
+        },
+        
+        /**
+         * List accounts that belong to a role.
+         * @param {string} role_id – Object identifier.
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} callback
+         * @memberof Client.roles#
+         */
+        list_accounts: function(role_id, query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                action: 'role.list_accounts',
+                method: 'GET',
+                path: '/roles/{role_id}/members',
+                pathParams: {
+                    role_id: role_id
+                },
+                query: query
             }, callback);
         },
         
