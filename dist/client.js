@@ -408,6 +408,65 @@ Client._bindResources = function(Client) {
                     placement_id: placement_id
                 }
             }, callback);
+        },
+        
+        /**
+         * Creates a placement test, used for A-B testing.
+         * @param {string} placement_id – Object identifier.
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} callback
+         * @memberof Client.placements#
+         */
+        create_test: function(placement_id, payload, callback) {
+            return Client._makeRequest({
+                action: 'placement.create_test',
+                method: 'POST',
+                path: '/placements/{placement_id}/tests',
+                pathParams: {
+                    placement_id: placement_id
+                },
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Deletes a placement test.
+         * @param {string} placement_id – Object identifier.
+         * @param {string} placement_test_id – Object identifier.
+         * @param {requestCallback} callback
+         * @memberof Client.placements#
+         */
+        delete_test: function(placement_id, placement_test_id, callback) {
+            return Client._makeRequest({
+                action: 'placement.delete_test',
+                method: 'DELETE',
+                path: '/placements/{placement_id}/tests/{placement_test_id}',
+                pathParams: {
+                    placement_id: placement_id,
+                    placement_test_id: placement_test_id
+                }
+            }, callback);
+        },
+        
+        /**
+         * Updates a placement test.
+         * @param {string} placement_id – Object identifier.
+         * @param {string} placement_test_id – Object identifier.
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} callback
+         * @memberof Client.placements#
+         */
+        update_test: function(placement_id, placement_test_id, payload, callback) {
+            return Client._makeRequest({
+                action: 'placement.update_test',
+                method: 'PUT',
+                path: '/placements/{placement_id}/tests/{placement_test_id}',
+                pathParams: {
+                    placement_id: placement_id,
+                    placement_test_id: placement_test_id
+                },
+                payload: payload
+            }, callback);
         }
         
     };
