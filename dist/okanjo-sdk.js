@@ -1702,7 +1702,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '1.0.0-rc12';
+Client.Version = '1.0.0';
 
 /**
  * Expose the Provider base class
