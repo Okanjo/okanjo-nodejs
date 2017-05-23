@@ -80,7 +80,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '1.0.0';
+Client.Version = '1.1.0';
 
 /**
  * Expose the Provider base class
@@ -458,7 +458,7 @@ Client._bindResources = function(Client) {
             return Client._makeRequest({
                 action: 'placement.list_tests',
                 method: 'GET',
-                path: '/placements/{placement_id}/tests/',
+                path: '/placements/{placement_id}/tests',
                 pathParams: {
                     placement_id: placement_id
                 }
