@@ -449,6 +449,42 @@ Client._bindResources = function(Client) {
         },
         
         /**
+         * Lists placement tests.
+         * @param {string} placement_id – Object identifier.
+         * @param {requestCallback} callback
+         * @memberof Client.placements#
+         */
+        list_tests: function(placement_id, callback) {
+            return Client._makeRequest({
+                action: 'placement.list_tests',
+                method: 'GET',
+                path: '/placements/{placement_id}/tests/',
+                pathParams: {
+                    placement_id: placement_id
+                }
+            }, callback);
+        },
+        
+        /**
+         * Retrieves a placement test.
+         * @param {string} placement_id – Object identifier.
+         * @param {string} placement_test_id – Object identifier.
+         * @param {requestCallback} callback
+         * @memberof Client.placements#
+         */
+        retrieve_test: function(placement_id, placement_test_id, callback) {
+            return Client._makeRequest({
+                action: 'placement.retrieve_test',
+                method: 'GET',
+                path: '/placements/{placement_id}/tests/{placement_test_id}',
+                pathParams: {
+                    placement_id: placement_id,
+                    placement_test_id: placement_test_id
+                }
+            }, callback);
+        },
+        
+        /**
          * Updates a placement test.
          * @param {string} placement_id – Object identifier.
          * @param {string} placement_test_id – Object identifier.
