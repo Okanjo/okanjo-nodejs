@@ -80,7 +80,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '1.1.0';
+Client.Version = '1.1.1';
 
 /**
  * Expose the Provider base class
@@ -229,6 +229,126 @@ Client._bindResources = function(Client) {
                 path: '/accounts/{account_id}/acl',
                 pathParams: {
                     account_id: account_id
+                }
+            }, callback);
+        }
+        
+    };
+    
+    /**
+     * Ads
+     * @namespace Client.ads
+     */
+    Client.ads = {
+        
+        /**
+         * Returns content to fill a placement.
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} callback
+         * @memberof Client.ads#
+         */
+        fill: function(payload, callback) {
+            return Client._makeRequest({
+                action: 'ads.fill',
+                method: 'POST',
+                path: '/ads',
+                payload: payload
+            }, callback);
+        }
+        
+    };
+    
+    /**
+     * Domains
+     * @namespace Client.domains
+     */
+    Client.domains = {
+        
+        /**
+         * Associates a domain with the property.
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} callback
+         * @memberof Client.domains#
+         */
+        create: function(payload, callback) {
+            return Client._makeRequest({
+                action: 'domain.create',
+                method: 'POST',
+                path: '/domains',
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Retrives a domain with the given name.
+         * @param {string} domain_name – Fully qualified domain name
+         * @param {requestCallback} callback
+         * @memberof Client.domains#
+         */
+        retrieve: function(domain_name, callback) {
+            return Client._makeRequest({
+                action: 'domain.retrieve',
+                method: 'GET',
+                path: '/domains/{domain_name}',
+                pathParams: {
+                    domain_name: domain_name
+                }
+            }, callback);
+        },
+        
+        /**
+         * List domains with the given criteria.
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} callback
+         * @memberof Client.domains#
+         */
+        list: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                action: 'domain.list',
+                method: 'GET',
+                path: '/domains',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Updates a domain with the given name.
+         * @param {string} domain_name – Fully qualified domain name
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} callback
+         * @memberof Client.domains#
+         */
+        update: function(domain_name, payload, callback) {
+            return Client._makeRequest({
+                action: 'domain.update',
+                method: 'PUT',
+                path: '/domains/{domain_name}',
+                pathParams: {
+                    domain_name: domain_name
+                },
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Dissociates a domain from its associated property.
+         * @param {string} domain_name – Fully qualified domain name
+         * @param {requestCallback} callback
+         * @memberof Client.domains#
+         */
+        delete: function(domain_name, callback) {
+            return Client._makeRequest({
+                action: 'domain.delete',
+                method: 'DELETE',
+                path: '/domains/{domain_name}',
+                pathParams: {
+                    domain_name: domain_name
                 }
             }, callback);
         }
@@ -449,42 +569,6 @@ Client._bindResources = function(Client) {
         },
         
         /**
-         * Lists placement tests.
-         * @param {string} placement_id – Object identifier.
-         * @param {requestCallback} callback
-         * @memberof Client.placements#
-         */
-        list_tests: function(placement_id, callback) {
-            return Client._makeRequest({
-                action: 'placement.list_tests',
-                method: 'GET',
-                path: '/placements/{placement_id}/tests',
-                pathParams: {
-                    placement_id: placement_id
-                }
-            }, callback);
-        },
-        
-        /**
-         * Retrieves a placement test.
-         * @param {string} placement_id – Object identifier.
-         * @param {string} placement_test_id – Object identifier.
-         * @param {requestCallback} callback
-         * @memberof Client.placements#
-         */
-        retrieve_test: function(placement_id, placement_test_id, callback) {
-            return Client._makeRequest({
-                action: 'placement.retrieve_test',
-                method: 'GET',
-                path: '/placements/{placement_id}/tests/{placement_test_id}',
-                pathParams: {
-                    placement_id: placement_id,
-                    placement_test_id: placement_test_id
-                }
-            }, callback);
-        },
-        
-        /**
          * Updates a placement test.
          * @param {string} placement_id – Object identifier.
          * @param {string} placement_test_id – Object identifier.
@@ -599,52 +683,6 @@ Client._bindResources = function(Client) {
                 pathParams: {
                     product_id: product_id
                 }
-            }, callback);
-        }
-        
-    };
-    
-    /**
-     * ProductMatch
-     * @namespace Client.productmatch
-     */
-    Client.productmatch = {
-        
-        /**
-         * Retrieves the specified product.
-         * @param {string} product_id – Object identifier.
-         * @param {requestCallback} callback
-         * @memberof Client.productmatch#
-         */
-        retrieve: function(product_id, callback) {
-            return Client._makeRequest({
-                action: 'productmatch.retrieve',
-                method: 'GET',
-                path: '/pm/products/{product_id}',
-                pathParams: {
-                    product_id: product_id
-                }
-            }, callback);
-        },
-        
-        /**
-         * Searches for products.
-         * @param {object} [query] - Filter arguments
-         * @param {requestCallback} callback
-         * @memberof Client.productmatch#
-         */
-        list: function(query, callback) {
-            // Shift optional arguments, if necessary
-            if (typeof query === "function") {
-                callback = query;
-                query = undefined;
-            }
-    
-            return Client._makeRequest({
-                action: 'productmatch.list',
-                method: 'GET',
-                path: '/pm/products',
-                query: query
             }, callback);
         }
         
