@@ -34,9 +34,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-
-var should = require('should'),
+const should = require('should'),
     http = require('http'),
     url = require('url'),
     qs = require('querystring'),
@@ -74,7 +72,7 @@ function FauxApiServer(config) {
     this.server = http.createServer(function(req, res) {
 
 
-        var payload = "";
+        let payload = "";
 
         req.on('data', function(chunk) {
             payload += chunk;
@@ -84,7 +82,7 @@ function FauxApiServer(config) {
             try {
 
                 // Get the route
-                var route = this._findRoute(req);
+                const route = this._findRoute(req);
 
                 // Attach the received payload
                 req.payload = payload;
@@ -122,6 +120,7 @@ FauxApiServer.prototype.start = function(callback) {
 };
 
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * Stop the server
  * @param callback
@@ -163,20 +162,20 @@ FauxApiServer.prototype._reply = function(res, statusCode, payload, options) {
 /**
  * Matches a route in the list
  * @param req
- * @return {T|{path, method, handler}|{path: (string|null|*|string), method: *, handler: handler}}
+ * @return {{path, method, handler}|{path: (string|null|*|string), method: *, handler: handler}}
  * @private
  */
 FauxApiServer.prototype._findRoute = function(req) {
 
-    var uri = url.parse(req.url),
+    const uri = url.parse(req.url),
         query = qs.parse(uri.query || "");
 
     req.uri = uri;
     req.query = query;
 
     // Find the first route that matches the spec
-    var route = this.routes.find(function(route) {
-        return req.method == route.method && uri.pathname == route.path;
+    const route = this.routes.find(function (route) {
+        return req.method === route.method && uri.pathname === route.path;
     }, this);
 
     // Return the matching route or not found if none matched

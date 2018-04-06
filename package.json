@@ -9,7 +9,7 @@
     "test": "npm run build && node_modules/.bin/mocha -R spec test",
     "cover": "node_modules/.bin/nyc node_modules/mocha/bin/_mocha --exit",
     "lint": "node_modules/.bin/eslint .",
-    "report": "npm run build && npm run cover && npm run lint"
+    "report": "npm run cover && npm run lint"
   },
   "repository": {
     "type": "git",

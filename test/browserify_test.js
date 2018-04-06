@@ -35,13 +35,9 @@
  * SOFTWARE.
  */
 
-
-var should = require('should');
-
-
 describe('Browser Mode', function() {
 
-    var Client = require('../dist/client'),
+    const Client = require('../dist/client'),
         Provider = require('../lib/provider');
 
     before(function() {
@@ -53,7 +49,7 @@ describe('Browser Mode', function() {
     });
 
     it('should select the correct transport provider', function() {
-        var api = new Client();
+        const api = new Client();
         api.provider.should.be.instanceof(Provider);
     });
 });

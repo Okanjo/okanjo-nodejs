@@ -35,11 +35,9 @@
  * SOFTWARE.
  */
 
-var should = require('should');
-
 describe('Client', function() {
 
-    var Client;
+    let Client;
 
     it('should require', function() {
         Client = require('../dist/client');
@@ -49,7 +47,7 @@ describe('Client', function() {
 
     it('should initialize with a config', function() {
 
-        var api = new Client({
+        const api = new Client({
             key: "ks_asdasd"
         });
 
@@ -59,13 +57,13 @@ describe('Client', function() {
     });
 
     it('should not require config to initialize', function() {
-        var api = new Client();
+        const api = new Client();
         api.should.be.instanceof(Client);
     });
 
     it('should instantiate with a key string', function() {
 
-        var api = new Client("ks_asdasd");
+        const api = new Client("ks_asdasd");
 
         api.config.key.should.be.equal('ks_asdasd');
     });

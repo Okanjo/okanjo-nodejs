@@ -40,22 +40,21 @@ global.$ = {
 };
 
 
-var should = require('should');
+const should = require('should');
 
 describe('jQuery Provider', function() {
 
-    var com = require('./common'),
+    const com = require('./common'),
         FauxApiServer = com.FauxApiServer,
         Client = require('../dist/client'),
         HttpProvider = require('../lib/providers/http_provider'),
-        jQueryProvider = require('../lib/providers/jquery_provider'),
-        util = require('util'),
-        server, api;
+        jQueryProvider = require('../lib/providers/jquery_provider');
+    let server, api;
 
     before(function(done) {
         server = new FauxApiServer();
 
-        var proxyApi = new Client({
+        const proxyApi = new Client({
             host: '127.0.0.1',
             port: server.port,
             protocol: 'http',
@@ -63,7 +62,7 @@ describe('jQuery Provider', function() {
             provider: HttpProvider
         });
 
-        var defaultRPCApi = new Client({
+        const defaultRPCApi = new Client({
             provider: jQueryProvider
         });
 
@@ -76,7 +75,7 @@ describe('jQuery Provider', function() {
 
         global.$.ajax = function(opts) {
 
-            var context = {
+            const context = {
                 _isDone: false,
                 _opts: opts,
                 _doneCallback: null,
@@ -89,6 +88,7 @@ describe('jQuery Provider', function() {
              * @this context
              */
             context.done = function(callback) {
+                // noinspection JSUnusedGlobalSymbols
                 this._doneCallback = callback;
                 return this;
             }.bind(context);
@@ -97,11 +97,12 @@ describe('jQuery Provider', function() {
              * @this context
              */
             context.fail = function(callback) {
+                // noinspection JSUnusedGlobalSymbols
                 this._failCallback = callback;
                 return this;
             }.bind(context);
 
-            var query = JSON.parse(opts.data);
+            const query = JSON.parse(opts.data);
 
             delete query.key;
             delete query.sessionToken;
@@ -112,7 +113,7 @@ describe('jQuery Provider', function() {
 
                 proxyApi._makeRequest(query, function(err, res) {
 
-                    var xhr = {
+                    const xhr = {
                             responseJSON: query.fakeHTML ? null : (err || res)
                         },
                         status = err ? "error" : "coo";
@@ -139,7 +140,7 @@ describe('jQuery Provider', function() {
 
     it('should broker a basic request', function(done) {
 
-        var received;
+        let received;
 
         // Fake proxy page (e.g. gist's fun unicorn)
         server.routes.push({
@@ -156,8 +157,8 @@ describe('jQuery Provider', function() {
             path: '/test'
         }, function(err, res) {
 
-            should(err).be.empty();
-            should(res).not.be.empty();
+            should(err).not.be.ok();
+            should(res).be.ok();
 
             res.statusCode.should.be.equal(200);
             res.data.should.match(/all good/);
@@ -166,7 +167,7 @@ describe('jQuery Provider', function() {
             //com.log('res', res)
 
             // And if we don't give a callback, it shouldn't care
-            var q = api._makeRequest({
+            const q = api._makeRequest({
                 method: 'GET',
                 path: '/test'
             });
@@ -180,7 +181,7 @@ describe('jQuery Provider', function() {
 
     it('should pass error states back', function(done) {
 
-        var received;
+        let received;
 
         // Fake proxy page (e.g. gist's fun unicorn)
         server.routes.push({
@@ -197,8 +198,8 @@ describe('jQuery Provider', function() {
             path: '/poop'
         }, function(err, res) {
 
-            should(err).not.be.empty();
-            should(res).be.empty();
+            should(err).be.ok();
+            should(res).not.be.ok();
 
             err.statusCode.should.be.equal(400);
             err.data.should.match(/no good/);
@@ -207,7 +208,7 @@ describe('jQuery Provider', function() {
             //com.log('res', res)
 
             // And if we don't give a callback, it shouldn't care
-            var q = api._makeRequest({
+            const q = api._makeRequest({
                 method: 'GET',
                 path: '/poop'
             });
@@ -222,7 +223,7 @@ describe('jQuery Provider', function() {
 
     it('should handle non-json replies ok', function(done) {
 
-        var received;
+        let received;
 
         // Fake proxy page (e.g. gist's fun unicorn)
         server.routes.push({
@@ -235,7 +236,7 @@ describe('jQuery Provider', function() {
             }
         });
 
-        var q = api._makeRequest({
+        const q = api._makeRequest({
             method: 'GET',
             path: '/balancer-down'
         });
@@ -244,8 +245,8 @@ describe('jQuery Provider', function() {
 
         q.execute(function(err, res) {
 
-            should(err).not.be.empty();
-            should(res).be.empty();
+            should(err).be.ok();
+            should(res).not.be.ok();
 
             err.statusCode.should.be.equal(503);
             err.error.should.match(/error/i);
@@ -289,7 +290,7 @@ describe('jQuery Provider', function() {
             //com.log('res', res)
 
             should(err).be.an.Object();
-            should(res).be.empty();
+            should(res).not.be.ok();
             err.statusCode.should.be.exactly(401);
             err.error.should.be.exactly('Unauthorized');
 
@@ -311,7 +312,7 @@ describe('jQuery Provider', function() {
                 //com.log('res', res)
 
                 should(err).be.an.Object();
-                should(res).be.empty();
+                should(res).not.be.ok();
                 err.statusCode.should.be.exactly(401);
                 err.error.should.be.exactly('Unauthorized');
 

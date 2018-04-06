@@ -34,24 +34,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-var should = require('should');
+const should = require('should');
 
 
 describe('Provider', function() {
 
 
-    var Client = require('../dist/client'),
+    const Client = require('../dist/client'),
         Provider = require('../lib/provider');
 
     it('should fire the callback when executed', function(done) {
 
-        var data = {
+        const data = {
             email: "joe@okanjo.com",
             password: "password"
         };
 
-        var api = new Client({
+        const api = new Client({
             key: "ks_asdasd",
             provider: Provider
         });
@@ -61,7 +60,7 @@ describe('Provider', function() {
             should(err).be.instanceof(Error);
             err.message.should.match(/not implemented/i);
 
-            should(res).be.empty();
+            should(res).not.be.ok();
 
             done();
         })

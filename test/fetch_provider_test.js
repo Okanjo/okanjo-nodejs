@@ -38,16 +38,15 @@
 // Fake fetch like it would on window
 global.fetch = require('node-fetch');
 
-var should = require('should');
+const should = require('should');
 
 describe('Fetch Provider', function() {
 
-    var com = require('./common'),
+    const com = require('./common'),
         FauxApiServer = com.FauxApiServer,
         Client = require('../dist/client'),
-        FetchProvider = require('../lib/providers/fetch_provider'),
-        util = require('util'),
-        server, api;
+        FetchProvider = require('../lib/providers/fetch_provider');
+    let server, api;
 
     before(function(done) {
         server = new FauxApiServer();
@@ -66,7 +65,7 @@ describe('Fetch Provider', function() {
 
     it('should broker a basic request', function(done) {
 
-        var received;
+        let received;
 
         // Fake proxy page (e.g. gist's fun unicorn)
         server.routes.push({
@@ -80,8 +79,8 @@ describe('Fetch Provider', function() {
 
         api.sessions.create({ email: "bogus@unit.test", password: "password" }, (err, res) => {
 
-            should(err).be.empty();
-            should(res).not.be.empty();
+            should(err).not.be.ok();
+            should(res).be.ok();
 
             res.statusCode.should.be.equal(200);
             res.data.should.match(/all good/);
@@ -90,7 +89,7 @@ describe('Fetch Provider', function() {
             //com.log('res', res)
 
             // And if we don't give a callback, it shouldn't care
-            var q = api._makeRequest({
+            const q = api._makeRequest({
                 method: 'GET',
                 path: '/test'
             });
@@ -110,7 +109,7 @@ describe('Fetch Provider', function() {
 
     it('should pass error states back', function(done) {
 
-        var received;
+        let received;
 
         // Fake proxy page (e.g. gist's fun unicorn)
         server.routes.push({
@@ -124,8 +123,8 @@ describe('Fetch Provider', function() {
 
         api.products.list((err, res) => {
 
-            should(err).not.be.empty();
-            should(res).be.empty();
+            should(err).be.ok();
+            should(res).not.be.ok();
 
             err.statusCode.should.be.equal(400);
             err.data.should.match(/no good/);
@@ -134,7 +133,7 @@ describe('Fetch Provider', function() {
             //com.log('res', res)
 
             // And if we don't give a callback, it shouldn't care
-            var q = api._makeRequest({
+            const q = api._makeRequest({
                 method: 'GET',
                 path: '/poop'
             });
@@ -153,7 +152,7 @@ describe('Fetch Provider', function() {
 
     it('should handle non-json replies ok', function(done) {
 
-        var received;
+        let received;
 
         // Fake proxy page (e.g. gist's fun unicorn)
         server.routes.push({
@@ -166,14 +165,14 @@ describe('Fetch Provider', function() {
             }
         });
 
-        var q = api.products.list();
+        const q = api.products.list();
 
         q.fakeHTML = true;
 
         q.execute(function(err, res) {
 
-            should(err).not.be.empty();
-            should(res).be.empty();
+            should(err).be.ok();
+            should(res).not.be.ok();
 
             err.statusCode.should.be.equal(503);
             err.error.should.match(/unexpected token/i);
@@ -197,7 +196,7 @@ describe('Fetch Provider', function() {
 
     it('handles 401 unauthorized hook', function(done) {
 
-        var received;
+        let received;
 
         // Fake proxy page (e.g. gist's fun unicorn)
         server.routes.push({
@@ -226,7 +225,7 @@ describe('Fetch Provider', function() {
             //com.log('res', res)
 
             should(err).be.an.Object();
-            should(res).be.empty();
+            should(res).not.be.ok();
             err.statusCode.should.be.exactly(401);
             err.error.should.be.exactly('Unauthorized');
 
@@ -253,7 +252,7 @@ describe('Fetch Provider', function() {
                 //com.log('res', res)
 
                 should(err).be.an.Object();
-                should(res).be.empty();
+                should(res).not.be.ok();
                 err.statusCode.should.be.exactly(401);
                 err.error.should.be.exactly('Unauthorized');
 

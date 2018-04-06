@@ -34,30 +34,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-
-var should = require('should');
+const should = require('should');
 
 
 describe('Utilities', function() {
 
-    var Util = require('../lib/util');
+    const Util = require('../lib/util');
 
 
     it('copy should deep copy', function() {
 
-        var original = {
+        const original = {
             key: 'str',
             val: 123,
-            arr: [ 1, 2, 3],
-            obj: { a: 1, b: 2 },
+            arr: [1, 2, 3],
+            obj: {a: 1, b: 2},
 
             nil: null,
 
-            arrDeep: [ 1, { c: 3, d: { e: 99, a: [ 3, 3 ] } } ]
+            arrDeep: [1, {c: 3, d: {e: 99, a: [3, 3]}}]
         };
 
-        var target = {
+        const target = {
             existing: true
         };
 
@@ -88,9 +86,9 @@ describe('Utilities', function() {
 
     it('should build a path correctly', function() {
 
-        var path = '/accounts/{accountId}/sessions/{sessionId}';
+        const path = '/accounts/{accountId}/sessions/{sessionId}';
 
-        var res = Util.buildPath(path, { accountId: '<nope>', sessionId: '?lols' });
+        const res = Util.buildPath(path, {accountId: '<nope>', sessionId: '?lols'});
 
         res.should.equal('/accounts/%3Cnope%3E/sessions/%3Flols');
     });
@@ -98,18 +96,18 @@ describe('Utilities', function() {
 
     it('should build a path correctly with underscores', function() {
 
-        var path = '/products/{product_id}';
+        const path = '/products/{product_id}';
 
-        var res = Util.buildPath(path, { product_id: 'product_dev_12n3j123123' });
+        const res = Util.buildPath(path, {product_id: 'product_dev_12n3j123123'});
 
         res.should.equal('/products/product_dev_12n3j123123');
     });
 
     it('should return an error if path build is missing params', function() {
 
-        var path = '/accounts/{accountId}/sessions/{sessionId}';
+        const path = '/accounts/{accountId}/sessions/{sessionId}';
 
-        var res = Util.buildPath(path, { accountId: 'ac_123' });
+        const res = Util.buildPath(path, {accountId: 'ac_123'});
 
         res.should.be.instanceof(Error);
         res.message.should.match(/Path parameter .* required/);

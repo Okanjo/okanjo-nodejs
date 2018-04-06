@@ -34,29 +34,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-
-var should = require('should');
+const should = require('should');
 
 
 describe('Query', function() {
 
 
-    var Client = require('../dist/client'),
+    const Client = require('../dist/client'),
         Query = require('../lib/query');
 
     it('can initialize with no extensions', function() {
 
-        var q = new Query();
+        const q = new Query();
         q.should.be.instanceof(Query);
 
     });
 
     it('can paginate a collection', function() {
 
-        var api = new Client();
+        const api = new Client();
 
-        var q = api.sessions.list().skip(1).take(2);
+        const q = api.sessions.list().skip(1).take(2);
 
         q.query.skip.should.equal(1);
         q.query.take.should.equal(2);
@@ -65,7 +63,7 @@ describe('Query', function() {
 
     it('helper functions work', function() {
 
-        var q = new Query();
+        const q = new Query();
 
         q.setAction('beer.drink');
         q.action.should.equal('beer.drink');
@@ -87,35 +85,35 @@ describe('Query', function() {
         q.setPathParams({ beer_id: 'pale ale' });
         q.getRealPath().should.equal('/path/to/pale%20ale');
 
-        should(q.query).be.empty();
+        should(q.query).not.be.ok();
         q.where({ free: true });
         q.query.free.should.be.exactly(true);
 
         q.getFullPath().should.equal('/path/to/pale%20ale?free=true');
 
-        should(q.payload).be.empty();
+        should(q.payload).not.be.ok();
         q.data({ head: 'full' });
         q.payload.head.should.be.equal('full');
 
-        should(q.query.skip).be.empty();
+        should(q.query.skip).not.be.ok();
         q.skip(1);
         q.query.skip.should.be.equal(1);
 
-        should(q.query.take).be.empty();
+        should(q.query.take).not.be.ok();
         q.take(1);
         q.query.take.should.be.equal(1);
 
-        should(q.key).be.empty();
+        should(q.key).not.be.ok();
         q.setKey("ak_74");
         q.key.should.be.equal("ak_74");
 
-        should(q.sessionToken).be.empty();
+        should(q.sessionToken).not.be.ok();
         q.setSessionToken("stok_12345");
         q.sessionToken.should.be.equal("stok_12345");
     });
 
     it('should handle full path edge cases', function() {
-        var q = new Query();
+        const q = new Query();
         q.getFullPath().should.equal('');
     })
 

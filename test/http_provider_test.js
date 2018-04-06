@@ -34,19 +34,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-
-var should = require('should');
+const should = require('should');
 
 
 describe('HTTP Provider', function() {
 
-    var com = require('./common'),
+    const com = require('./common'),
         FauxApiServer = com.FauxApiServer,
         Client = require('../dist/client'),
-        HttpProvider = require('../lib/providers/http_provider'),
-        util = require('util'),
-        server, api;
+        HttpProvider = require('../lib/providers/http_provider');
+    let server, api;
 
     before(function(done) {
         server = new FauxApiServer();
@@ -73,8 +70,8 @@ describe('HTTP Provider', function() {
             path: '/'
         }, function(err, res) {
 
-            should(err).not.be.empty();
-            should(res).be.empty();
+            should(err).be.ok();
+            should(res).not.be.ok();
 
             err.statusCode.should.be.equal(503);
             err.error.should.match(/ECONNREFUSED/);
@@ -90,7 +87,7 @@ describe('HTTP Provider', function() {
 
     it('should setup defaults to production', function() {
 
-        var api2 = new Client({
+        const api2 = new Client({
             provider: HttpProvider
         });
 
@@ -106,8 +103,8 @@ describe('HTTP Provider', function() {
             path: '/nope'
         }, function(err, res) {
 
-            should(err).not.be.empty();
-            should(res).be.empty();
+            should(err).be.ok();
+            should(res).not.be.ok();
 
             err.statusCode.should.be.equal(404);
 
@@ -137,8 +134,8 @@ describe('HTTP Provider', function() {
             path: '/slow'
         }, function(err, res) {
 
-            should(err).not.be.empty();
-            should(res).be.empty();
+            should(err).be.ok();
+            should(res).not.be.ok();
 
             err.statusCode.should.be.equal(504);
             err.error.should.match(/ETIMEDOUT/);
@@ -170,8 +167,8 @@ describe('HTTP Provider', function() {
             path: '/balancer-down'
         }, function(err, res) {
 
-            should(err).not.be.empty();
-            should(res).be.empty();
+            should(err).be.ok();
+            should(res).not.be.ok();
 
             err.statusCode.should.be.equal(503);
             err.error.should.match(/Service Unavailable/i);
@@ -202,8 +199,8 @@ describe('HTTP Provider', function() {
             path: '/balancer-down2'
         }, function(err, res) {
 
-            should(err).not.be.empty();
-            should(res).be.empty();
+            should(err).be.ok();
+            should(res).not.be.ok();
 
             err.statusCode.should.be.equal(503);
             err.error.should.match(/Service Unavailable/i);
@@ -228,8 +225,8 @@ describe('HTTP Provider', function() {
             path: '/balancer-down'
         }, function(err, res) {
 
-            should(err).not.be.empty();
-            should(res).be.empty();
+            should(err).be.ok();
+            should(res).not.be.ok();
 
             err.statusCode.should.be.equal(503);
             err.error.should.match(/ECONNREFUSED/i);
@@ -273,8 +270,8 @@ describe('HTTP Provider', function() {
             path: '/mismatch-codes'
         }, function(err, res) {
 
-            should(err).not.be.empty();
-            should(res).be.empty();
+            should(err).be.ok();
+            should(res).not.be.ok();
 
             err.statusCode.should.be.equal(400);
             err.error.should.match(/data is poop/i);
@@ -291,8 +288,8 @@ describe('HTTP Provider', function() {
                 //com.log('res', res)
 
 
-                should(err).not.be.empty();
-                should(res).be.empty();
+                should(err).be.ok();
+                should(res).not.be.ok();
 
                 err.statusCode.should.be.equal(400);
                 err.error.should.match(/wild/i);
@@ -318,8 +315,8 @@ describe('HTTP Provider', function() {
             path: '/bad-json'
         }, function(err, res) {
 
-            should(err).not.be.empty();
-            should(res).be.empty();
+            should(err).be.ok();
+            should(res).not.be.ok();
 
             err.statusCode.should.be.equal(500);
             err.error.should.match(/response parsing error/i);
@@ -360,11 +357,11 @@ describe('HTTP Provider', function() {
             //com.log('err', err)
             //com.log('res', res)
 
-            should(err).be.empty();
-            should(res).not.be.empty();
+            should(err).not.be.ok();
+            should(res).be.ok();
 
             res.statusCode.should.be.equal(200);
-            should(res.error).be.empty();
+            should(res.error).not.be.ok();
             res.data.should.be.a.String().and.equal('{"hi":"there"}');
 
 
@@ -398,7 +395,7 @@ describe('HTTP Provider', function() {
             //com.log('res', res)
 
             should(err).be.an.Object();
-            should(res).be.empty();
+            should(res).not.be.ok();
             err.statusCode.should.be.exactly(401);
             err.error.should.be.exactly('Unauthorized');
 
@@ -420,7 +417,7 @@ describe('HTTP Provider', function() {
                 //com.log('res', res)
 
                 should(err).be.an.Object();
-                should(res).be.empty();
+                should(res).not.be.ok();
                 err.statusCode.should.be.exactly(401);
                 err.error.should.be.exactly('Unauthorized');
 
@@ -434,7 +431,7 @@ describe('HTTP Provider', function() {
 
     it('should POST data to a secure server, for better, for worse', function(done) {
 
-        var api3 = new Client({
+        const api3 = new Client({
             host: 'okanjo.com',
             provider: HttpProvider
         });
@@ -451,8 +448,8 @@ describe('HTTP Provider', function() {
             //com.log('err', err)
             //com.log('res', res)
 
-            should(err).not.be.empty();
-            should(res).be.empty();
+            should(err).be.ok();
+            should(res).not.be.ok();
 
             // err.statusCode.should.be.equal(301);
             // err.error.should.match(/Moved Permanently/i);
@@ -471,21 +468,21 @@ describe('HTTP Provider', function() {
     it('should encode credentials properly', function() {
 
         // Encode it
-        var authorization = api.provider._getAuthorization("api key", "session token");
+        const authorization = api.provider._getAuthorization("api key", "session token");
 
         authorization.should.be.a.String().and.not.empty();
 
         // Decode it
-        var parts = authorization.split(/\s+/);
+        const parts = authorization.split(/\s+/);
 
         parts[0].toLowerCase().should.equal('basic');
 
         parts.length.should.be.exactly(2);
 
-        var credentialsPart = new Buffer(parts[1], 'base64').toString();
-        var sep = credentialsPart.indexOf(':');
-        var key = sep === -1 ? credentialsPart : credentialsPart.slice(0, sep);
-        var token = sep === -1 ? '' : credentialsPart.slice(sep + 1);
+        const credentialsPart = new Buffer(parts[1], 'base64').toString();
+        const sep = credentialsPart.indexOf(':');
+        const key = sep === -1 ? credentialsPart : credentialsPart.slice(0, sep);
+        const token = sep === -1 ? '' : credentialsPart.slice(sep + 1);
 
         key.should.equal('api key');
         token.should.equal('session token');
@@ -495,16 +492,16 @@ describe('HTTP Provider', function() {
         authorization.should.be.a.String().and.not.empty();
 
         // Decode it
-        var parts = authorization.split(/\s+/);
+        const parts = authorization.split(/\s+/);
 
         parts[0].toLowerCase().should.equal('basic');
 
         parts.length.should.be.exactly(2);
 
-        var credentialsPart = new Buffer(parts[1], 'base64').toString();
-        var sep = credentialsPart.indexOf(':');
-        var key = sep === -1 ? credentialsPart : credentialsPart.slice(0, sep);
-        var token = sep === -1 ? '' : credentialsPart.slice(sep + 1);
+        const credentialsPart = new Buffer(parts[1], 'base64').toString();
+        const sep = credentialsPart.indexOf(':');
+        const key = sep === -1 ? credentialsPart : credentialsPart.slice(0, sep);
+        const token = sep === -1 ? '' : credentialsPart.slice(sep + 1);
 
         return {
             key: key,
@@ -515,12 +512,12 @@ describe('HTTP Provider', function() {
     it('should encode just the key properly', function() {
 
         // Encode it
-        var authorization = api.provider._getAuthorization("api key");
+        const authorization = api.provider._getAuthorization("api key");
 
-        var res = decodeAuthorization(authorization);
+        const res = decodeAuthorization(authorization);
 
         res.key.should.equal('api key');
-        should(res.token).be.empty();
+        should(res.token).not.be.ok();
     });
 
 
@@ -531,9 +528,9 @@ describe('HTTP Provider', function() {
             path: '/secret',
             handler: function(req, reply) {
 
-                should(req.headers.authorization).not.be.empty();
+                should(req.headers.authorization).be.ok();
 
-                var credentials = decodeAuthorization(req.headers['authorization']);
+                const credentials = decodeAuthorization(req.headers['authorization']);
 
                 credentials.key.should.equal('keeeey');
                 credentials.token.should.equal('sssshhhh');
@@ -554,11 +551,11 @@ describe('HTTP Provider', function() {
             //com.log('err', err)
             //com.log('res', res)
 
-            should(err).be.empty();
-            should(res).not.be.empty();
+            should(err).not.be.ok();
+            should(res).be.ok();
 
             res.statusCode.should.be.equal(200);
-            should(res.error).be.empty();
+            should(res.error).not.be.ok();
             res.data.should.be.a.String().and.equal('thanks');
 
 
