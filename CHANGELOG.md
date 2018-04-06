@@ -3,6 +3,11 @@
 
 When stuff changes, it's described here.
 
+# 1.2.0
+Total rewrite from previous versions
+ * SDK is now generated from API spec, eliminating consistency and repetitive releases 
+ * Removed deprecated marketplace components 
+
 # 0.2.x
 
 ## 2016-11-25 - v0.2.5

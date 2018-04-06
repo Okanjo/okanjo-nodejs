@@ -5,3 +5,5 @@ coverage
 out
 dist/partials
 .DS_Store
+*.tgz
+.nyc_output

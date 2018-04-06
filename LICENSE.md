@@ -1,9 +1,7 @@
 
-(c) Okanjo Partners Inc
+(c) Okanjo Partners Inc and contributors
 https://okanjo.com
 support@okanjo.com
-
-https://github.com/okanjo/okanjo-nodejs
 
 ----
 

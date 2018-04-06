@@ -1,3 +1,4 @@
+"use strict";
 
 const Gulp = require('gulp');
 const Concat = require('gulp-concat');
@@ -12,7 +13,7 @@ const Del = require('del');
 const Browserify = require('browserify');
 
 const ApiSpecification = require('./lib/helpers/api_spec');
-var api = null;
+let api = null;
 
 // Sources
 const resourceTemplateDir = 'templates'; // string or array

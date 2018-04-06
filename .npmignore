@@ -4,3 +4,7 @@ coverage
 test
 out
 dist/partials
+test
+*.tgz
+.nyc_output
+docs
