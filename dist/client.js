@@ -80,7 +80,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '1.1.1';
+Client.Version = '1.2.0';
 
 /**
  * Expose the Provider base class
@@ -251,7 +251,7 @@ Client._bindResources = function(Client) {
             return Client._makeRequest({
                 action: 'ads.fill',
                 method: 'POST',
-                path: '/ads',
+                path: '/content',
                 payload: payload
             }, callback);
         }

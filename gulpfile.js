@@ -39,7 +39,7 @@ Gulp.task('get_spec', [], (done) => {
             done(err);
         } else {
             api = apiSpec;
-            //console.log(api);
+            // console.log(api);
             //console.log(api.getResourceMapArray());
             done();
         }
