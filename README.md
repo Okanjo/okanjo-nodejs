@@ -1,6 +1,6 @@
 # Okanjo API – JavaScript SDK
 
-[![Build Status](https://travis-ci.org/Okanjo/okanjo-app-server-docs.svg?branch=master)](https://travis-ci.org/Okanjo/okanjo-app-server-docs) [![Coverage Status](https://coveralls.io/repos/github/Okanjo/okanjo-app-server-docs/badge.svg?branch=master)](https://coveralls.io/github/Okanjo/okanjo-app-server-docs?branch=master)
+[![Build Status](https://travis-ci.org/Okanjo/okanjo-nodejs.svg?branch=master)](https://travis-ci.org/Okanjo/okanjo-nodejs) [![Coverage Status](https://coveralls.io/repos/github/Okanjo/okanjo-nodejs/badge.svg?branch=master)](https://coveralls.io/github/Okanjo/okanjo-nodejs?branch=master)
 
 This library provides easy integration with the Okanjo platform.
 
