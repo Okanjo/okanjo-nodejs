@@ -1,13 +1,14 @@
 {
-  "name": "okanjo",
-  "version": "0.2.5",
-  "description": "Okanjo JavaScript Software Development Kit",
-  "main": "./index.js",
-  "bin": {
-    "okanjo-cli": "./bin/console.js"
-  },
+  "name": "@okanjo/okanjo-sdk",
+  "version": "1.2.0",
+  "description": "Use the Okanjo API in JavaScript!",
+  "main": "dist/client.js",
   "scripts": {
-    "test": "mocha test"
+    "build": "node_modules/.bin/gulp build",
+    "test": "npm run build && node_modules/.bin/mocha test",
+    "cover": "rm -f coverage/coverage*.json && node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- -R spec && node_modules/.bin/istanbul report",
+    "hint": "node_modules/.bin/jshint ./lib/**/*.js",
+    "report": "npm run build && npm run cover && npm run hint"
   },
   "repository": {
     "type": "git",
@@ -15,6 +16,7 @@
   },
   "keywords": [
     "Okanjo",
+    "API",
     "Ecommerce",
     "Marketplace",
     "Ads",
@@ -26,13 +28,23 @@
   "bugs": {
     "url": "https://github.com/Okanjo/okanjo-nodejs/issues"
   },
-  "dependencies": {
-    "qs": "~0.6.6"
-  },
   "devDependencies": {
-    "async": "^1.4.0",
-    "mocha": "^2.2.1",
-    "requestbin": "^1.1.1",
-    "should": "^5.2.0"
+    "browserify": "^13.0.0",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-nunjucks-render": "^2.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace": "^0.5.4",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^2.0.0",
+    "istanbul": "^0.4.2",
+    "jshint": "^2.9.1",
+    "mocha": "^2.4.1",
+    "needle": "^1.1.2",
+    "node-fetch": "^1.6.3",
+    "should": "^8.2.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
   }
 }

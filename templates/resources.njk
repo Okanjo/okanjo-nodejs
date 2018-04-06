@@ -1,0 +1,15 @@
+/* istanbul ignore next: out of scope */
+Client._bindResources = function(Client) {
+    {% for resource in resources %}
+    /**
+     * {{ resource.pretty }}
+     * @namespace Client.{{ resource.pluralized }}
+     */
+    Client.{{ resource.pluralized }} = {
+        {% for route in resource.routes %}
+        {% include "route.njk" %}
+        {% endfor %}
+    };
+    {% endfor %}
+
+};
