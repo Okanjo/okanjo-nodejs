@@ -80,7 +80,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '1.2.0';
+Client.Version = '1.4.0';
 
 /**
  * Expose the Provider base class
@@ -252,6 +252,86 @@ Client._bindResources = function(Client) {
                 action: 'ads.fill',
                 method: 'POST',
                 path: '/content',
+                payload: payload
+            }, callback);
+        }
+        
+    };
+    
+    /**
+     * Articles
+     * @namespace Client.articles
+     */
+    Client.articles = {
+        
+        /**
+         * Creates an article for distribution
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} callback
+         * @memberof Client.articles#
+         */
+        create: function(payload, callback) {
+            return Client._makeRequest({
+                action: 'article.create',
+                method: 'POST',
+                path: '/articles',
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Retrieves an article
+         * @param {string} url – URL of the article
+         * @param {requestCallback} callback
+         * @memberof Client.articles#
+         */
+        retrieve: function(url, callback) {
+            return Client._makeRequest({
+                action: 'article.retrieve',
+                method: 'GET',
+                path: '/articles/{url}',
+                pathParams: {
+                    url: url
+                }
+            }, callback);
+        },
+        
+        /**
+         * Lists articles that meet the given criteria.
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} callback
+         * @memberof Client.articles#
+         */
+        list: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                action: 'article.list',
+                method: 'GET',
+                path: '/articles',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Modifies an article
+         * @param {string} url – URL of the article
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} callback
+         * @memberof Client.articles#
+         */
+        update: function(url, payload, callback) {
+            return Client._makeRequest({
+                action: 'article.update',
+                method: 'PUT',
+                path: '/articles/{url}',
+                pathParams: {
+                    url: url
+                },
                 payload: payload
             }, callback);
         }

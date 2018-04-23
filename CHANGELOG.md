@@ -3,6 +3,9 @@
 
 When stuff changes, it's described here.
 
+# 1.4.0
+Regenerated for new article routes
+
 # 1.3.0
 Total rewrite from previous versions
  * SDK is now generated from API spec, eliminating consistency and repetitive releases 
