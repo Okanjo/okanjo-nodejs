@@ -360,7 +360,7 @@ Client._bindResources = function(Client) {
         },
         
         /**
-         * Retrives a domain with the given name.
+         * Retrieves a domain with the given name.
          * @param {string} domain_name – Fully qualified domain name
          * @param {requestCallback} callback
          * @memberof Client.domains#
@@ -843,6 +843,103 @@ Client._bindResources = function(Client) {
                     property_id: property_id
                 },
                 payload: payload
+            }, callback);
+        }
+        
+    };
+    
+    /**
+     * Resource Sets
+     * @namespace Client.resource_sets
+     */
+    Client.resource_sets = {
+        
+        /**
+         * Creates a new resource set.
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} callback
+         * @memberof Client.resource_sets#
+         */
+        create: function(payload, callback) {
+            return Client._makeRequest({
+                action: 'resource_set.create',
+                method: 'POST',
+                path: '/resource-sets',
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Retrieves a resource set with the given name.
+         * @param {string} resource_set_name – Name of the resource set.
+         * @param {requestCallback} callback
+         * @memberof Client.resource_sets#
+         */
+        retrieve: function(resource_set_name, callback) {
+            return Client._makeRequest({
+                action: 'resource_set.retrieve',
+                method: 'GET',
+                path: '/resource-sets/{resource_set_name}',
+                pathParams: {
+                    resource_set_name: resource_set_name
+                }
+            }, callback);
+        },
+        
+        /**
+         * List resource sets with the given criteria.
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} callback
+         * @memberof Client.resource_sets#
+         */
+        list: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                action: 'resource_set.list',
+                method: 'GET',
+                path: '/resource-sets',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Updates a resource set with the given name.
+         * @param {string} resource_set_name – Name of the resource set.
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} callback
+         * @memberof Client.resource_sets#
+         */
+        update: function(resource_set_name, payload, callback) {
+            return Client._makeRequest({
+                action: 'resource_set.update',
+                method: 'PUT',
+                path: '/resource-sets/{resource_set_name}',
+                pathParams: {
+                    resource_set_name: resource_set_name
+                },
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Removes a resource set.
+         * @param {string} resource_set_name – Name of the resource set.
+         * @param {requestCallback} callback
+         * @memberof Client.resource_sets#
+         */
+        delete: function(resource_set_name, callback) {
+            return Client._makeRequest({
+                action: 'resource_set.delete',
+                method: 'DELETE',
+                path: '/resource-sets/{resource_set_name}',
+                pathParams: {
+                    resource_set_name: resource_set_name
+                }
             }, callback);
         }
         
