@@ -3,6 +3,10 @@
 
 When stuff changes, it's described here.
 
+## 1.7.1
+ * Updated HTTP Provider to return a promise
+ * Updated supporting tests
+
 ## 1.6.1
  * Updated jsdoc to show that callback is optional
 

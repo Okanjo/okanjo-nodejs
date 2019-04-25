@@ -96,7 +96,6 @@ describe('HTTP Provider', function() {
         api2.provider.port.should.equal(443);
     });
 
-
     it('404 returns error', function(done) {
         api._makeRequest({
             method: 'GET',
@@ -114,7 +113,6 @@ describe('HTTP Provider', function() {
             done();
         });
     });
-
 
     it('handles timeout gracefully', function(done) {
 
@@ -150,7 +148,6 @@ describe('HTTP Provider', function() {
         });
     });
 
-
     it('handles non-json gracefully', function(done) {
 
         // Fake proxy page (e.g. gist's fun unicorn)
@@ -181,7 +178,6 @@ describe('HTTP Provider', function() {
             done();
         });
     });
-
 
     it('handles lack of content-type gracefully', function(done) {
 
@@ -214,7 +210,6 @@ describe('HTTP Provider', function() {
         });
     });
 
-
     it('handles deals with network errors', function(done) {
 
         const port = api.provider.port;
@@ -244,7 +239,6 @@ describe('HTTP Provider', function() {
 
 
     });
-
 
     it('handles mis-matched status codes correctly (e.g. jsonp)', function(done) {
 
@@ -299,7 +293,6 @@ describe('HTTP Provider', function() {
         });
     });
 
-
     it('handles bad JSON gracefully', function(done) {
         // Something blew up serializing JSON - or a man got in the middle. men, amirite?
         server.routes.push({
@@ -330,9 +323,6 @@ describe('HTTP Provider', function() {
         });
     });
 
-
-
-
     it('POSTs data properly', function(done) {
         // Something blew up serializing JSON - or a man got in the middle. men, amirite?
         server.routes.push({
@@ -353,9 +343,8 @@ describe('HTTP Provider', function() {
             payload: { hi: "there"}
         }, function(err, res) {
 
-
-            //com.log('err', err)
-            //com.log('res', res)
+            // com.log('err', err)
+            // com.log('res', res)
 
             should(err).not.be.ok();
             should(res).be.ok();
@@ -367,6 +356,42 @@ describe('HTTP Provider', function() {
 
             done();
         });
+    });
+
+    it('POSTs data properly via promise', function(done) {
+        // Something blew up serializing JSON - or a man got in the middle. men, amirite?
+        server.routes.push({
+            method: 'POST',
+            path: '/junkyard',
+            handler: function(req, reply) {
+                reply(200, { data: req.payload, error: null })
+            }
+        });
+
+        api.config.onUnauthorizedResponse = function(/*err, query*/) {
+            should("THIS SHOULD NOT FIRE").should.be.exactly(false);
+        };
+
+        const q = api._makeRequest({
+            method: 'POST',
+            path: '/junkyard',
+            payload: { hi: "there"}
+        });
+
+        q.execute().then(res => {
+
+            // com.log('err', err)
+            // com.log('res', res)
+
+            should(res).be.ok();
+
+            res.statusCode.should.be.equal(200);
+            should(res.error).not.be.ok();
+            res.data.should.be.a.String().and.equal('{"hi":"there"}');
+
+
+            done();
+        })
     });
 
     it('handles 401 unauthorized hook', function(done) {
@@ -428,6 +453,69 @@ describe('HTTP Provider', function() {
         });
     });
 
+    it('handles errors as promised', function(done) {
+        // Something blew up serializing JSON - or a man got in the middle. men, amirite?
+        server.routes.push({
+            method: 'GET',
+            path: '/unauthorized',
+            handler: function(req, reply) {
+                reply(401, { error: "Unauthorized" })
+            }
+        });
+
+        const state = {
+            hookFired: false
+        };
+
+        // No callback use-case
+        api.config.onUnauthorizedResponse = undefined;
+
+        let q = api._makeRequest({
+            method: 'GET',
+            path: '/unauthorized'
+        });
+
+        q.execute()
+            .then(res => done(res)) // fail
+            .catch(err => {
+
+            //com.log('err', err)
+            //com.log('res', res)
+
+            should(err).be.an.Object();
+            err.statusCode.should.be.exactly(401);
+            err.error.should.be.exactly('Unauthorized');
+
+            api.config.onUnauthorizedResponse = function (err, query) {
+                should(err).be.an.Object();
+                err.statusCode.should.be.exactly(401);
+                err.error.should.be.exactly('Unauthorized');
+                query.should.be.an.Object();
+                state.hookFired = true;
+            };
+
+            let q = api._makeRequest({
+                method: 'GET',
+                path: '/unauthorized'
+            });
+
+            q.execute()
+                .then(res => done(res)) // nope
+                .catch(err => {
+
+                //com.log('err', err)
+                //com.log('res', res)
+
+                should(err).be.an.Object();
+                err.statusCode.should.be.exactly(401);
+                err.error.should.be.exactly('Unauthorized');
+
+                state.hookFired.should.be.exactly(true);
+
+                done();
+            });
+        });
+    });
 
     it('should POST data to a secure server, for better, for worse', function(done) {
 
@@ -519,7 +607,6 @@ describe('HTTP Provider', function() {
         res.key.should.equal('api key');
         should(res.token).not.be.ok();
     });
-
 
     it('should automatically include authorization in requests', function(done) {
         // Check key and session token
