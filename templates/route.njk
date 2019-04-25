@@ -21,7 +21,8 @@
     {%- set pathParamList = "" if paramList|length == 0 else paramList|join(', ') %}
     {%- set methodParamList = ", " if paramList|length > 0 else "" %}
     {%- set methodParamList = methodParamList + methodParams|join(', ') + (", " if methodParams|length > 0 else "") %}
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.{{ route.resource.pluralized }}#
          */
         {{ route.action.name }}: function({{ pathParamList }}{{ methodParamList }}callback) {

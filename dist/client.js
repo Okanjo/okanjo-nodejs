@@ -80,7 +80,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '1.6.0';
+Client.Version = '1.6.1';
 
 /**
  * Expose the Provider base class
@@ -132,7 +132,8 @@ Client._bindResources = function(Client) {
         /**
          * Registers a new Okanjo account
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.accounts#
          */
         create: function(payload, callback) {
@@ -147,7 +148,8 @@ Client._bindResources = function(Client) {
         /**
          * Retrieves an account
          * @param {string} account_id – Object identifier.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.accounts#
          */
         retrieve: function(account_id, callback) {
@@ -164,7 +166,8 @@ Client._bindResources = function(Client) {
         /**
          * Returns manageable accounts, or accounts on a given resource.
          * @param {object} [query] - Filter arguments
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.accounts#
          */
         list: function(query, callback) {
@@ -186,7 +189,8 @@ Client._bindResources = function(Client) {
          * Updates an account
          * @param {string} account_id – Object identifier.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.accounts#
          */
         update: function(account_id, payload, callback) {
@@ -204,7 +208,8 @@ Client._bindResources = function(Client) {
         /**
          * Requests a password reset for an account with the given email address
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.accounts#
          */
         recover: function(payload, callback) {
@@ -219,7 +224,8 @@ Client._bindResources = function(Client) {
         /**
          * Retrieves an account's access control list. This provides an overview of what the account has access to.
          * @param {string} account_id – Account id for the acl to be retrieved.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.accounts#
          */
         retrieve_acl: function(account_id, callback) {
@@ -244,7 +250,8 @@ Client._bindResources = function(Client) {
         /**
          * Returns content to fill a placement.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.ads#
          */
         fill: function(payload, callback) {
@@ -267,7 +274,8 @@ Client._bindResources = function(Client) {
         /**
          * Creates an article for distribution
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.articles#
          */
         create: function(payload, callback) {
@@ -282,7 +290,8 @@ Client._bindResources = function(Client) {
         /**
          * Retrieves an article
          * @param {string} url – URL of the article
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.articles#
          */
         retrieve: function(url, callback) {
@@ -299,7 +308,8 @@ Client._bindResources = function(Client) {
         /**
          * Lists articles that meet the given criteria.
          * @param {object} [query] - Filter arguments
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.articles#
          */
         list: function(query, callback) {
@@ -321,7 +331,8 @@ Client._bindResources = function(Client) {
          * Modifies an article
          * @param {string} url – URL of the article
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.articles#
          */
         update: function(url, payload, callback) {
@@ -347,7 +358,8 @@ Client._bindResources = function(Client) {
         /**
          * Associates a domain with the property.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.domains#
          */
         create: function(payload, callback) {
@@ -362,7 +374,8 @@ Client._bindResources = function(Client) {
         /**
          * Retrieves a domain with the given name.
          * @param {string} domain_name – Fully qualified domain name
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.domains#
          */
         retrieve: function(domain_name, callback) {
@@ -379,7 +392,8 @@ Client._bindResources = function(Client) {
         /**
          * List domains with the given criteria.
          * @param {object} [query] - Filter arguments
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.domains#
          */
         list: function(query, callback) {
@@ -401,7 +415,8 @@ Client._bindResources = function(Client) {
          * Updates a domain with the given name.
          * @param {string} domain_name – Fully qualified domain name
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.domains#
          */
         update: function(domain_name, payload, callback) {
@@ -419,7 +434,8 @@ Client._bindResources = function(Client) {
         /**
          * Dissociates a domain from its associated property.
          * @param {string} domain_name – Fully qualified domain name
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.domains#
          */
         delete: function(domain_name, callback) {
@@ -444,7 +460,8 @@ Client._bindResources = function(Client) {
         /**
          * Creates a new organization under the current user.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.organizations#
          */
         create: function(payload, callback) {
@@ -459,7 +476,8 @@ Client._bindResources = function(Client) {
         /**
          * Gets a particular organization if visible to the current user.
          * @param {string} org_id – Object identifier.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.organizations#
          */
         retrieve: function(org_id, callback) {
@@ -476,7 +494,8 @@ Client._bindResources = function(Client) {
         /**
          * Lists organizations visible to the current user.
          * @param {object} [query] - Filter arguments
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.organizations#
          */
         list: function(query, callback) {
@@ -498,7 +517,8 @@ Client._bindResources = function(Client) {
          * Updates an organization
          * @param {string} org_id – Object identifier.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.organizations#
          */
         update: function(org_id, payload, callback) {
@@ -524,7 +544,8 @@ Client._bindResources = function(Client) {
         /**
          * Creates a ProductMatch placement
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.placements#
          */
         create: function(payload, callback) {
@@ -539,7 +560,8 @@ Client._bindResources = function(Client) {
         /**
          * Retrieves a ProductMatch placement
          * @param {string} placement_id – Object identifier.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.placements#
          */
         retrieve: function(placement_id, callback) {
@@ -556,7 +578,8 @@ Client._bindResources = function(Client) {
         /**
          * List ProductMatch placements
          * @param {object} [query] - Filter arguments
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.placements#
          */
         list: function(query, callback) {
@@ -578,7 +601,8 @@ Client._bindResources = function(Client) {
          * Updates a ProductMatch placement
          * @param {string} placement_id – Object identifier.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.placements#
          */
         update: function(placement_id, payload, callback) {
@@ -596,7 +620,8 @@ Client._bindResources = function(Client) {
         /**
          * Deletes a ProductMatch placement
          * @param {string} placement_id – Object identifier.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.placements#
          */
         delete: function(placement_id, callback) {
@@ -614,7 +639,8 @@ Client._bindResources = function(Client) {
          * Creates a placement test, used for A-B testing.
          * @param {string} placement_id – Object identifier.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.placements#
          */
         create_test: function(placement_id, payload, callback) {
@@ -633,7 +659,8 @@ Client._bindResources = function(Client) {
          * Deletes a placement test.
          * @param {string} placement_id – Object identifier.
          * @param {string} placement_test_id – Object identifier.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.placements#
          */
         delete_test: function(placement_id, placement_test_id, callback) {
@@ -653,7 +680,8 @@ Client._bindResources = function(Client) {
          * @param {string} placement_id – Object identifier.
          * @param {string} placement_test_id – Object identifier.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.placements#
          */
         update_test: function(placement_id, placement_test_id, payload, callback) {
@@ -680,7 +708,8 @@ Client._bindResources = function(Client) {
         /**
          * Creates a product
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.products#
          */
         create: function(payload, callback) {
@@ -695,7 +724,8 @@ Client._bindResources = function(Client) {
         /**
          * Retrieves a product
          * @param {string} product_id – Object identifier.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.products#
          */
         retrieve: function(product_id, callback) {
@@ -712,7 +742,8 @@ Client._bindResources = function(Client) {
         /**
          * Lists products
          * @param {object} [query] - Filter arguments
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.products#
          */
         list: function(query, callback) {
@@ -734,7 +765,8 @@ Client._bindResources = function(Client) {
          * Updates a product
          * @param {string} product_id – Object identifier.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.products#
          */
         update: function(product_id, payload, callback) {
@@ -752,7 +784,8 @@ Client._bindResources = function(Client) {
         /**
          * Deletes a product
          * @param {string} product_id – Object identifier.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.products#
          */
         delete: function(product_id, callback) {
@@ -777,7 +810,8 @@ Client._bindResources = function(Client) {
         /**
          * Creates a new property.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.properties#
          */
         create: function(payload, callback) {
@@ -792,7 +826,8 @@ Client._bindResources = function(Client) {
         /**
          * Retrieves a property.
          * @param {string} property_id – Object identifier.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.properties#
          */
         retrieve: function(property_id, callback) {
@@ -809,7 +844,8 @@ Client._bindResources = function(Client) {
         /**
          * Returns accessible properties.
          * @param {object} [query] - Filter arguments
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.properties#
          */
         list: function(query, callback) {
@@ -831,7 +867,8 @@ Client._bindResources = function(Client) {
          * Updates a property.
          * @param {string} property_id – Object identifier.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.properties#
          */
         update: function(property_id, payload, callback) {
@@ -857,7 +894,8 @@ Client._bindResources = function(Client) {
         /**
          * Creates a new resource set.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.resource_sets#
          */
         create: function(payload, callback) {
@@ -872,7 +910,8 @@ Client._bindResources = function(Client) {
         /**
          * Retrieves a resource set with the given name.
          * @param {string} resource_set_name – Name of the resource set.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.resource_sets#
          */
         retrieve: function(resource_set_name, callback) {
@@ -889,7 +928,8 @@ Client._bindResources = function(Client) {
         /**
          * List resource sets with the given criteria.
          * @param {object} [query] - Filter arguments
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.resource_sets#
          */
         list: function(query, callback) {
@@ -911,7 +951,8 @@ Client._bindResources = function(Client) {
          * Updates a resource set with the given name.
          * @param {string} resource_set_name – Name of the resource set.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.resource_sets#
          */
         update: function(resource_set_name, payload, callback) {
@@ -929,7 +970,8 @@ Client._bindResources = function(Client) {
         /**
          * Removes a resource set.
          * @param {string} resource_set_name – Name of the resource set.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.resource_sets#
          */
         delete: function(resource_set_name, callback) {
@@ -954,7 +996,8 @@ Client._bindResources = function(Client) {
         /**
          * Creates a role for the given resource
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.roles#
          */
         create: function(payload, callback) {
@@ -969,7 +1012,8 @@ Client._bindResources = function(Client) {
         /**
          * Retrieves a role.
          * @param {string} role_id – Object identifier.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.roles#
          */
         retrieve: function(role_id, callback) {
@@ -986,7 +1030,8 @@ Client._bindResources = function(Client) {
         /**
          * Retrieves roles on a given resource.
          * @param {object} [query] - Filter arguments
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.roles#
          */
         list: function(query, callback) {
@@ -1008,7 +1053,8 @@ Client._bindResources = function(Client) {
          * Adds an account to a role.
          * @param {string} role_id – Object identifier.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.roles#
          */
         add_account: function(role_id, payload, callback) {
@@ -1027,7 +1073,8 @@ Client._bindResources = function(Client) {
          * List accounts that belong to a role.
          * @param {string} role_id – Object identifier.
          * @param {object} [query] - Filter arguments
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.roles#
          */
         list_accounts: function(role_id, query, callback) {
@@ -1052,7 +1099,8 @@ Client._bindResources = function(Client) {
          * Removes an account from a role.
          * @param {string} role_id – Object identifier.
          * @param {string} account_id – Object identifier.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.roles#
          */
         remove_account: function(role_id, account_id, callback) {
@@ -1078,7 +1126,8 @@ Client._bindResources = function(Client) {
         /**
          * Starts a new account session
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.sessions#
          */
         create: function(payload, callback) {
@@ -1094,7 +1143,8 @@ Client._bindResources = function(Client) {
          * Gets an particular session.
          * @param {string} account_id – Object identifier.
          * @param {string} session_id – Object identifier.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.sessions#
          */
         retrieve: function(account_id, session_id, callback) {
@@ -1113,7 +1163,8 @@ Client._bindResources = function(Client) {
          * Returns past and present sessions belonging to the account.
          * @param {string} account_id – Object identifier.
          * @param {object} [query] - Filter arguments
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.sessions#
          */
         list: function(account_id, query, callback) {
@@ -1139,7 +1190,8 @@ Client._bindResources = function(Client) {
          * @param {string} account_id – Object identifier.
          * @param {string} session_id – Object identifier.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.sessions#
          */
         update: function(account_id, session_id, payload, callback) {
@@ -1159,7 +1211,8 @@ Client._bindResources = function(Client) {
          * Closes the session, invalidating the `session_token`. The status of the session will become `ended`.
          * @param {string} account_id – Object identifier.
          * @param {string} session_id – Object identifier.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.sessions#
          */
         delete: function(account_id, session_id, callback) {
@@ -1185,7 +1238,8 @@ Client._bindResources = function(Client) {
         /**
          * Creates a new store.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.stores#
          */
         create: function(payload, callback) {
@@ -1200,7 +1254,8 @@ Client._bindResources = function(Client) {
         /**
          * Retrieves a store.
          * @param {string} store_id – Object identifier.
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.stores#
          */
         retrieve: function(store_id, callback) {
@@ -1217,7 +1272,8 @@ Client._bindResources = function(Client) {
         /**
          * Retrieves accessible stores.
          * @param {object} [query] - Filter arguments
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.stores#
          */
         list: function(query, callback) {
@@ -1239,7 +1295,8 @@ Client._bindResources = function(Client) {
          * Updates a store.
          * @param {string} store_id – Object identifier.
          * @param {object} payload - Resource or parameters
-         * @param {requestCallback} callback
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
          * @memberof Client.stores#
          */
         update: function(store_id, payload, callback) {

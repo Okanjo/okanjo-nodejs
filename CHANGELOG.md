@@ -3,6 +3,9 @@
 
 When stuff changes, it's described here.
 
+## 1.6.1
+ * Updated jsdoc to show that callback is optional
+
 ## 1.6.0
  * Updated Fetch provider to return a promise
  * Updated Buffer to use Buffer.from instead of new Buffer
