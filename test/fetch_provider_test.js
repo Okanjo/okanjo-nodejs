@@ -180,7 +180,7 @@ describe('Fetch Provider', function() {
                 done();
             };
 
-            q.execute();
+            q.execute().catch(err => { /* no UnhandledPromiseRejectionWarning plz */});
         });
 
     });
@@ -255,7 +255,7 @@ describe('Fetch Provider', function() {
                 server.routes.splice(0, 1);
                 done();
             };
-            q.execute();
+            q.execute().catch(err => { /* no UnhandledPromiseRejectionWarning plz */});
 
         });
 

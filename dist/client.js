@@ -80,7 +80,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '1.4.0';
+Client.Version = '1.6.0';
 
 /**
  * Expose the Provider base class

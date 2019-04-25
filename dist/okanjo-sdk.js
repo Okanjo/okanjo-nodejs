@@ -54,7 +54,7 @@ Provider.prototype.compile = function(query) {
 
     // Attach execute function to the query
     query.execute = function(callback) {
-        provider.execute(query, callback);
+        return provider.execute(query, callback);
     };
 
     // Future: Attach cache/execute function to the query
@@ -192,10 +192,12 @@ FetchProvider.prototype.execute = function(query, callback) {
                 return Promise.reject(res);
             } else {
                 // Browserify should polyfill setImmediate
-                if (callback) setImmediate(function() {
-                    callback(null, res);
-                });
-                return res.data;
+                if (callback) {
+                    return setImmediate(function() {
+                        callback(null, res);
+                    });
+                }
+                return Promise.resolve(res);
             }
         })
         .catch(function(err) {
@@ -214,9 +216,12 @@ FetchProvider.prototype.execute = function(query, callback) {
             // Check for unauthorized hook case
             if (err.statusCode === 401) this._unauthorizedHook(err, query);
 
-            if (callback) setImmediate(function() {
-                callback(err, null);
-            });
+            if (callback) {
+                return setImmediate(function() {
+                    callback(err, null);
+                });
+            }
+            return Promise.reject(err);
         }.bind(this));
 };
 
@@ -229,7 +234,7 @@ FetchProvider.prototype.execute = function(query, callback) {
 
 module.exports = FetchProvider;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../provider":1,"timers":10,"util":13}],3:[function(require,module,exports){
+},{"../provider":1,"timers":11,"util":13}],3:[function(require,module,exports){
 /*
  * Date: 1/26/16 11:59 AM
  *
@@ -452,7 +457,7 @@ Query.prototype.setSessionToken = function(sessionToken) { this.sessionToken = s
 
 
 module.exports = Query;
-},{"./util":4,"querystring":9}],4:[function(require,module,exports){
+},{"./util":4,"querystring":10}],4:[function(require,module,exports){
 /*
  * Date: 1/26/16 12:01 PM
  *
@@ -559,6 +564,31 @@ module.exports = {
 },{}],5:[function(require,module,exports){
 
 },{}],6:[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
+},{}],7:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -744,7 +774,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -830,7 +860,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -917,13 +947,14 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":7,"./encode":8}],10:[function(require,module,exports){
+},{"./decode":8,"./encode":9}],11:[function(require,module,exports){
+(function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
 var slice = Array.prototype.slice;
@@ -1000,32 +1031,8 @@ exports.setImmediate = typeof setImmediate === "function" ? setImmediate : funct
 exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
   delete immediateIds[id];
 };
-},{"process/browser.js":6}],11:[function(require,module,exports){
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-  };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    var TempCtor = function () {}
-    TempCtor.prototype = superCtor.prototype
-    ctor.prototype = new TempCtor()
-    ctor.prototype.constructor = ctor
-  }
-}
-
-},{}],12:[function(require,module,exports){
+}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
+},{"process/browser.js":7,"timers":11}],12:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
@@ -1622,7 +1629,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":12,"_process":6,"inherits":11}],"okanjo-sdk":[function(require,module,exports){
+},{"./support/isBuffer":12,"_process":7,"inherits":6}],"okanjo-sdk":[function(require,module,exports){
 (function (process){
 /*
  * Date: 1/26/16 11:59 AM
@@ -1706,7 +1713,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '1.4.0';
+Client.Version = '1.6.0';
 
 /**
  * Expose the Provider base class
@@ -2885,4 +2892,4 @@ Client._bindResources = function(Client) {
 
 };
 }).call(this,require('_process'))
-},{"../lib/provider":1,"../lib/providers/fetch_provider":2,"../lib/providers/http_provider":5,"../lib/query":3,"_process":6}]},{},[]);
+},{"../lib/provider":1,"../lib/providers/fetch_provider":2,"../lib/providers/http_provider":5,"../lib/query":3,"_process":7}]},{},[]);
