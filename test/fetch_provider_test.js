@@ -107,6 +107,42 @@ describe('Fetch Provider', function() {
 
     });
 
+    it('should work as a promise', function(done) {
+
+        let received;
+
+        // Fake proxy page (e.g. gist's fun unicorn)
+        server.routes.push({
+            method: 'POST',
+            path: '/rpc',
+            handler: function(req, reply) {
+                if (received) received();
+                reply(200, { statusCode: 200, data: "all good!" });
+            }
+        });
+
+        let q = api.sessions
+            .create({ email: "bogus@unit.test", password: "password" });
+
+        let p = q.execute();
+
+        p.then(res => {
+            // Strip the route off
+            server.routes.splice(0, 1);
+
+            should(res).be.ok();
+
+            res.statusCode.should.be.equal(200);
+            res.data.should.match(/all good/);
+
+            done();
+        })
+        .catch(err => {
+            server.routes.splice(0, 1);
+            done(err);
+        });
+    });
+
     it('should pass error states back', function(done) {
 
         let received;
@@ -149,6 +185,38 @@ describe('Fetch Provider', function() {
 
     });
 
+    it('should catch errors as a promise', function(done) {
+
+        let received;
+
+        // Fake proxy page (e.g. gist's fun unicorn)
+        server.routes.push({
+            method: 'POST',
+            path: '/rpc',
+            handler: function(req, reply) {
+                if (received) received();
+                reply(400, { statusCode: 400, error: "Nope", data: "data no good!" });
+            }
+        });
+
+        api.products.list().execute().then(res => {
+            server.routes.splice(0, 1);
+            done(res); // this is an error to hit here
+        }).catch(err => {
+            server.routes.splice(0, 1);
+
+            should(err).be.ok();
+
+            err.statusCode.should.be.equal(400);
+            err.data.should.match(/no good/);
+
+            //com.log('err', err)
+            //com.log('res', res)
+
+            done();
+        });
+
+    });
 
     it('should handle non-json replies ok', function(done) {
 
@@ -192,7 +260,6 @@ describe('Fetch Provider', function() {
         });
 
     });
-
 
     it('handles 401 unauthorized hook', function(done) {
 

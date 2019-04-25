@@ -3,6 +3,11 @@
 
 When stuff changes, it's described here.
 
+## 1.6.0
+ * Updated Fetch provider to return a promise
+ * Updated Buffer to use Buffer.from instead of new Buffer
+ * Added tests showing promise works in res/catch modes
+
 ## 1.5.0
 Regenerated for new resource set routes
 

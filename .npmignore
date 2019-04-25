@@ -8,3 +8,5 @@ test
 *.tgz
 .nyc_output
 docs
+.eslint*
+.travis*

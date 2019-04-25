@@ -479,7 +479,7 @@ describe('HTTP Provider', function() {
 
         parts.length.should.be.exactly(2);
 
-        const credentialsPart = new Buffer(parts[1], 'base64').toString();
+        const credentialsPart = Buffer.from(parts[1], 'base64').toString();
         const sep = credentialsPart.indexOf(':');
         const key = sep === -1 ? credentialsPart : credentialsPart.slice(0, sep);
         const token = sep === -1 ? '' : credentialsPart.slice(sep + 1);
@@ -498,7 +498,7 @@ describe('HTTP Provider', function() {
 
         parts.length.should.be.exactly(2);
 
-        const credentialsPart = new Buffer(parts[1], 'base64').toString();
+        const credentialsPart = Buffer.from(parts[1], 'base64').toString();
         const sep = credentialsPart.indexOf(':');
         const key = sep === -1 ? credentialsPart : credentialsPart.slice(0, sep);
         const token = sep === -1 ? '' : credentialsPart.slice(sep + 1);
