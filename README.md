@@ -45,10 +45,11 @@ HttpProvider Configuration Options
 * `options.key` – The API key to use on requests.   
 * `options.sessionToken` – The session token to use on requests.
 * `options.timeout` – The client request timeout in milliseconds. Once elapsed, the request will be aborted. Defaults to `30000` (30s).
-* `options.protocolName` – The communication protocol to use, either `http` or `https`. Defaults to `https`.
-* `options.host` – The remote host to use. Defaults to `api2.okanjo.com` (live).  
-* `options.port` – The remote port to use. Defaults to `443`.
 * `options.userAgent` – The user agent to identify as. Defaults to `okanjo-nodejs/<sdk-version>`.
+* `options[api]` – Configuration options for a particular api. Use `api` for core okanjo api, `farm` or `shortcodes`.
+  * `options[api].protocol` – The communication protocol to use, either `http` or `https`. Defaults to `https`.
+  * `options[api].host` – The remote host to use. Defaults to `api2.okanjo.com` (live).  
+  * `options[api].port` – The remote port to use. Defaults to `443`.
 
 FetchProvider/jQueryProvider Configuration Options
 * `options.rpcHost` – The server endpoint to proxy requests through. Defaults to `/rpc`. 
@@ -71,5 +72,17 @@ api.sessions.create(payload, (err, res) => {
 Here, `sessions` is our resource group. `create` is the action. 
 The callback returns two parameters, `err` and `res`. If the request failed or any reason, `err` will be set. 
 If the request was successful, `res` will be set. Both `err` and `res` are both the response payload from the server.
+
+You can also use promises:
+
+```js
+api.sessions.create(payload).execute().then(res => { ... }).catch(err => { ... });
+```
+
+With await:
+
+```js
+const res = await api.sessions.create(payload).execute();
+```
 
 See the [Okanjo API documentation](https://developer.okanjo.com/api) for information on what routes are available for use.
