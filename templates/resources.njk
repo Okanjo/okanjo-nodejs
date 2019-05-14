@@ -1,15 +1,18 @@
-/* istanbul ignore next: out of scope */
-Client._bindResources = function(Client) {
+/* istanbul ignore next: generated code */
+Client.resourceBinders.push(function(Client) {
+    {% if namespace %}
+    Client.{{ namespace }} = {};
+    {% endif %}
     {% for resource in resources %}
     /**
      * {{ resource.pretty }}
-     * @namespace Client.{{ resource.pluralized }}
+     * @namespace Client.{{ (namespace+'.') if namespace }}{{ resource.pluralized }}
      */
-    Client.{{ resource.pluralized }} = {
+    Client.{{ (namespace+'.') if namespace }}{{ resource.pluralized }} = {
         {% for route in resource.routes %}
         {% include "route.njk" %}
         {% endfor %}
     };
     {% endfor %}
 
-};
+});

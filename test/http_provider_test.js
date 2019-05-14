@@ -49,9 +49,11 @@ describe('HTTP Provider', function() {
         server = new FauxApiServer();
 
         api = new Client({
-            host: '127.0.0.1',
-            port: server.port,
-            protocol: 'http',
+            api: {
+                host: '127.0.0.1',
+                port: server.port,
+                protocol: 'http',
+            },
             timeout: 100,
             provider: HttpProvider
         });
@@ -66,6 +68,7 @@ describe('HTTP Provider', function() {
     it('should handle connection errors (e.g server down) gracefully', function(done) {
 
         api._makeRequest({
+            api: 'api',
             method: 'GET',
             path: '/'
         }, function(err, res) {
@@ -91,13 +94,30 @@ describe('HTTP Provider', function() {
             provider: HttpProvider
         });
 
-        api2.provider.protocolName.should.equal('https');
-        api2.provider.host.should.equal('api2.okanjo.com');
-        api2.provider.port.should.equal(443);
+        api2.provider.apis.api.protocolName.should.equal('https');
+        api2.provider.apis.api.host.should.equal('api2.okanjo.com');
+        api2.provider.apis.api.port.should.equal(443);
+    });
+
+    it('should handle https connections', function() {
+
+        const api2 = new Client({
+            provider: HttpProvider
+        });
+
+        api2._makeRequest({
+            api: 'api',
+            method: 'GET',
+            path: '/',
+        }, (err, res) => {
+            console.log('err', err);
+            console.log('res', res);
+        });
     });
 
     it('404 returns error', function(done) {
         api._makeRequest({
+            api: 'api',
             method: 'GET',
             path: '/nope'
         }, function(err, res) {
@@ -128,6 +148,7 @@ describe('HTTP Provider', function() {
         });
 
         api._makeRequest({
+            api: 'api',
             method: 'GET',
             path: '/slow'
         }, function(err, res) {
@@ -160,6 +181,7 @@ describe('HTTP Provider', function() {
         });
 
         api._makeRequest({
+            api: 'api',
             method: 'GET',
             path: '/balancer-down'
         }, function(err, res) {
@@ -191,6 +213,7 @@ describe('HTTP Provider', function() {
         });
 
         api._makeRequest({
+            api: 'api',
             method: 'GET',
             path: '/balancer-down2'
         }, function(err, res) {
@@ -212,10 +235,11 @@ describe('HTTP Provider', function() {
 
     it('handles deals with network errors', function(done) {
 
-        const port = api.provider.port;
-        api.provider.port = 999;
+        const port = api.provider.apis.api.port;
+        api.provider.apis.api.port = 999;
 
         api._makeRequest({
+            api: 'api',
             method: 'GET',
             path: '/balancer-down'
         }, function(err, res) {
@@ -232,7 +256,7 @@ describe('HTTP Provider', function() {
             //com.log('res', res
             //
 
-            api.provider.port = port;
+            api.provider.apis.api.port = port;
 
             done();
         });
@@ -260,6 +284,7 @@ describe('HTTP Provider', function() {
         });
 
         api._makeRequest({
+            api: 'api',
             method: 'GET',
             path: '/mismatch-codes'
         }, function(err, res) {
@@ -273,6 +298,7 @@ describe('HTTP Provider', function() {
 
             // Now try it in reverse (bad server status, good payload status)
             api._makeRequest({
+                api: 'api',
                 method: 'GET',
                 path: '/mismatch-codes-reverse'
             }, function(err, res) {
@@ -304,6 +330,7 @@ describe('HTTP Provider', function() {
         });
 
         api._makeRequest({
+            api: 'api',
             method: 'GET',
             path: '/bad-json'
         }, function(err, res) {
@@ -338,6 +365,7 @@ describe('HTTP Provider', function() {
         };
 
         api._makeRequest({
+            api: 'api',
             method: 'POST',
             path: '/junkyard',
             payload: { hi: "there"}
@@ -373,6 +401,7 @@ describe('HTTP Provider', function() {
         };
 
         const q = api._makeRequest({
+            api: 'api',
             method: 'POST',
             path: '/junkyard',
             payload: { hi: "there"}
@@ -412,6 +441,7 @@ describe('HTTP Provider', function() {
         api.config.onUnauthorizedResponse = undefined;
 
         api._makeRequest({
+            api: 'api',
             method: 'GET',
             path: '/unauthorized'
         }, function(err, res) {
@@ -433,6 +463,7 @@ describe('HTTP Provider', function() {
             };
 
             api._makeRequest({
+                api: 'api',
                 method: 'GET',
                 path: '/unauthorized'
             }, function (err, res) {
@@ -471,6 +502,7 @@ describe('HTTP Provider', function() {
         api.config.onUnauthorizedResponse = undefined;
 
         let q = api._makeRequest({
+            api: 'api',
             method: 'GET',
             path: '/unauthorized'
         });
@@ -495,6 +527,7 @@ describe('HTTP Provider', function() {
             };
 
             let q = api._makeRequest({
+                api: 'api',
                 method: 'GET',
                 path: '/unauthorized'
             });
@@ -520,12 +553,15 @@ describe('HTTP Provider', function() {
     it('should POST data to a secure server, for better, for worse', function(done) {
 
         const api3 = new Client({
-            host: 'okanjo.com',
+            api: {
+                host: 'www.okanjo.com'
+            },
             provider: HttpProvider
         });
 
         //noinspection JSAccessibilityCheck
         api3._makeRequest({
+            api: 'api',
             method: 'POST',
             path: '/',
             query: { unit_test: "post" },
@@ -627,6 +663,7 @@ describe('HTTP Provider', function() {
         });
 
         api._makeRequest({
+            api: 'api',
             method: 'PUT',
             path: '/secret',
             payload: { hi: "there"},
@@ -650,4 +687,23 @@ describe('HTTP Provider', function() {
         });
     });
 
+    it('should explode if api is not defined', (done) => {
+        api._makeRequest({
+            api: 'boom',
+            method: 'GET',
+            path: '/nope'
+        }, function(err, res) {
+
+            should(err).be.ok();
+            should(res).not.be.ok();
+
+            err.statusCode.should.be.equal(503);
+            err.error.should.match(/API/);
+
+            // com.log('err', err)
+            //com.log('res', res)
+
+            done();
+        });
+    });
 });

@@ -34,6 +34,7 @@
             }
     {% endif %}
             return Client._makeRequest({
+                api: '{{ api }}',
                 action: '{{ route.id }}',
                 method: '{{ route.endpoint.method|upper }}',
                 path: '{{ route.endpoint.path }}',

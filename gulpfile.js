@@ -13,14 +13,19 @@ const Del = require('del');
 const Browserify = require('browserify');
 
 const ApiSpecification = require('./lib/helpers/api_spec');
-let api = null;
+
+const apiSpec = new ApiSpecification({ name: 'api', endpoint: 'https://dev-api2.okanjo.com' });
+const farmSpec = new ApiSpecification({ name: 'farm', namespace: 'farm', endpoint: 'https://farm-sandbox.okanjo.com' });
+const shortcodesSpec = new ApiSpecification({ name: 'shortcodes', namespace: 'shortcodes', endpoint: 'http://localhost:3040' });
 
 // Sources
 const resourceTemplateDir = 'templates'; // string or array
 const resourcesTemplateSrc = `${resourceTemplateDir}/resources.njk`;
 const clientSources = [
     'lib/client_base.js',
-    'dist/partials/resources.js'
+    'dist/partials/resources.js',
+    'dist/partials/farm_resources.js',
+    'dist/partials/shortcodes_resources.js'
 ];
 
 // Clean up everything
@@ -33,12 +38,34 @@ Gulp.task('clean', function() {
 
 // Gets the latest API spec
 Gulp.task('get_spec', [], (done) => {
-    const apiSpec = new ApiSpecification();
     apiSpec.getSpecification((err) => {
         if (err) {
             done(err);
         } else {
-            api = apiSpec;
+            // console.log(api);
+            //console.log(api.getResourceMapArray());
+            done();
+        }
+    });
+});
+
+Gulp.task('get_farm_spec', [], (done) => {
+    farmSpec.getSpecification((err) => {
+        if (err) {
+            done(err);
+        } else {
+            // console.log(api);
+            //console.log(api.getResourceMapArray());
+            done();
+        }
+    });
+});
+
+Gulp.task('get_shortcodes_spec', [], (done) => {
+    shortcodesSpec.getSpecification((err) => {
+        if (err) {
+            done(err);
+        } else {
             // console.log(api);
             //console.log(api.getResourceMapArray());
             done();
@@ -53,15 +80,47 @@ Gulp.task('gen_resources', ['get_spec'], () => {
         .pipe(NunjucksRender({
             path: resourceTemplateDir,
             data: {
-                resources: api.getResourceMapArray()
+                api: apiSpec.name,
+                namespace: apiSpec.namespace,
+                resources: apiSpec.getResourceMapArray()
             }
         }))
         .pipe(Rename('resources.js'))
         .pipe(Gulp.dest('dist/partials'))
 });
 
+Gulp.task('gen_farm_resources', ['get_farm_spec'], () => {
+    return Gulp
+        .src(resourcesTemplateSrc)
+        .pipe(NunjucksRender({
+            path: resourceTemplateDir,
+            data: {
+                api: farmSpec.name,
+                namespace: farmSpec.namespace,
+                resources: farmSpec.getResourceMapArray()
+            }
+        }))
+        .pipe(Rename('farm_resources.js'))
+        .pipe(Gulp.dest('dist/partials'))
+});
+
+Gulp.task('gen_shortcodes_resources', ['get_shortcodes_spec'], () => {
+    return Gulp
+        .src(resourcesTemplateSrc)
+        .pipe(NunjucksRender({
+            path: resourceTemplateDir,
+            data: {
+                api: shortcodesSpec.name,
+                namespace: shortcodesSpec.namespace,
+                resources: shortcodesSpec.getResourceMapArray()
+            }
+        }))
+        .pipe(Rename('shortcodes_resources.js'))
+        .pipe(Gulp.dest('dist/partials'))
+});
+
 // Marries the resource spec and client together, and includes current version
-Gulp.task('build_client', ['gen_resources'], () => {
+Gulp.task('build_client', ['gen_resources','gen_farm_resources','gen_shortcodes_resources'], () => {
     return Gulp
         .src(clientSources)
         .pipe(Concat('client.js'))

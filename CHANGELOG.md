@@ -3,6 +3,18 @@
 
 When stuff changes, it's described here.
 
+## 2.0.0
+Support multiple apis under the okanjo sdk
+ * Removed jQuery provider
+ * Changed API config options
+ * Supports different APIs: api, farm, shortcodes
+ * Updated api spec helper
+ * Updated HTTPProvider to store configs of different apis by key
+ * Changed Client route binder mechanism to make it easier for integrations
+ * Added api value and setter to Query
+ * Updated the resource/route templates to support namespaced resources
+ * Added / updated unit tests, build process
+
 ## 1.7.1
  * Updated HTTP Provider to return a promise
  * Updated supporting tests
