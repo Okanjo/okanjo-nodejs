@@ -338,6 +338,12 @@ function Query(base, options) {
      */
     this.sessionToken = null;
 
+    /**
+     * Cookies
+     * @type {{}}
+     */
+    this.cookies = {};
+
     this._extend(base);
     this._extend(options, true);
 }
@@ -359,6 +365,7 @@ Query.prototype._extend = function(extra, overrideAll) {
         if (extra.pathParams !== undefined) this.setPathParams(extra.pathParams);
         if (extra.query !== undefined) this.where(extra.query);
         if (extra.payload !== undefined) this.data(extra.payload);
+        if (extra.cookies !== undefined) this.setCookies(extra.cookies);
 
         if (overrideAll) {
             if (extra.key !== undefined) this.setKey(extra.key);
@@ -469,6 +476,12 @@ Query.prototype.setKey = function(key) { this.key = key; return this; };
  */
 Query.prototype.setSessionToken = function(sessionToken) { this.sessionToken = sessionToken; return this; };
 
+/**
+ * Sets cookies on the request
+ * @param {*} cookies
+ * @returns {Query}
+ */
+Query.prototype.setCookies = function(cookies) { this.cookies = cookies; return this; };
 
 module.exports = Query;
 },{"./util":4,"querystring":10}],4:[function(require,module,exports){
@@ -1729,7 +1742,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '2.0.0';
+Client.Version = '2.1.0';
 
 /**
  * Expose the Provider base class

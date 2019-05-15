@@ -88,6 +88,40 @@ describe('HTTP Provider', function() {
 
     });
 
+    it('should set cookies', (done) => {
+        server.routes.push({
+            method: 'GET',
+            path: '/cookie-jar',
+            handler: function(req, reply) {
+                req.headers.cookie.should.be.exactly('chocolate=chip, thin=mint');
+                reply(200, { error: null, data: 'all good' })
+            }
+        });
+
+
+        api._makeRequest({
+            api: 'api',
+            method: 'GET',
+            path: '/cookie-jar',
+            cookies: {
+                chocolate: 'chip',
+                thin: 'mint'
+            }
+        }, function(err, res) {
+
+            should(err).not.be.ok();
+            should(res).be.ok();
+
+            res.statusCode.should.be.equal(200);
+            res.data.should.match(/all good/i);
+
+            //com.log('err', err)
+            //com.log('res', res)
+
+            done();
+        });
+    });
+
     it('should setup defaults to production', function() {
 
         const api2 = new Client({
@@ -110,8 +144,8 @@ describe('HTTP Provider', function() {
             method: 'GET',
             path: '/',
         }, (err, res) => {
-            console.log('err', err);
-            console.log('res', res);
+            // console.log('err', err);
+            // console.log('res', res);
         });
     });
 

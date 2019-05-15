@@ -3,6 +3,9 @@
 
 When stuff changes, it's described here.
 
+## 2.1.0
+ * Added support for passing cookies in queries
+
 ## 2.0.0
 Support multiple apis under the okanjo sdk
  * Removed jQuery provider
