@@ -3,6 +3,9 @@
 
 When stuff changes, it's described here.
 
+## 2.2.0
+ * Set Host header on HTTP requests
+
 ## 2.1.0
  * Added support for passing cookies in queries
 

@@ -16,7 +16,7 @@ const ApiSpecification = require('./lib/helpers/api_spec');
 
 const apiSpec = new ApiSpecification({ name: 'api', endpoint: 'https://dev-api2.okanjo.com' });
 const farmSpec = new ApiSpecification({ name: 'farm', namespace: 'farm', endpoint: 'https://farm-sandbox.okanjo.com' });
-const shortcodesSpec = new ApiSpecification({ name: 'shortcodes', namespace: 'shortcodes', endpoint: 'http://localhost:3040' });
+const shortcodesSpec = new ApiSpecification({ name: 'shortcodes', namespace: 'shortcodes', endpoint: 'https://dev-shortcodes.okanjo.com' });
 
 // Sources
 const resourceTemplateDir = 'templates'; // string or array
