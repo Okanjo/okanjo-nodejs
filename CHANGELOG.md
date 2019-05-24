@@ -3,7 +3,7 @@
 
 When stuff changes, it's described here.
 
-## 2.1.0
+## 2.2.1
  * Fixed util buildPath leaking index state
 
 ## 2.2.0
