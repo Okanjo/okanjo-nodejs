@@ -113,4 +113,21 @@ describe('Utilities', function() {
         res.message.should.match(/Path parameter .* required/);
 
     });
+
+    it('should return an error and then success (no regex leak)', () => {
+        const path = '/accounts/{accountId}/sessions/{sessionId}';
+
+        const res = Util.buildPath(path, {accountId: 'ac_123'});
+
+        res.should.be.instanceof(Error);
+        res.message.should.match(/Path parameter .* required/);
+
+        const path2 = '/products/{product_id}';
+
+        const res2 = Util.buildPath(path2, {product_id: 'product_dev_12n3j123123'});
+
+        res2.should.equal('/products/product_dev_12n3j123123');
+
+
+    });
 });

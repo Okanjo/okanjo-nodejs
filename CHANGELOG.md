@@ -3,6 +3,9 @@
 
 When stuff changes, it's described here.
 
+## 2.1.0
+ * Fixed util buildPath leaking index state
+
 ## 2.2.0
  * Set Host header on HTTP requests
 

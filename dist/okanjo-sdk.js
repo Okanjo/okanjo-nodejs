@@ -550,8 +550,6 @@ function copy(destination, source) {
 }
 
 
-var extractParams = /\{([a-zA-Z_]+)}/g;
-
 /**
  * Builds the final URL path given replaceable param names
  * @param {string} path - Route path
@@ -560,7 +558,9 @@ var extractParams = /\{([a-zA-Z_]+)}/g;
  */
 function buildPath(path, params) {
 
-    var resultPath = path, p, token, name;
+    var extractParams = /\{([a-zA-Z_]+)}/g,
+        resultPath = path,
+        p, token, name;
 
     // Pull out the expected parameters
     while ((p = extractParams.exec(path)) !== null) {
@@ -1742,7 +1742,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '2.2.0';
+Client.Version = '2.2.1';
 
 /**
  * Expose the Provider base class
