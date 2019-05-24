@@ -740,4 +740,25 @@ describe('HTTP Provider', function() {
             done();
         });
     });
+
+    it('should error if not enough path params given', (done) => {
+        api._makeRequest({
+            api: 'api',
+            method: 'GET',
+            path: '/nope/{nopers}',
+            pathParams: {}
+        }, function(err, res) {
+
+            should(err).be.ok();
+            should(res).not.be.ok();
+
+            err.statusCode.should.be.equal(503);
+            err.error.should.match(/Path parameter/);
+
+            // com.log('err', err)
+            //com.log('res', res)
+
+            done();
+        });
+    });
 });

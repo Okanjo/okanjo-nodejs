@@ -3,6 +3,9 @@
 
 When stuff changes, it's described here.
 
+## 2.2.2
+ * Fixed http provider execute not handling path errors
+
 ## 2.2.1
  * Fixed util buildPath leaking index state
 
