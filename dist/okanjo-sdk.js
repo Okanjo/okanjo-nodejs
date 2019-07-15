@@ -1742,7 +1742,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '2.2.2';
+Client.Version = '2.3.0';
 
 /**
  * Expose the Provider base class
@@ -3048,46 +3048,6 @@ Client.resourceBinders.push(function(Client) {
     
     
     /**
-     * Account
-     * @namespace Client.farm.accounts
-     */
-    Client.farm.accounts = {
-        
-        /**
-         * Login with an Okanjo account.
-         * @param {object} payload - Resource or parameters
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.accounts#
-         */
-        login: function(payload, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'account.login',
-                method: 'POST',
-                path: '/api/login',
-                payload: payload
-            }, callback);
-        },
-        
-        /**
-         * Close an active session
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.accounts#
-         */
-        logout: function(callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'account.logout',
-                method: 'POST',
-                path: '/api/logout',
-            }, callback);
-        }
-        
-    };
-    
-    /**
      * Activity
      * @namespace Client.farm.activities
      */
@@ -3144,20 +3104,20 @@ Client.resourceBinders.push(function(Client) {
         /**
          * Returns a specific bucket.
          * @param {string} instance_id – Instance Id
-         * @param {string} name – Name of bucket.
+         * @param {string} bucket_id – Bucket Id
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.buckets#
          */
-        retrieve: function(instance_id, name, callback) {
+        retrieve: function(instance_id, bucket_id, callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'bucket.retrieve',
                 method: 'GET',
-                path: '/api/{instance_id}/buckets/{name}',
+                path: '/api/{instance_id}/buckets/{bucket_id}',
                 pathParams: {
                     instance_id: instance_id,
-                    name: name
+                    bucket_id: bucket_id
                 }
             }, callback);
         },
@@ -3165,11 +3125,18 @@ Client.resourceBinders.push(function(Client) {
         /**
          * Returns a list of buckets.
          * @param {string} instance_id – Instance Id
+         * @param {object} [query] - Filter arguments
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.buckets#
          */
-        list: function(instance_id, callback) {
+        list: function(instance_id, query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
             return Client._makeRequest({
                 api: 'farm',
                 action: 'bucket.list',
@@ -3177,50 +3144,72 @@ Client.resourceBinders.push(function(Client) {
                 path: '/api/{instance_id}/buckets',
                 pathParams: {
                     instance_id: instance_id
-                }
+                },
+                query: query
             }, callback);
         },
         
         /**
          * Make changes to a bucket.
-         * @param {string} name – Name of bucket.
          * @param {string} instance_id – Instance Id
+         * @param {string} bucket_id – Bucket Id
          * @param {object} payload - Resource or parameters
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.buckets#
          */
-        update: function(name, instance_id, payload, callback) {
+        update: function(instance_id, bucket_id, payload, callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'bucket.update',
                 method: 'PUT',
-                path: '/api/{instance_id}/buckets/{name}',
+                path: '/api/{instance_id}/buckets/{bucket_id}',
                 pathParams: {
-                    name: name,
-                    instance_id: instance_id
+                    instance_id: instance_id,
+                    bucket_id: bucket_id
                 },
                 payload: payload
             }, callback);
         },
         
         /**
-         * Fills a bucket to capacity with recommended offers.
+         * Removes a bucket.
          * @param {string} instance_id – Instance Id
-         * @param {string} name – Name of bucket.
+         * @param {string} bucket_id – Bucket Id
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.buckets#
          */
-        backfill: function(instance_id, name, callback) {
+        delete: function(instance_id, bucket_id, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'bucket.delete',
+                method: 'DELETE',
+                path: '/api/{instance_id}/buckets/{bucket_id}',
+                pathParams: {
+                    instance_id: instance_id,
+                    bucket_id: bucket_id
+                }
+            }, callback);
+        },
+        
+        /**
+         * Fills a bucket to capacity with recommended offers.
+         * @param {string} instance_id – Instance Id
+         * @param {string} bucket_id – Bucket Id
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.buckets#
+         */
+        backfill: function(instance_id, bucket_id, callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'bucket.backfill',
                 method: 'POST',
-                path: '/api/{instance_id}/buckets/{name}/do-backfill',
+                path: '/api/{instance_id}/buckets/{bucket_id}/do-backfill',
                 pathParams: {
                     instance_id: instance_id,
-                    name: name
+                    bucket_id: bucket_id
                 }
             }, callback);
         },
@@ -3228,20 +3217,20 @@ Client.resourceBinders.push(function(Client) {
         /**
          * Gets the current state of the offers within the bucket.
          * @param {string} instance_id – Instance Id
-         * @param {string} name – Name of bucket.
+         * @param {string} bucket_id – Bucket Id
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.buckets#
          */
-        status: function(instance_id, name, callback) {
+        status: function(instance_id, bucket_id, callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'bucket.status',
                 method: 'GET',
-                path: '/api/{instance_id}/buckets/{name}/status',
+                path: '/api/{instance_id}/buckets/{bucket_id}/status',
                 pathParams: {
                     instance_id: instance_id,
-                    name: name
+                    bucket_id: bucket_id
                 }
             }, callback);
         },
@@ -3249,20 +3238,20 @@ Client.resourceBinders.push(function(Client) {
         /**
          * Toggles AI recommendations ON if currently disabled, or OFF if currently enabled.
          * @param {string} instance_id – Instance Id
-         * @param {string} name – Name of bucket.
+         * @param {string} bucket_id – Bucket Id
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.buckets#
          */
-        toggle_ai: function(instance_id, name, callback) {
+        toggle_ai: function(instance_id, bucket_id, callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'bucket.toggle_ai',
                 method: 'POST',
-                path: '/api/{instance_id}/buckets/{name}/toggle-ai',
+                path: '/api/{instance_id}/buckets/{bucket_id}/toggle-ai',
                 pathParams: {
                     instance_id: instance_id,
-                    name: name
+                    bucket_id: bucket_id
                 }
             }, callback);
         },
@@ -3270,20 +3259,20 @@ Client.resourceBinders.push(function(Client) {
         /**
          * Toggles AI automation ON if currently disabled, or OFF if currently enabled.
          * @param {string} instance_id – Instance Id
-         * @param {string} name – Name of bucket.
+         * @param {string} bucket_id – Bucket Id
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.buckets#
          */
-        toggle_ai_automation: function(instance_id, name, callback) {
+        toggle_ai_automation: function(instance_id, bucket_id, callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'bucket.toggle_ai_automation',
                 method: 'POST',
-                path: '/api/{instance_id}/buckets/{name}/toggle-ai-automation',
+                path: '/api/{instance_id}/buckets/{bucket_id}/toggle-ai-automation',
                 pathParams: {
                     instance_id: instance_id,
-                    name: name
+                    bucket_id: bucket_id
                 }
             }, callback);
         },
@@ -3291,20 +3280,20 @@ Client.resourceBinders.push(function(Client) {
         /**
          * Remove all offers from a bucket.
          * @param {string} instance_id – Instance Id
-         * @param {string} name – Name of bucket.
+         * @param {string} bucket_id – Bucket Id
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.buckets#
          */
-        truncate: function(instance_id, name, callback) {
+        truncate: function(instance_id, bucket_id, callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'bucket.truncate',
                 method: 'POST',
-                path: '/api/{instance_id}/buckets/{name}/truncate',
+                path: '/api/{instance_id}/buckets/{bucket_id}/truncate',
                 pathParams: {
                     instance_id: instance_id,
-                    name: name
+                    bucket_id: bucket_id
                 }
             }, callback);
         }
@@ -3341,18 +3330,12 @@ Client.resourceBinders.push(function(Client) {
         /**
          * Removes a list of offers from a bucket.
          * @param {string} instance_id – Instance Id
-         * @param {object} [query] - Filter arguments
+         * @param {object} payload - Resource or parameters
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.bucket_items#
          */
-        delete: function(instance_id, query, callback) {
-            // Shift optional arguments, if necessary
-            if (typeof query === "function") {
-                callback = query;
-                query = undefined;
-            }
-    
+        delete: function(instance_id, payload, callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'bucket_item.delete',
@@ -3361,7 +3344,7 @@ Client.resourceBinders.push(function(Client) {
                 pathParams: {
                     instance_id: instance_id
                 },
-                query: query
+                payload: payload
             }, callback);
         }
         
@@ -3376,22 +3359,22 @@ Client.resourceBinders.push(function(Client) {
         /**
          * Returns a list of merchant category mappings by vendor.
          * @param {string} instance_id – Instance Id
-         * @param {string} vendorId – Name of vendor.
-         * @param {string} merchantId – Vendor merchant identifier.
+         * @param {string} vendor_id – Vendor Id
+         * @param {string} merchant_id – Vendor merchant identifier.
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.categories#
          */
-        list: function(instance_id, vendorId, merchantId, callback) {
+        list: function(instance_id, vendor_id, merchant_id, callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'category.list',
                 method: 'GET',
-                path: '/api/{instance_id}/vendors/{vendorId}/merchants/{merchantId}/categories',
+                path: '/api/{instance_id}/vendors/{vendor_id}/merchants/{merchant_id}/categories',
                 pathParams: {
                     instance_id: instance_id,
-                    vendorId: vendorId,
-                    merchantId: merchantId
+                    vendor_id: vendor_id,
+                    merchant_id: merchant_id
                 }
             }, callback);
         },
@@ -3399,21 +3382,23 @@ Client.resourceBinders.push(function(Client) {
         /**
          * Adds or updates a vendor-merchant category mapping
          * @param {string} instance_id – Instance Id
-         * @param {string} vendorId – Name of vendor.
+         * @param {string} vendor_id – Vendor Id
+         * @param {string} merchant_id – Vendor merchant identifier.
          * @param {object} payload - Resource or parameters
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.categories#
          */
-        upsert: function(instance_id, vendorId, payload, callback) {
+        upsert: function(instance_id, vendor_id, merchant_id, payload, callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'category.upsert',
-                method: 'PUT',
-                path: '/api/{instance_id}/vendors/{vendorId}/categories',
+                method: 'POST',
+                path: '/api/{instance_id}/vendors/{vendor_id}/merchants/{merchant_id}/categories',
                 pathParams: {
                     instance_id: instance_id,
-                    vendorId: vendorId
+                    vendor_id: vendor_id,
+                    merchant_id: merchant_id
                 },
                 payload: payload
             }, callback);
@@ -3480,13 +3465,13 @@ Client.resourceBinders.push(function(Client) {
         /**
          * Retrieves an existing direct link.
          * @param {string} instance_id – Instance Id
-         * @param {string} offer_id – Unique offer id, using combined vendor_id:offer_id pair
+         * @param {string} vendor_offer_id – Unique offer id, using combined vendor_id:offer_id pair
          * @param {object} [query] - Filter arguments
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.direct_links#
          */
-        retrieve: function(instance_id, offer_id, query, callback) {
+        retrieve: function(instance_id, vendor_offer_id, query, callback) {
             // Shift optional arguments, if necessary
             if (typeof query === "function") {
                 callback = query;
@@ -3497,10 +3482,10 @@ Client.resourceBinders.push(function(Client) {
                 api: 'farm',
                 action: 'direct_link.retrieve',
                 method: 'GET',
-                path: '/api/{instance_id}/links/{offer_id}',
+                path: '/api/{instance_id}/links/{vendor_offer_id}',
                 pathParams: {
                     instance_id: instance_id,
-                    offer_id: offer_id
+                    vendor_offer_id: vendor_offer_id
                 },
                 query: query
             }, callback);
@@ -3534,45 +3519,22 @@ Client.resourceBinders.push(function(Client) {
         },
         
         /**
-         * Update an existing direct link.
-         * @param {string} instance_id – Instance Id
-         * @param {string} offer_id – Unique offer id, using combined vendor_id:offer_id pair
-         * @param {object} payload - Resource or parameters
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.direct_links#
-         */
-        update: function(instance_id, offer_id, payload, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'direct_link.update',
-                method: 'PUT',
-                path: '/api/{instance_id}/links/{offer_id}',
-                pathParams: {
-                    instance_id: instance_id,
-                    offer_id: offer_id
-                },
-                payload: payload
-            }, callback);
-        },
-        
-        /**
          * Deletes a direct link.
          * @param {string} instance_id – Instance Id
-         * @param {string} offer_id – Unique offer id, using combined vendor_id:offer_id pair
+         * @param {string} vendor_offer_id – Unique offer id, using combined vendor_id:offer_id pair
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.direct_links#
          */
-        delete: function(instance_id, offer_id, callback) {
+        delete: function(instance_id, vendor_offer_id, callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'direct_link.delete',
                 method: 'DELETE',
-                path: '/api/{instance_id}/links/{offer_id}',
+                path: '/api/{instance_id}/links/{vendor_offer_id}',
                 pathParams: {
                     instance_id: instance_id,
-                    offer_id: offer_id
+                    vendor_offer_id: vendor_offer_id
                 }
             }, callback);
         },
@@ -3580,21 +3542,44 @@ Client.resourceBinders.push(function(Client) {
         /**
          * Follows the direct offer link to the offer page, or finds a replacement if no longer available.
          * @param {string} instance_id – Instance Id
-         * @param {string} offer_id – Unique offer id, using combined vendor_id:offer_id pair
+         * @param {string} vendor_offer_id – Unique offer id, using combined vendor_id:offer_id pair
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.direct_links#
          */
-        follow: function(instance_id, offer_id, callback) {
+        follow: function(instance_id, vendor_offer_id, callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'direct_link.follow',
                 method: 'GET',
-                path: '/api/{instance_id}/links/follow/{offer_id}',
+                path: '/api/{instance_id}/links/{vendor_offer_id}/follow',
                 pathParams: {
                     instance_id: instance_id,
-                    offer_id: offer_id
+                    vendor_offer_id: vendor_offer_id
                 }
+            }, callback);
+        },
+        
+        /**
+         * Update an existing direct link.
+         * @param {string} instance_id – Instance Id
+         * @param {string} vendor_offer_id – Unique offer id, using combined vendor_id:offer_id pair
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.direct_links#
+         */
+        update: function(instance_id, vendor_offer_id, payload, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'direct_link.update',
+                method: 'PUT',
+                path: '/api/{instance_id}/links/{vendor_offer_id}',
+                pathParams: {
+                    instance_id: instance_id,
+                    vendor_offer_id: vendor_offer_id
+                },
+                payload: payload
             }, callback);
         }
         
@@ -3605,6 +3590,23 @@ Client.resourceBinders.push(function(Client) {
      * @namespace Client.farm.instances
      */
     Client.farm.instances = {
+        
+        /**
+         * Creates a new instance of the farm.
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.instances#
+         */
+        create: function(payload, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'instance.create',
+                method: 'POST',
+                path: '/api/instances',
+                payload: payload
+            }, callback);
+        },
         
         /**
          * Returns a given farm instance.
@@ -3626,7 +3628,30 @@ Client.resourceBinders.push(function(Client) {
         },
         
         /**
-         * Updates an instance configuration.
+         * Returns accessible farm instances
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.instances#
+         */
+        list: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'instance.list',
+                method: 'GET',
+                path: '/api/instances',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Updates a farm instance.
          * @param {string} instance_id – Instance Id
          * @param {object} payload - Resource or parameters
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
@@ -3644,237 +3669,6 @@ Client.resourceBinders.push(function(Client) {
                 },
                 payload: payload
             }, callback);
-        },
-        
-        /**
-         * Creates a new placement.
-         * @param {string} instance_id – Instance Id
-         * @param {object} payload - Resource or parameters
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.instances#
-         */
-        create_placement: function(instance_id, payload, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'instance.create_placement',
-                method: 'POST',
-                path: '/api/instances/{instance_id}/placements',
-                pathParams: {
-                    instance_id: instance_id
-                },
-                payload: payload
-            }, callback);
-        },
-        
-        /**
-         * Deletes a placement.
-         * @param {string} instance_id – Instance Id
-         * @param {string} placement_id – Placement Id
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.instances#
-         */
-        delete_placement: function(instance_id, placement_id, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'instance.delete_placement',
-                method: 'DELETE',
-                path: '/api/instances/{instance_id}/placements/{placement_id}',
-                pathParams: {
-                    instance_id: instance_id,
-                    placement_id: placement_id
-                }
-            }, callback);
-        },
-        
-        /**
-         * Returns the current list of accounts who can access the farm.
-         * @param {string} instance_id – Instance Id
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.instances#
-         */
-        list_accounts: function(instance_id, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'instance.list_accounts',
-                method: 'GET',
-                path: '/api/instances/{instance_id}/accounts',
-                pathParams: {
-                    instance_id: instance_id
-                }
-            }, callback);
-        },
-        
-        /**
-         * Returns all properties enabled for use to the farm.
-         * @param {string} instance_id – Instance Id
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.instances#
-         */
-        list_enabled_properties: function(instance_id, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'instance.list_enabled_properties',
-                method: 'GET',
-                path: '/api/instances/{instance_id}/enabled-properties',
-                pathParams: {
-                    instance_id: instance_id
-                }
-            }, callback);
-        },
-        
-        /**
-         * Returns placements that meet the filter criteria.
-         * @param {string} instance_id – Instance Id
-         * @param {object} [query] - Filter arguments
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.instances#
-         */
-        list_placements: function(instance_id, query, callback) {
-            // Shift optional arguments, if necessary
-            if (typeof query === "function") {
-                callback = query;
-                query = undefined;
-            }
-    
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'instance.list_placements',
-                method: 'GET',
-                path: '/api/instances/{instance_id}/placements',
-                pathParams: {
-                    instance_id: instance_id
-                },
-                query: query
-            }, callback);
-        },
-        
-        /**
-         * Returns all properties available to the farm.
-         * @param {string} instance_id – Instance Id
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.instances#
-         */
-        list_properties: function(instance_id, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'instance.list_properties',
-                method: 'GET',
-                path: '/api/instances/{instance_id}/properties',
-                pathParams: {
-                    instance_id: instance_id
-                }
-            }, callback);
-        },
-        
-        /**
-         * Returns the organization which the farm belongs to.
-         * @param {string} instance_id – Instance Id
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.instances#
-         */
-        retrieve_organization: function(instance_id, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'instance.retrieve_organization',
-                method: 'GET',
-                path: '/api/instances/{instance_id}/organization',
-                pathParams: {
-                    instance_id: instance_id
-                }
-            }, callback);
-        },
-        
-        /**
-         * Sets the default instance that should load when starting the farm.
-         * @param {string} instance_id – Instance Id
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.instances#
-         */
-        set_current: function(instance_id, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'instance.set_current',
-                method: 'PUT',
-                path: '/api/instances/{instance_id}/current',
-                pathParams: {
-                    instance_id: instance_id
-                }
-            }, callback);
-        },
-        
-        /**
-         * Update default placement settings on an organization.
-         * @param {string} instance_id – Instance Id
-         * @param {object} payload - Resource or parameters
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.instances#
-         */
-        update_organization: function(instance_id, payload, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'instance.update_organization',
-                method: 'PUT',
-                path: '/api/instances/{instance_id}/organization',
-                pathParams: {
-                    instance_id: instance_id
-                },
-                payload: payload
-            }, callback);
-        },
-        
-        /**
-         * Update an existing placement.
-         * @param {string} instance_id – Instance Id
-         * @param {string} placement_id – Placement Id
-         * @param {object} payload - Resource or parameters
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.instances#
-         */
-        update_placement: function(instance_id, placement_id, payload, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'instance.update_placement',
-                method: 'PUT',
-                path: '/api/instances/{instance_id}/placements/{placement_id}',
-                pathParams: {
-                    instance_id: instance_id,
-                    placement_id: placement_id
-                },
-                payload: payload
-            }, callback);
-        },
-        
-        /**
-         * Update default placement settings on a property.
-         * @param {string} instance_id – Instance Id
-         * @param {string} property_id – Property Id
-         * @param {object} payload - Resource or parameters
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.instances#
-         */
-        update_property: function(instance_id, property_id, payload, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'instance.update_property',
-                method: 'PUT',
-                path: '/api/instances/{instance_id}/properties/{property_id}',
-                pathParams: {
-                    instance_id: instance_id,
-                    property_id: property_id
-                },
-                payload: payload
-            }, callback);
         }
         
     };
@@ -3888,20 +3682,20 @@ Client.resourceBinders.push(function(Client) {
         /**
          * Returns a list of merchants belonging to the vendor.
          * @param {string} instance_id – Instance Id
-         * @param {string} vendorId – Name of vendor.
+         * @param {string} vendor_id – Vendor Id
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.merchants#
          */
-        list: function(instance_id, vendorId, callback) {
+        list: function(instance_id, vendor_id, callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'merchants.list',
                 method: 'GET',
-                path: '/api/{instance_id}/vendors/{vendorId}/merchants',
+                path: '/api/{instance_id}/vendors/{vendor_id}/merchants',
                 pathParams: {
                     instance_id: instance_id,
-                    vendorId: vendorId
+                    vendor_id: vendor_id
                 }
             }, callback);
         }
@@ -3915,22 +3709,22 @@ Client.resourceBinders.push(function(Client) {
     Client.farm.offers = {
         
         /**
-         * Returns an offer given its unique vendor_id:offer_id pairing
+         * Returns an offer given its canonical id
          * @param {string} instance_id – Instance Id
-         * @param {string} vendorOfferId – Unique offer id, using combined vendor_id:offer_id pair
+         * @param {string} vendor_offer_id – Unique offer id, using combined vendor_id:offer_id pair
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.offers#
          */
-        retrieve: function(instance_id, vendorOfferId, callback) {
+        retrieve: function(instance_id, vendor_offer_id, callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'offer.retrieve',
                 method: 'GET',
-                path: '/api/{instance_id}/offers/{vendorOfferId}',
+                path: '/api/{instance_id}/offers/{vendor_offer_id}',
                 pathParams: {
                     instance_id: instance_id,
-                    vendorOfferId: vendorOfferId
+                    vendor_offer_id: vendor_offer_id
                 }
             }, callback);
         },
@@ -4006,6 +3800,27 @@ Client.resourceBinders.push(function(Client) {
     Client.farm.vendors = {
         
         /**
+         * Returns detailed information about a vendor.
+         * @param {string} instance_id – Instance Id
+         * @param {string} vendor_id – Vendor Id
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.vendors#
+         */
+        retrieve: function(instance_id, vendor_id, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'vendor.retrieve',
+                method: 'GET',
+                path: '/api/{instance_id}/vendors/{vendor_id}',
+                pathParams: {
+                    instance_id: instance_id,
+                    vendor_id: vendor_id
+                }
+            }, callback);
+        },
+        
+        /**
          * Returns a list of vendors.
          * @param {string} instance_id – Instance Id
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
@@ -4025,43 +3840,22 @@ Client.resourceBinders.push(function(Client) {
         },
         
         /**
-         * Returns more information about a vendor.
-         * @param {string} instance_id – Instance Id
-         * @param {string} vendorId – Name of vendor.
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.vendors#
-         */
-        details: function(instance_id, vendorId, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'vendor.details',
-                method: 'GET',
-                path: '/api/{instance_id}/vendors/{vendorId}/details',
-                pathParams: {
-                    instance_id: instance_id,
-                    vendorId: vendorId
-                }
-            }, callback);
-        },
-        
-        /**
          * Resynchronizes all offers associated with the vendor.
          * @param {string} instance_id – Instance Id
-         * @param {string} vendorId – Name of vendor.
+         * @param {string} vendor_id – Vendor Id
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.vendors#
          */
-        resync: function(instance_id, vendorId, callback) {
+        resync: function(instance_id, vendor_id, callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'vendor.resync',
                 method: 'POST',
-                path: '/api/{instance_id}/vendors/{vendorId}/resync',
+                path: '/api/{instance_id}/vendors/{vendor_id}/resync',
                 pathParams: {
                     instance_id: instance_id,
-                    vendorId: vendorId
+                    vendor_id: vendor_id
                 }
             }, callback);
         }
