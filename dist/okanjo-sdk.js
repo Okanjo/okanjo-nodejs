@@ -1742,7 +1742,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '2.3.0';
+Client.Version = '2.3.1';
 
 /**
  * Expose the Provider base class
@@ -3823,11 +3823,18 @@ Client.resourceBinders.push(function(Client) {
         /**
          * Returns a list of vendors.
          * @param {string} instance_id – Instance Id
+         * @param {object} [query] - Filter arguments
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.vendors#
          */
-        list: function(instance_id, callback) {
+        list: function(instance_id, query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
             return Client._makeRequest({
                 api: 'farm',
                 action: 'vendor.list',
@@ -3835,7 +3842,8 @@ Client.resourceBinders.push(function(Client) {
                 path: '/api/{instance_id}/vendors',
                 pathParams: {
                     instance_id: instance_id
-                }
+                },
+                query: query
             }, callback);
         },
         
