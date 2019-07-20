@@ -66,7 +66,7 @@ module.exports = {
 function FauxApiServer(config) {
 
     this.config = config || {};
-    this.port = process.env.TEST_SERVER_PORT || this.config.port || 3200;
+    this.port = process.env.TEST_SERVER_PORT || this.config.port || 3202;
     this.routes = [];
 
     this.server = http.createServer(function(req, res) {

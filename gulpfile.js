@@ -14,9 +14,24 @@ const Browserify = require('browserify');
 
 const ApiSpecification = require('./lib/helpers/api_spec');
 
-const apiSpec = new ApiSpecification({ name: 'api', endpoint: 'https://dev-api2.okanjo.com' });
-const farmSpec = new ApiSpecification({ name: 'farm', namespace: 'farm', endpoint: 'https://farm-sandbox.okanjo.com' });
-const shortcodesSpec = new ApiSpecification({ name: 'shortcodes', namespace: 'shortcodes', endpoint: 'https://dev-shortcodes.okanjo.com' });
+const apiSpec = new ApiSpecification({
+    name: 'api',
+    endpoint: 'https://dev-api2.okanjo.com'
+});
+const ssoSpec = new ApiSpecification({
+    name: 'sso',
+    endpoint: 'https://okanjo.com/sign-in'
+});
+const farmSpec = new ApiSpecification({
+    name: 'farm',
+    namespace: 'farm',
+    endpoint: 'https://dev-farm.okanjo.com',
+});
+const shortcodesSpec = new ApiSpecification({
+    name: 'shortcodes',
+    namespace: 'shortcodes',
+    endpoint: 'https://dev-shortcodes.okanjo.com'
+});
 
 // Sources
 const resourceTemplateDir = 'templates'; // string or array
@@ -73,6 +88,18 @@ Gulp.task('get_shortcodes_spec', [], (done) => {
     });
 });
 
+Gulp.task('get_sso_spec', [], (done) => {
+    ssoSpec.getSpecification((err) => {
+        if (err) {
+            done(err);
+        } else {
+            // console.log(api);
+            //console.log(api.getResourceMapArray());
+            done();
+        }
+    });
+});
+
 // Generate resources from API spec
 Gulp.task('gen_resources', ['get_spec'], () => {
     return Gulp
@@ -119,8 +146,23 @@ Gulp.task('gen_shortcodes_resources', ['get_shortcodes_spec'], () => {
         .pipe(Gulp.dest('dist/partials'))
 });
 
+Gulp.task('gen_sso_resources', ['get_sso_spec'], () => {
+    return Gulp
+        .src(resourcesTemplateSrc)
+        .pipe(NunjucksRender({
+            path: resourceTemplateDir,
+            data: {
+                api: ssoSpec.name,
+                namespace: ssoSpec.namespace,
+                resources: ssoSpec.getResourceMapArray()
+            }
+        }))
+        .pipe(Rename('sso_resources.js'))
+        .pipe(Gulp.dest('dist/partials'))
+});
+
 // Marries the resource spec and client together, and includes current version
-Gulp.task('build_client', ['gen_resources','gen_farm_resources','gen_shortcodes_resources'], () => {
+Gulp.task('build_client', ['gen_resources','gen_farm_resources','gen_shortcodes_resources','gen_sso_resources'], () => {
     return Gulp
         .src(clientSources)
         .pipe(Concat('client.js'))
