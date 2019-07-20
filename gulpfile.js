@@ -40,7 +40,8 @@ const clientSources = [
     'lib/client_base.js',
     'dist/partials/resources.js',
     'dist/partials/farm_resources.js',
-    'dist/partials/shortcodes_resources.js'
+    'dist/partials/shortcodes_resources.js',
+    'dist/partials/sso_resources.js'
 ];
 
 // Clean up everything

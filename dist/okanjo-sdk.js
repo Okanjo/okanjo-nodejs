@@ -4113,5 +4113,103 @@ Client.resourceBinders.push(function(Client) {
     
 
 });
+/* istanbul ignore next: generated code */
+Client.resourceBinders.push(function(Client) {
+    
+    
+    /**
+     * Session
+     * @namespace Client.sso
+     */
+    Client.sso = {
+        
+        /**
+         * Authenticates a user session
+         * @param {string} prefix – Environment login path
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.ssos#
+         */
+        login: function(prefix, payload, callback) {
+            return Client._makeRequest({
+                api: 'sso',
+                action: 'sso.login',
+                method: 'POST',
+                path: '/{prefix}/api/sessions',
+                pathParams: {
+                    prefix: prefix
+                },
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Terminates the given session
+         * @param {string} prefix – Environment login path
+         * @param {string} sid – Session identifier
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.ssos#
+         */
+        logout: function(prefix, sid, callback) {
+            return Client._makeRequest({
+                api: 'sso',
+                action: 'sso.logout',
+                method: 'DELETE',
+                path: '/{prefix}/api/sessions/{sid}',
+                pathParams: {
+                    prefix: prefix,
+                    sid: sid
+                }
+            }, callback);
+        },
+        
+        /**
+         * Starts the account recovery process
+         * @param {string} prefix – Environment login path
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.ssos#
+         */
+        recover: function(prefix, payload, callback) {
+            return Client._makeRequest({
+                api: 'sso',
+                action: 'sso.recover',
+                method: 'POST',
+                path: '/{prefix}/api/recover',
+                pathParams: {
+                    prefix: prefix
+                },
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Gets the session state if still valid
+         * @param {string} prefix – Environment login path
+         * @param {string} sso_token – Session identifier
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.ssos#
+         */
+        validate: function(prefix, sso_token, callback) {
+            return Client._makeRequest({
+                api: 'sso',
+                action: 'sso.validate',
+                method: 'GET',
+                path: '/{prefix}/api/sessions/{sso_token}',
+                pathParams: {
+                    prefix: prefix,
+                    sso_token: sso_token
+                }
+            }, callback);
+        }
+        
+    };
+    
+
+});
 }).call(this,require('_process'))
 },{"../lib/provider":1,"../lib/providers/fetch_provider":2,"../lib/providers/http_provider":5,"../lib/query":3,"_process":7}]},{},[]);
