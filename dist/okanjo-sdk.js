@@ -1742,7 +1742,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '2.4.0';
+Client.Version = '2.4.2';
 
 /**
  * Expose the Provider base class
@@ -3339,8 +3339,8 @@ Client.resourceBinders.push(function(Client) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'bucket_item.delete',
-                method: 'DELETE',
-                path: '/api/{instance_id}/bucket-items',
+                method: 'POST',
+                path: '/api/{instance_id}/bucket-items/delete',
                 pathParams: {
                     instance_id: instance_id
                 },
@@ -3519,23 +3519,25 @@ Client.resourceBinders.push(function(Client) {
         },
         
         /**
-         * Deletes a direct link.
+         * Update an existing direct link.
          * @param {string} instance_id – Instance Id
          * @param {string} vendor_offer_id – Unique offer id, using combined vendor_id:offer_id pair
+         * @param {object} payload - Resource or parameters
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.direct_links#
          */
-        delete: function(instance_id, vendor_offer_id, callback) {
+        update: function(instance_id, vendor_offer_id, payload, callback) {
             return Client._makeRequest({
                 api: 'farm',
-                action: 'direct_link.delete',
-                method: 'DELETE',
+                action: 'direct_link.update',
+                method: 'PUT',
                 path: '/api/{instance_id}/links/{vendor_offer_id}',
                 pathParams: {
                     instance_id: instance_id,
                     vendor_offer_id: vendor_offer_id
-                }
+                },
+                payload: payload
             }, callback);
         },
         
@@ -3561,25 +3563,23 @@ Client.resourceBinders.push(function(Client) {
         },
         
         /**
-         * Update an existing direct link.
+         * Deletes a direct link.
          * @param {string} instance_id – Instance Id
          * @param {string} vendor_offer_id – Unique offer id, using combined vendor_id:offer_id pair
-         * @param {object} payload - Resource or parameters
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.direct_links#
          */
-        update: function(instance_id, vendor_offer_id, payload, callback) {
+        delete: function(instance_id, vendor_offer_id, callback) {
             return Client._makeRequest({
                 api: 'farm',
-                action: 'direct_link.update',
-                method: 'PUT',
+                action: 'direct_link.delete',
+                method: 'DELETE',
                 path: '/api/{instance_id}/links/{vendor_offer_id}',
                 pathParams: {
                     instance_id: instance_id,
                     vendor_offer_id: vendor_offer_id
-                },
-                payload: payload
+                }
             }, callback);
         }
         
