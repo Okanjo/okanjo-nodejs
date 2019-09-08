@@ -1742,7 +1742,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '2.4.2';
+Client.Version = '2.5.0';
 
 /**
  * Expose the Provider base class
@@ -3075,6 +3075,177 @@ Client.resourceBinders.push(function(Client) {
     };
     
     /**
+     * Amazon Links
+     * @namespace Client.farm.amazon_links
+     */
+    Client.farm.amazon_links = {
+        
+        /**
+         * Creates a new Amazon link.
+         * @param {string} instance_id – Instance Id
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.amazon_links#
+         */
+        create: function(instance_id, payload, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'amazon_link.create',
+                method: 'POST',
+                path: '/api/{instance_id}/links/amazon',
+                pathParams: {
+                    instance_id: instance_id
+                },
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Retrieves an existing Amazon link.
+         * @param {string} instance_id – Instance Id
+         * @param {string} vendor_id_asin – Unique amazon product id, using combined vendor_id:asin pair
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.amazon_links#
+         */
+        retrieve: function(instance_id, vendor_id_asin, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'amazon_link.retrieve',
+                method: 'GET',
+                path: '/api/{instance_id}/links/amazon/{vendor_id_asin}',
+                pathParams: {
+                    instance_id: instance_id,
+                    vendor_id_asin: vendor_id_asin
+                }
+            }, callback);
+        },
+        
+        /**
+         * Returns Amazon links that meet the filter criteria.
+         * @param {string} instance_id – Instance Id
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.amazon_links#
+         */
+        list: function(instance_id, query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'amazon_link.list',
+                method: 'GET',
+                path: '/api/{instance_id}/links/amazon',
+                pathParams: {
+                    instance_id: instance_id
+                },
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Update an existing Amazon link.
+         * @param {string} instance_id – Instance Id
+         * @param {string} vendor_id_asin – Unique amazon product id, using combined vendor_id:asin pair
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.amazon_links#
+         */
+        update: function(instance_id, vendor_id_asin, payload, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'amazon_link.update',
+                method: 'PUT',
+                path: '/api/{instance_id}/links/amazon/{vendor_id_asin}',
+                pathParams: {
+                    instance_id: instance_id,
+                    vendor_id_asin: vendor_id_asin
+                },
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Follows the Amazon link to the offer page, or finds a replacement if no longer available.
+         * @param {string} instance_id – Instance Id
+         * @param {string} vendor_id_asin – Unique amazon product id, using combined vendor_id:asin pair
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.amazon_links#
+         */
+        follow: function(instance_id, vendor_id_asin, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'amazon_link.follow',
+                method: 'GET',
+                path: '/api/{instance_id}/links/amazon/{vendor_id_asin}/follow',
+                pathParams: {
+                    instance_id: instance_id,
+                    vendor_id_asin: vendor_id_asin
+                }
+            }, callback);
+        },
+        
+        /**
+         * Returns Amazon offers that meet the filter criteria.
+         * @param {string} instance_id – Instance Id
+         * @param {string} vendor_id – Vendor Id
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.amazon_links#
+         */
+        search: function(instance_id, vendor_id, query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'amazon_link.search',
+                method: 'GET',
+                path: '/api/{instance_id}/vendors/{vendor_id}/amazon-search',
+                pathParams: {
+                    instance_id: instance_id,
+                    vendor_id: vendor_id
+                },
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Deletes an Amazon link.
+         * @param {string} instance_id – Instance Id
+         * @param {string} vendor_id_asin – Unique amazon product id, using combined vendor_id:asin pair
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.amazon_links#
+         */
+        delete: function(instance_id, vendor_id_asin, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'amazon_link.delete',
+                method: 'DELETE',
+                path: '/api/{instance_id}/links/amazon/{vendor_id_asin}',
+                pathParams: {
+                    instance_id: instance_id,
+                    vendor_id_asin: vendor_id_asin
+                }
+            }, callback);
+        }
+        
+    };
+    
+    /**
      * Buckets
      * @namespace Client.farm.buckets
      */
@@ -3542,27 +3713,6 @@ Client.resourceBinders.push(function(Client) {
         },
         
         /**
-         * Follows the direct offer link to the offer page, or finds a replacement if no longer available.
-         * @param {string} instance_id – Instance Id
-         * @param {string} vendor_offer_id – Unique offer id, using combined vendor_id:offer_id pair
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.direct_links#
-         */
-        follow: function(instance_id, vendor_offer_id, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'direct_link.follow',
-                method: 'GET',
-                path: '/api/{instance_id}/links/{vendor_offer_id}/follow',
-                pathParams: {
-                    instance_id: instance_id,
-                    vendor_offer_id: vendor_offer_id
-                }
-            }, callback);
-        },
-        
-        /**
          * Deletes a direct link.
          * @param {string} instance_id – Instance Id
          * @param {string} vendor_offer_id – Unique offer id, using combined vendor_id:offer_id pair
@@ -3576,6 +3726,27 @@ Client.resourceBinders.push(function(Client) {
                 action: 'direct_link.delete',
                 method: 'DELETE',
                 path: '/api/{instance_id}/links/{vendor_offer_id}',
+                pathParams: {
+                    instance_id: instance_id,
+                    vendor_offer_id: vendor_offer_id
+                }
+            }, callback);
+        },
+        
+        /**
+         * Follows the direct offer link to the offer page, or finds a replacement if no longer available.
+         * @param {string} instance_id – Instance Id
+         * @param {string} vendor_offer_id – Unique offer id, using combined vendor_id:offer_id pair
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.direct_links#
+         */
+        follow: function(instance_id, vendor_offer_id, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'direct_link.follow',
+                method: 'GET',
+                path: '/api/{instance_id}/links/{vendor_offer_id}/follow',
                 pathParams: {
                     instance_id: instance_id,
                     vendor_offer_id: vendor_offer_id

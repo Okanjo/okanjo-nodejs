@@ -20,7 +20,7 @@ const apiSpec = new ApiSpecification({
 });
 const ssoSpec = new ApiSpecification({
     name: 'sso',
-    endpoint: 'https://okanjo.com/sign-in'
+    endpoint: 'https://okanjo.com/dev-sign-in'
 });
 const farmSpec = new ApiSpecification({
     name: 'farm',
