@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '2.5.0';
+Client.Version = '2.6.0';
 
 /**
  * Expose the Provider base class
@@ -2355,6 +2355,29 @@ Client.resourceBinders.push(function(Client) {
                     instance_id: instance_id
                 },
                 query: query
+            }, callback);
+        },
+        
+        /**
+         * Updates a vendor.
+         * @param {string} instance_id – Instance Id
+         * @param {string} vendor_id – Vendor Id
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.vendors#
+         */
+        update: function(instance_id, vendor_id, payload, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'vendor.update',
+                method: 'PUT',
+                path: '/api/{instance_id}/vendors/{vendor_id}',
+                pathParams: {
+                    instance_id: instance_id,
+                    vendor_id: vendor_id
+                },
+                payload: payload
             }, callback);
         },
         
