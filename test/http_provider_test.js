@@ -42,7 +42,7 @@ describe('HTTP Provider', function() {
     const com = require('./common'),
         FauxApiServer = com.FauxApiServer,
         Client = require('../dist/client'),
-        HttpProvider = require('../lib/providers/http_provider');
+        HttpProvider = require('../src/providers/http_provider');
     let server, api;
 
     before(function(done) {
@@ -122,6 +122,40 @@ describe('HTTP Provider', function() {
         });
     });
 
+    it('should set options', (done) => {
+
+        server.routes.push({
+            method: 'POST',
+            path: '/options-jar',
+            handler: function(req, reply) {
+                reply(200, { error: null, data: 'all good' })
+            }
+        });
+
+
+        api._makeRequest({
+            api: 'api',
+            method: 'POST',
+            path: '/options-jar',
+            options: {
+                chocolate: 'chip',
+                thin: 'mint'
+            }
+        }, function(err, res) {
+
+            should(err).not.be.ok();
+            should(res).be.ok();
+
+            res.statusCode.should.be.equal(200);
+            res.data.should.match(/all good/i);
+
+            //com.log('err', err)
+            //com.log('res', res)
+
+            done();
+        });
+    });
+
     it('should setup defaults to production', function() {
 
         const api2 = new Client({
@@ -143,7 +177,7 @@ describe('HTTP Provider', function() {
             api: 'api',
             method: 'GET',
             path: '/',
-        }, (err, res) => {
+        }, (/*err, res*/) => {
             // console.log('err', err);
             // console.log('res', res);
         });
@@ -626,6 +660,7 @@ describe('HTTP Provider', function() {
     it('should encode credentials properly', function() {
 
         // Encode it
+        // noinspection JSAccessibilityCheck
         const authorization = api.provider._getAuthorization("api key", "session token");
 
         authorization.should.be.a.String().and.not.empty();
@@ -670,6 +705,7 @@ describe('HTTP Provider', function() {
     it('should encode just the key properly', function() {
 
         // Encode it
+        // noinspection JSAccessibilityCheck
         const authorization = api.provider._getAuthorization("api key");
 
         const res = decodeAuthorization(authorization);

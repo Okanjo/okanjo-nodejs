@@ -41,7 +41,7 @@ describe('Provider', function() {
 
 
     const Client = require('../dist/client'),
-        Provider = require('../lib/provider');
+        Provider = require('../src/provider');
 
     it('should fire the callback when executed', function(done) {
 

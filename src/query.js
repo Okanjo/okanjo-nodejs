@@ -107,6 +107,12 @@ function Query(base, options) {
      */
     this.cookies = {};
 
+    /**
+     * SDK options, do not transmit
+     * @type {{}}
+     */
+    this.options = {};
+
     this._extend(base);
     this._extend(options, true);
 }
@@ -129,6 +135,7 @@ Query.prototype._extend = function(extra, overrideAll) {
         if (extra.query !== undefined) this.where(extra.query);
         if (extra.payload !== undefined) this.data(extra.payload);
         if (extra.cookies !== undefined) this.setCookies(extra.cookies);
+        if (extra.options !== undefined) this.setOptions(extra.options);
 
         if (overrideAll) {
             if (extra.key !== undefined) this.setKey(extra.key);
@@ -245,5 +252,12 @@ Query.prototype.setSessionToken = function(sessionToken) { this.sessionToken = s
  * @returns {Query}
  */
 Query.prototype.setCookies = function(cookies) { this.cookies = cookies; return this; };
+
+/**
+ * Sets sdk options for the request
+ * @param {*} options
+ * @returns {Query}
+ */
+Query.prototype.setOptions = function(options) { this.options = options; return this; };
 
 module.exports = Query;

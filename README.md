@@ -85,4 +85,41 @@ With await:
 const res = await api.sessions.create(payload).execute();
 ```
 
+## Aborting requests
+
+When using the FetchProvider, you can provide a controller signal to shutdown a fetch request.
+
+For example:
+
+```js
+
+const controller = new AbortController();
+const signal = controller.signal;
+
+api.organizations.list({}).setOptions({ signal }).execute()
+    .then(res => {
+        // res completed successfully
+        // (this won't fire in this example)
+    })
+    .catch(err => {
+        // request failed or was aborted
+        // in this example, err looks like this:
+        /*
+            err = {
+                statusCode: 503,
+                error: 'The user aborted a request.',
+                message: 'Something went wrong'
+            }
+         */
+    })
+;
+
+// Abort the request
+setTimeout(() => {
+    controller.abort();    
+}, 100);
+
+
+```
+
 See the [Okanjo API documentation](https://developer.okanjo.com/api) for information on what routes are available for use.

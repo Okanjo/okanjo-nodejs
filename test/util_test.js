@@ -39,7 +39,7 @@ const should = require('should');
 
 describe('Utilities', function() {
 
-    const Util = require('../lib/util');
+    const Util = require('../src/util');
 
 
     it('copy should deep copy', function() {

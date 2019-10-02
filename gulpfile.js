@@ -12,7 +12,7 @@ const NunjucksRender = require('gulp-nunjucks-render');
 const Del = require('del');
 const Browserify = require('browserify');
 
-const ApiSpecification = require('./lib/helpers/api_spec');
+const ApiSpecification = require('./src/helpers/api_spec');
 
 const apiSpec = new ApiSpecification({
     name: 'api',
@@ -37,7 +37,7 @@ const shortcodesSpec = new ApiSpecification({
 const resourceTemplateDir = 'templates'; // string or array
 const resourcesTemplateSrc = `${resourceTemplateDir}/resources.njk`;
 const clientSources = [
-    'lib/client_base.js',
+    'src/client_base.js',
     'dist/partials/resources.js',
     'dist/partials/farm_resources.js',
     'dist/partials/shortcodes_resources.js',
@@ -56,6 +56,7 @@ Gulp.task('clean', function() {
 Gulp.task('get_spec', [], (done) => {
     apiSpec.getSpecification((err) => {
         if (err) {
+            console.error('failed to fetch api spec');
             done(err);
         } else {
             // console.log(api);
@@ -68,6 +69,7 @@ Gulp.task('get_spec', [], (done) => {
 Gulp.task('get_farm_spec', [], (done) => {
     farmSpec.getSpecification((err) => {
         if (err) {
+            console.error('failed to fetch farm spec');
             done(err);
         } else {
             // console.log(api);
@@ -80,6 +82,7 @@ Gulp.task('get_farm_spec', [], (done) => {
 Gulp.task('get_shortcodes_spec', [], (done) => {
     shortcodesSpec.getSpecification((err) => {
         if (err) {
+            console.error('failed to fetch shortcode spec');
             done(err);
         } else {
             // console.log(api);
@@ -92,6 +95,7 @@ Gulp.task('get_shortcodes_spec', [], (done) => {
 Gulp.task('get_sso_spec', [], (done) => {
     ssoSpec.getSpecification((err) => {
         if (err) {
+            console.error('failed to fetch sso spec');
             done(err);
         } else {
             // console.log(api);
@@ -175,7 +179,7 @@ Gulp.task('build_client', ['gen_resources','gen_farm_resources','gen_shortcodes_
 Gulp.task('build_browser_client', ['build_client'], () => {
     const bundler = Browserify();
 
-    bundler.ignore('./lib/providers/http_provider.js');
+    bundler.ignore('./src/providers/http_provider.js');
     bundler.require('./dist/client.js', { expose: 'okanjo-sdk' });
 
     return bundler.bundle()
@@ -185,7 +189,7 @@ Gulp.task('build_browser_client', ['build_client'], () => {
         .pipe(Rename('okanjo-sdk.min.js'))
         .pipe(SourceMaps.init())
         .pipe(Uglify())
-            .on('error', (err) => { console.error('Blew up uglifying sources!', err.stack); })
+            .on('error', (err) => { console.error('Blew up uglifying sources!', err.stack, err); })
         .pipe(SourceMaps.write('./'))
         .pipe(Gulp.dest('dist'))
 });

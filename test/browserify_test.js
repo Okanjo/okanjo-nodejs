@@ -38,7 +38,7 @@
 describe('Browser Mode', function() {
 
     const Client = require('../dist/client'),
-        Provider = require('../lib/provider');
+        Provider = require('../src/provider');
 
     before(function() {
         process.browser = true;

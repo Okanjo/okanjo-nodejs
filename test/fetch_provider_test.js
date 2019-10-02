@@ -39,13 +39,14 @@
 global.fetch = require('node-fetch');
 
 const should = require('should');
+const AbortController = require('abort-controller');
 
 describe('Fetch Provider', function() {
 
     const com = require('./common'),
         FauxApiServer = com.FauxApiServer,
         Client = require('../dist/client'),
-        FetchProvider = require('../lib/providers/fetch_provider');
+        FetchProvider = require('../src/providers/fetch_provider');
     let server, api;
 
     before(function(done) {
@@ -180,7 +181,7 @@ describe('Fetch Provider', function() {
                 done();
             };
 
-            q.execute().catch(err => { /* no UnhandledPromiseRejectionWarning plz */});
+            q.execute().catch(() => { /* no UnhandledPromiseRejectionWarning plz */});
         });
 
     });
@@ -255,7 +256,7 @@ describe('Fetch Provider', function() {
                 server.routes.splice(0, 1);
                 done();
             };
-            q.execute().catch(err => { /* no UnhandledPromiseRejectionWarning plz */});
+            q.execute().catch(() => { /* no UnhandledPromiseRejectionWarning plz */});
 
         });
 
@@ -328,6 +329,176 @@ describe('Fetch Provider', function() {
                 done();
             });
         });
+    });
+
+    it('should handle request queue saturation', (done) => {
+
+        let holdRequests = true;
+        const queue = [];
+        let received = 0;
+
+        server.routes.push({
+            method: 'POST',
+            path: '/rpc',
+            handler: function(req, reply) {
+                if (holdRequests) {
+                    // console.log('queued', req.payload)
+                    queue.push(() => {
+                        // console.log('reply', req.payload)
+                        reply(200, {statusCode: 200, data: JSON.parse(req.payload)});
+                    });
+                } else {
+                    // console.log('reply2', req.payload)
+                    reply(200, {statusCode: 200, data: JSON.parse(req.payload)});
+                }
+            }
+        });
+
+        for (let i = 0; i < 8; i++) {
+            api.sessions.create({ counter: i }, (/*err, res*/) => {
+                // console.log('got response for req', res.data.payload.counter);
+                received++;
+                if (received === 8) {
+                    // DONE
+                    server.routes.splice(0, 1);
+                    done();
+                }
+            });
+        }
+
+        // let stuff settle
+        setImmediate(() => {
+            // requests should show 5 in progress, 3 in queue, 5 received by server
+            // noinspection JSAccessibilityCheck
+            api.provider._activeRequests.should.be.exactly(5);      // 5 in progress
+            // noinspection JSAccessibilityCheck
+            api.provider._requestQueue.length.should.be.exactly(3); // 3 queued
+            setTimeout(() => {
+
+                queue.length.should.be.exactly(5);                  // 5 received by server
+
+                // release the queue and don't hold future reqs
+                // console.log('releasing the queue', queue);
+                holdRequests = false;
+                queue.forEach(reply => reply());
+            }, 100);
+        });
+    });
+
+    it('should handle request queue saturation with promises', (done) => {
+
+        let holdRequests = true;
+        const queue = [];
+        let received = 0;
+
+        server.routes.push({
+            method: 'POST',
+            path: '/rpc',
+            handler: function(req, reply) {
+                if (holdRequests) {
+                    // console.log('queued', req.payload)
+                    queue.push(() => {
+                        // console.log('reply', req.payload)
+                        reply(200, {statusCode: 200, data: JSON.parse(req.payload)});
+                    });
+                } else {
+                    // console.log('reply2', req.payload)
+                    reply(200, {statusCode: 200, data: JSON.parse(req.payload)});
+                }
+            }
+        });
+
+        for (let i = 0; i < 8; i++) {
+            api.sessions.create({ counter: i }).execute().then((/*res*/) => {
+                // console.log('got response for req', res.data.payload.counter);
+                received++;
+                if (received === 8) {
+                    // DONE
+                    server.routes.splice(0, 1);
+                    done();
+                }
+            });
+        }
+
+        // let stuff settle
+        setImmediate(() => {
+            // requests should show 5 in progress, 3 in queue, 5 received by server
+            // noinspection JSAccessibilityCheck
+            api.provider._activeRequests.should.be.exactly(5);      // 5 in progress
+            // noinspection JSAccessibilityCheck
+            api.provider._requestQueue.length.should.be.exactly(3); // 3 queued
+            setTimeout(() => {
+
+                queue.length.should.be.exactly(5);                  // 5 received by server
+
+                // release the queue and don't hold future reqs
+                // console.log('releasing the queue', queue);
+                holdRequests = false;
+                queue.forEach(reply => reply());
+            }, 100);
+        });
+    });
+
+    it('should handle abortable requests', (done) => {
+
+        let sendReply;
+
+        // Fake proxy page (e.g. gist's fun unicorn)
+        server.routes.push({
+            method: 'POST',
+            path: '/rpc',
+            handler: function(req, reply) {
+                // console.log('server got req')
+                sendReply = () => {
+                    // console.log('server sending reply')
+                    reply(200, { statusCode: 200, data: "all good!" });
+                };
+            }
+        });
+
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        let q = api.sessions
+            .create({ email: "bogus@unit.test", password: "password" })
+            .setOptions({ signal })
+        ;
+
+        // console.log('query?', q)
+
+        let p = q.execute();
+        p
+            .then(() => {
+                // console.log('res', res);
+                server.routes.splice(0, 1);
+                done('this should not have returned');
+            })
+            .catch(err => {
+                // console.log('err', err);
+                should(err).be.ok();
+                err.statusCode.should.be.exactly(503);
+                err.error.should.match(/aborted/);
+                should(err.message).be.ok();
+
+                // cleanup
+                server.routes.splice(0, 1);
+
+                // let the server send the response now
+                sendReply();
+                setTimeout(() => { done(); }, 10);
+            })
+        ;
+
+        // delay and then abort the req
+        setTimeout(() => {
+            // console.log('aborting!');
+            // noinspection JSAccessibilityCheck
+            api.provider._requestQueue.length.should.be.exactly(0);
+            // noinspection JSAccessibilityCheck
+            api.provider._activeRequests.should.be.exactly(1);
+            controller.abort();
+        }, 100);
+
     });
 
 });

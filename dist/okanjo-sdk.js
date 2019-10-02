@@ -1,596 +1,6 @@
 require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-/*
- * Date: 1/26/16 11:59 AM
- *
- * ----
- *
- * (c) Okanjo Partners Inc
- * https://okanjo.com
- * support@okanjo.com
- *
- * https://github.com/okanjo/okanjo-nodejs
- *
- * ----
- *
- * TL;DR? see: http://www.tldrlegal.com/license/mit-license
- *
- * The MIT License (MIT)
- * Copyright (c) 2013 Okanjo Partners Inc.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
 
-/**
- * Request handler
- * @param {Client} [client]
- * @constructor
- */
-function Provider(client) {
-    this.client = client;
-}
-
-/**
- * Compiles the query into an executable request
- * @param {Query} query – The query to build
- */
-Provider.prototype.compile = function(query) {
-    var provider = this;
-
-    // Attach execute function to the query
-    query.execute = function(callback) {
-        return provider.execute(query, callback);
-    };
-
-    // Future: Attach cache/execute function to the query
-};
-
-
-/**
- * Executes the query
- * @param {Query} query - The query to execute
- * @param {requestCallback} callback – Callback to fire when request is completed
- * @abstract
- */
-Provider.prototype.execute = function(query, callback) {
-    //console.error('Okanjo Base Provider Execute:', query);
-    callback(new Error('Transport provider not implemented'), null);
-};
-
-/**
- * Fires the client-given unauthorized hook in the event a response comes back 401-Unauthorized
- * which generally means, your session is dead, jim.
- * @param {object} err - The response payload
- * @param {Query} query - The offending query
- * @return {*}
- * @protected
- */
-Provider.prototype._unauthorizedHook = function(err, query) {
-    if (typeof this.client.config.onUnauthorizedResponse === "function") {
-        this.client.config.onUnauthorizedResponse(err, query);
-    }
-};
-
-
-/**
- * @callback requestCallback
- * @param {object|null} error
- * @param {object|null} response
- */
-
-module.exports = Provider;
 },{}],2:[function(require,module,exports){
-(function (global){
-/*
- * Date: 10/20/16 4:30 PM
- *
- * ----
- *
- * (c) Okanjo Partners Inc
- * https://okanjo.com
- * support@okanjo.com
- *
- * https://github.com/okanjo/okanjo-nodejs
- *
- * ----
- *
- * TL;DR? see: http://www.tldrlegal.com/license/mit-license
- *
- * The MIT License (MIT)
- * Copyright (c) 2013 Okanjo Partners Inc.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
-var util = require('util'),
-    timers = require('timers'),
-    setImmediate = global.setImmediate /* istanbul ignore next */ || timers.setImmediate,
-    Provider = require('../provider');
-
-/**
- * Request handler
- * @param {Client} [client]
- * @constructor
- */
-function FetchProvider(client) {
-    Provider.call(this, client);
-
-    /**
-     * Where to send requests to
-     * @type {string}
-     */
-    this.rpcHost = client.config.rpcHost || "/rpc";
-
-    /**
-     * What method is the RPC router expecting
-     * @type {string}
-     */
-    this.rpcMethod = client.config.rpcMethod || 'POST';
-
-
-}
-
-util.inherits(FetchProvider, Provider);
-
-
-/**
- * Executes the query
- * @param {Query} query - The query to execute
- * @param callback – Callback to fire when request is completed
- * @abstract
- */
-FetchProvider.prototype.execute = function(query, callback) {
-
-    var req = {
-        method: this.rpcMethod,
-        body: JSON.stringify(query),
-        credentials: 'same-origin', // preserve authentication
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json; charset=utf-8'
-        }
-    };
-
-    return fetch(this.rpcHost + '?a=' + encodeURIComponent(query.action), req)
-        .then(function(res) {
-            return res.json();
-        })
-        .then(function(res) {
-            if (res.error) {
-                // Error response from API
-                return Promise.reject(res);
-            } else {
-                // Browserify should polyfill setImmediate
-                if (callback) {
-                    return setImmediate(function() {
-                        callback(null, res);
-                    });
-                }
-                return Promise.resolve(res);
-            }
-        })
-        .catch(function(err) {
-            if (!err || !err.statusCode) {
-                err = {
-                    statusCode: 503,
-                    error: (err instanceof Error ? err.message : /* istanbul ignore next: not worth testing err vs stats */ err),
-                    message: "Something went wrong",
-                    attributes: {
-                        source: 'okanjo.providers.FetchProvider',
-                        wrappedError: err
-                    }
-                };
-            }
-
-            // Check for unauthorized hook case
-            if (err.statusCode === 401) this._unauthorizedHook(err, query);
-
-            if (callback) {
-                return setImmediate(function() {
-                    callback(err, null);
-                });
-            }
-            return Promise.reject(err);
-        }.bind(this));
-};
-
-
-/**
- * @callback requestCallback
- * @param {object|null} error
- * @param {object|null} response
- */
-
-module.exports = FetchProvider;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../provider":1,"timers":11,"util":13}],3:[function(require,module,exports){
-/*
- * Date: 1/26/16 11:59 AM
- *
- * ----
- *
- * (c) Okanjo Partners Inc
- * https://okanjo.com
- * support@okanjo.com
- *
- * https://github.com/okanjo/okanjo-nodejs
- *
- * ----
- *
- * TL;DR? see: http://www.tldrlegal.com/license/mit-license
- *
- * The MIT License (MIT)
- * Copyright (c) 2013 Okanjo Partners Inc.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
-var sdkUtil = require('./util'),
-    querystring = require('querystring');
-
-/**
- * Query container
- * @param {object} [base] - Base query to clone
- * @param {object} [options] - Options to override
- * @constructor
- */
-function Query(base, options) {
-
-    /**
-     * The API in which the resource belongs to
-     * @type {null}
-     */
-    this.api = null;
-
-    /**
-     * Resource method action / route id
-     * @type {string}
-     */
-    this.action = null;
-
-    /**
-     * Request method
-     * @example `GET` or `PUT` or `POST` or `DELETE`
-     * @type {string}
-     */
-    this.method = null;
-
-    /**
-     * Request path
-     * @type {string}
-     */
-    this.path = '';
-
-    /**
-     * Request path parameters
-     * @type {object}
-     */
-    this.pathParams = {};
-
-    /**
-     * Request query arguments
-     * @type {object|null}
-     */
-    this.query = null;
-
-    /**
-     * Request payload
-     * @type {object|null}
-     */
-    this.payload = null;
-
-    /**
-     * API key
-     * @type {null}
-     */
-    this.key = null;
-
-    /**
-     * Authorization token
-     * @type {null}
-     */
-    this.sessionToken = null;
-
-    /**
-     * Cookies
-     * @type {{}}
-     */
-    this.cookies = {};
-
-    this._extend(base);
-    this._extend(options, true);
-}
-
-
-
-/**
- * Copies and clones properties from the given object
- * @param extra
- * @param overrideAll
- * @private
- */
-Query.prototype._extend = function(extra, overrideAll) {
-    if (extra) {
-        if (extra.api !== undefined) this.setAPI(extra.api);
-        if (extra.action !== undefined) this.setAction(extra.action);
-        if (extra.method !== undefined) this.setMethod(extra.method);
-        if (extra.path !== undefined) this.setPath(extra.path);
-        if (extra.pathParams !== undefined) this.setPathParams(extra.pathParams);
-        if (extra.query !== undefined) this.where(extra.query);
-        if (extra.payload !== undefined) this.data(extra.payload);
-        if (extra.cookies !== undefined) this.setCookies(extra.cookies);
-
-        if (overrideAll) {
-            if (extra.key !== undefined) this.setKey(extra.key);
-            if (extra.sessionToken !== undefined) this.setSessionToken(extra.sessionToken);
-        }
-    }
-};
-
-
-/**
- * Returns the real URL path of the request
- * @return {string|Error}
- */
-Query.prototype.getRealPath = function() {
-    return sdkUtil.buildPath(this.path, this.pathParams);
-};
-
-
-/**
- * Returns the full URL path including the querystring
- * @return {string|Error}
- */
-Query.prototype.getFullPath = function() {
-    var path = this.getRealPath();
-    if (path && this.query) {
-        return path + '?' + querystring.stringify(this.query);
-    } else {
-        return path;
-    }
-};
-
-/**
- * Sets the name of the API which handles the query
- * @param {string} api
- * @return {Query}
- */
-Query.prototype.setAPI = function(api) { this.api = api; return this; };
-
-/**
- * Sets the method action / route id
- * @param {string} action
- * @return {Query}
- */
-Query.prototype.setAction = function(action) { this.action = action; return this; };
-
-/**
- * Sets the HTTP method on the request
- * @param {string} method
- * @return {Query}
- */
-Query.prototype.setMethod = function(method) { this.method = method; return this; };
-
-
-/**
- * Sets the URL path template on the request
- * @param {string} path
- * @return {Query}
- */
-Query.prototype.setPath = function(path) { this.path = path; return this; };
-
-/**
- * Sets the URL path parameters on the request
- * @param {object} params
- * @return {Query}
- */
-Query.prototype.setPathParams = function(params) { this.pathParams = sdkUtil.copy(this.pathParams, params); return this; };
-
-/**
- * Sets the query parameters on the request
- * @param {object} params
- * @return {Query}
- */
-Query.prototype.where = function(params) { this.query = sdkUtil.copy(this.query, params); return this; };
-
-/**
- * Sets the payload on the request
- * @param {object} doc
- * @return {Query}
- */
-Query.prototype.data = function(doc) { this.payload = sdkUtil.copy(this.payload, doc); return this; };
-
-/**
- * Sets the pagination skip count on the request
- * @param {number} count
- * @return {Query}
- */
-Query.prototype.skip = function(count) { this.query = sdkUtil.copy(this.query, { skip: count }); return this; };
-
-/**
- * Sets the pagination return count on the request
- * @param {number} count
- * @return {Query}
- */
-Query.prototype.take = function(count) { this.query = sdkUtil.copy(this.query, { take: count }); return this; };
-
-/**
- * Sets the API key to use on the request
- * @param {string} key
- * @return {Query}
- */
-Query.prototype.setKey = function(key) { this.key = key; return this; };
-
-
-/**
- * Sets the authorization context of the request
- * @param {string} sessionToken
- * @return {Query}
- */
-Query.prototype.setSessionToken = function(sessionToken) { this.sessionToken = sessionToken; return this; };
-
-/**
- * Sets cookies on the request
- * @param {*} cookies
- * @returns {Query}
- */
-Query.prototype.setCookies = function(cookies) { this.cookies = cookies; return this; };
-
-module.exports = Query;
-},{"./util":4,"querystring":10}],4:[function(require,module,exports){
-/*
- * Date: 1/26/16 12:01 PM
- *
- * ----
- *
- * (c) Okanjo Partners Inc
- * https://okanjo.com
- * support@okanjo.com
- *
- * https://github.com/okanjo/okanjo-nodejs
- *
- * ----
- *
- * TL;DR? see: http://www.tldrlegal.com/license/mit-license
- *
- * The MIT License (MIT)
- * Copyright (c) 2013 Okanjo Partners Inc.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
-/**
- * Simple, deep, key-value copier
- * @param {*} destination – Target object or empty to make brand new copy
- * @param {*} source – Object to make a duplicate of
- * @return {*} – The resulting object, which might be the same as dest unless source was a value not a reference
- * @author Kevin Fitzgerald
- */
-function copy(destination, source) {
-    if (source !== null && typeof source === "object") {
-        if (Array.isArray(source)) {
-            destination = destination || [];
-            source.forEach(function(val, index) {
-                destination[index] = copy(destination[index], val);
-            });
-        } else {
-            destination = destination || {};
-            Object.keys(source).forEach(function(key) {
-                destination[key] = copy(destination[key], source[key]);
-            });
-        }
-    } else {
-        destination = source;
-    }
-
-    return destination;
-}
-
-
-/**
- * Builds the final URL path given replaceable param names
- * @param {string} path - Route path
- * @param {object} params - Parameter key value pairs
- * @return {string|Error} Final path or Error if missing a parameter
- */
-function buildPath(path, params) {
-
-    var extractParams = /\{([a-zA-Z_]+)}/g,
-        resultPath = path,
-        p, token, name;
-
-    // Pull out the expected parameters
-    while ((p = extractParams.exec(path)) !== null) {
-
-        token = p[0];
-        name = p[1];
-
-        // Make sure the param was given
-        if (params[name]) {
-            resultPath = resultPath.replace(token, encodeURIComponent(params[name]));
-        } else {
-            return new Error('Path parameter ' + token + ' required to call ' + path);
-        }
-    }
-
-    return resultPath;
-}
-
-
-/**
- *
- * @type {{copy: copy}}
- */
-module.exports = {
-    copy: copy,
-    buildPath: buildPath
-};
-},{}],5:[function(require,module,exports){
-
-},{}],6:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -615,7 +25,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],7:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -801,7 +211,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],8:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -887,7 +297,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],9:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -974,13 +384,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],10:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":8,"./encode":9}],11:[function(require,module,exports){
+},{"./decode":4,"./encode":5}],7:[function(require,module,exports){
 (function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -1059,14 +469,14 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":7,"timers":11}],12:[function(require,module,exports){
+},{"process/browser.js":3,"timers":7}],8:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],13:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -1656,7 +1066,759 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":12,"_process":7,"inherits":6}],"okanjo-sdk":[function(require,module,exports){
+},{"./support/isBuffer":8,"_process":3,"inherits":2}],10:[function(require,module,exports){
+/*
+ * Date: 1/26/16 11:59 AM
+ *
+ * ----
+ *
+ * (c) Okanjo Partners Inc
+ * https://okanjo.com
+ * support@okanjo.com
+ *
+ * https://github.com/okanjo/okanjo-nodejs
+ *
+ * ----
+ *
+ * TL;DR? see: http://www.tldrlegal.com/license/mit-license
+ *
+ * The MIT License (MIT)
+ * Copyright (c) 2013 Okanjo Partners Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+/**
+ * Request handler
+ * @param {Client} [client]
+ * @constructor
+ */
+function Provider(client) {
+    this.client = client;
+}
+
+/**
+ * Compiles the query into an executable request
+ * @param {Query} query – The query to build
+ */
+Provider.prototype.compile = function(query) {
+    var provider = this;
+
+    // Attach execute function to the query
+    query.execute = function(callback) {
+        return provider.execute(query, callback);
+    };
+
+    // Future: Attach cache/execute function to the query
+};
+
+
+/**
+ * Executes the query
+ * @param {Query} query - The query to execute
+ * @param {requestCallback} callback – Callback to fire when request is completed
+ * @abstract
+ */
+Provider.prototype.execute = function(query, callback) {
+    //console.error('Okanjo Base Provider Execute:', query);
+    callback(new Error('Transport provider not implemented'), null);
+};
+
+/**
+ * Fires the client-given unauthorized hook in the event a response comes back 401-Unauthorized
+ * which generally means, your session is dead, jim.
+ * @param {object} err - The response payload
+ * @param {Query} query - The offending query
+ * @return {*}
+ * @protected
+ */
+Provider.prototype._unauthorizedHook = function(err, query) {
+    if (typeof this.client.config.onUnauthorizedResponse === "function") {
+        this.client.config.onUnauthorizedResponse(err, query);
+    }
+};
+
+
+/**
+ * @callback requestCallback
+ * @param {object|null} error
+ * @param {object|null} response
+ */
+
+module.exports = Provider;
+},{}],11:[function(require,module,exports){
+(function (global){
+/*
+ * Date: 10/20/16 4:30 PM
+ *
+ * ----
+ *
+ * (c) Okanjo Partners Inc
+ * https://okanjo.com
+ * support@okanjo.com
+ *
+ * https://github.com/okanjo/okanjo-nodejs
+ *
+ * ----
+ *
+ * TL;DR? see: http://www.tldrlegal.com/license/mit-license
+ *
+ * The MIT License (MIT)
+ * Copyright (c) 2013 Okanjo Partners Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+var util = require('util'),
+    timers = require('timers'),
+    setImmediate = global.setImmediate /* istanbul ignore next */ || timers.setImmediate,
+    Provider = require('../provider');
+
+/**
+ * Request handler
+ * @param {Client} [client]
+ * @constructor
+ */
+function FetchProvider(client) {
+    Provider.call(this, client);
+
+    /**
+     * Where to send requests to
+     * @type {string}
+     */
+    this.rpcHost = client.config.rpcHost || "/rpc";
+
+    /**
+     * What method is the RPC router expecting
+     * @type {string}
+     */
+    this.rpcMethod = client.config.rpcMethod || 'POST';
+
+    /**
+     * How many requests can be run in parallel at any given time. Additional requests will be queued.
+     * @type {*|number}
+     */
+    this.maxConcurrency = client.config.maxConcurrency || 5;
+
+    /**
+     * Active request counter
+     * @type {number}
+     * @private
+     */
+    this._activeRequests = 0;
+
+    /**
+     * Request queue
+     * @type {Array}
+     * @private
+     */
+    this._requestQueue = [];
+
+    this._handleRequest = this._handleRequest.bind(this);
+    this._completeRequest = this._completeRequest.bind(this);
+    this._runQueueIfAble = this._runQueueIfAble.bind(this);
+}
+
+util.inherits(FetchProvider, Provider);
+
+/**
+ * Returns whether the request pipeline is full (true) or not (false)
+ * @returns {boolean}
+ */
+FetchProvider.prototype.areRequestsSaturated = function() {
+    return this._activeRequests >= this.maxConcurrency;
+};
+
+/**
+ * Queues a new request. Will run it if able
+ * @param query
+ * @param callback
+ * @returns {Promise<any>}
+ * @private
+ */
+FetchProvider.prototype._queueRequest = function(query, callback) {
+    var queue = this._requestQueue;
+    var _runQueueIfAble = this._runQueueIfAble;
+
+    return new Promise(function (resolve, reject) {
+        queue.push({
+            query: query,
+            callback: callback,
+            resolve: resolve,
+            reject: reject
+        });
+        _runQueueIfAble();
+    });
+};
+
+/**
+ * Runs the next available item in the queue if concurrency not met
+ * @private
+ */
+FetchProvider.prototype._runQueueIfAble = function() {
+    var _handleRequest = this._handleRequest;
+
+    // Run any queued requests if able
+    if (this._requestQueue.length > 0 && !this.areRequestsSaturated()) {
+
+        // Bump request counter
+        this._activeRequests++;
+
+        // Take the one off the top
+        var queuedRequest = this._requestQueue.shift();
+
+        // Execute
+        return setImmediate(function () {
+            _handleRequest(queuedRequest);
+        });
+    }
+};
+
+/**
+ * Hook for when a request completes. Will try to run the next task in the queue if able
+ * @private
+ */
+FetchProvider.prototype._completeRequest = function() {
+
+    // Decrement request counter
+    this._activeRequests--;
+
+    // Handle the next available request
+    this._runQueueIfAble();
+};
+
+/**
+ * Executes the query
+ * @param {Query} query - The query to execute
+ * @param callback – Callback to fire when request is completed
+ * @returns {Promise<any>}
+ * @abstract
+ */
+FetchProvider.prototype.execute = function(query, callback) {
+    // Queue this request (returns a promise, resolved when the req completes)
+    return this._queueRequest(query, callback);
+};
+
+
+/* istanbul ignore next: taken from MDN, like it's the gospel */
+/**
+ * Object.assign polyfill from MDN
+ * @param target
+ * @param varArgs
+ * @return {any}
+ */
+function assign(target, varArgs) { // .length of function is 2
+    'use strict';
+    if (target === null || target === undefined) {
+        throw new TypeError('Cannot convert undefined or null to object');
+    }
+
+    var to = Object(target);
+
+    for (var index = 1; index < arguments.length; index++) {
+        var nextSource = arguments[index];
+
+        if (nextSource !== null && nextSource !== undefined) {
+            for (var nextKey in nextSource) {
+                // Avoid bugs when hasOwnProperty is shadowed
+                if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+                    to[nextKey] = nextSource[nextKey];
+                }
+            }
+        }
+    }
+    return to;
+}
+
+/**
+ * Handles the request like execute() used to do
+ * @param queuedRequest
+ * @return {Promise<any>}
+ * @private
+ */
+FetchProvider.prototype._handleRequest = function(queuedRequest) {
+
+    // shallow copy the query so we can safely mutate it
+    var payload = assign({}, queuedRequest.query);
+    var options = payload.options;
+    delete payload.options;
+
+    var req = {
+        method: this.rpcMethod,
+        body: JSON.stringify(queuedRequest.query),
+        credentials: 'same-origin', // preserve authentication
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8'
+        }
+    };
+
+    // Hook for making fetch abortable, see: https://developers.google.com/web/updates/2017/09/abortable-fetch
+    if (options.signal) req.signal = options.signal;
+
+    var _completeRequest = this._completeRequest;
+
+    return fetch(this.rpcHost + '?a=' + encodeURIComponent(queuedRequest.query.action), req)
+        .then(function(res) {
+            return res.json();
+        })
+        .then(function(res) {
+            if (res.error) {
+                // Error response from API
+                return Promise.reject(res);
+            } else {
+                // Browserify should polyfill setImmediate
+                if (queuedRequest.callback) {
+                    return setImmediate(function() {
+                        _completeRequest();
+                        queuedRequest.callback(null, res);
+                    });
+                }
+                _completeRequest();
+                queuedRequest.resolve(res); // this goes back to caller
+                return Promise.resolve(res); // internally resolve
+            }
+        })
+        .catch(function(err) {
+            if (!err || !err.statusCode) {
+                err = {
+                    statusCode: 503,
+                    error: (err instanceof Error ? err.message : /* istanbul ignore next: not worth testing err vs stats */ err),
+                    message: "Something went wrong",
+                    attributes: {
+                        source: 'okanjo.providers.FetchProvider',
+                        wrappedError: err
+                    }
+                };
+            }
+
+            // Check for unauthorized hook case
+            if (err.statusCode === 401) this._unauthorizedHook(err, queuedRequest.query);
+
+            if (queuedRequest.callback) {
+                return setImmediate(function() {
+                    _completeRequest();
+                    queuedRequest.callback(err, null);
+                });
+            }
+
+            _completeRequest();
+            queuedRequest.reject(err); // this goes back to caller
+            return Promise.resolve(err); // internally resolve
+        }.bind(this))
+    ;
+};
+
+
+/**
+ * @callback requestCallback
+ * @param {object|null} error
+ * @param {object|null} response
+ */
+
+module.exports = FetchProvider;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../provider":10,"timers":7,"util":9}],12:[function(require,module,exports){
+/*
+ * Date: 1/26/16 11:59 AM
+ *
+ * ----
+ *
+ * (c) Okanjo Partners Inc
+ * https://okanjo.com
+ * support@okanjo.com
+ *
+ * https://github.com/okanjo/okanjo-nodejs
+ *
+ * ----
+ *
+ * TL;DR? see: http://www.tldrlegal.com/license/mit-license
+ *
+ * The MIT License (MIT)
+ * Copyright (c) 2013 Okanjo Partners Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+var sdkUtil = require('./util'),
+    querystring = require('querystring');
+
+/**
+ * Query container
+ * @param {object} [base] - Base query to clone
+ * @param {object} [options] - Options to override
+ * @constructor
+ */
+function Query(base, options) {
+
+    /**
+     * The API in which the resource belongs to
+     * @type {null}
+     */
+    this.api = null;
+
+    /**
+     * Resource method action / route id
+     * @type {string}
+     */
+    this.action = null;
+
+    /**
+     * Request method
+     * @example `GET` or `PUT` or `POST` or `DELETE`
+     * @type {string}
+     */
+    this.method = null;
+
+    /**
+     * Request path
+     * @type {string}
+     */
+    this.path = '';
+
+    /**
+     * Request path parameters
+     * @type {object}
+     */
+    this.pathParams = {};
+
+    /**
+     * Request query arguments
+     * @type {object|null}
+     */
+    this.query = null;
+
+    /**
+     * Request payload
+     * @type {object|null}
+     */
+    this.payload = null;
+
+    /**
+     * API key
+     * @type {null}
+     */
+    this.key = null;
+
+    /**
+     * Authorization token
+     * @type {null}
+     */
+    this.sessionToken = null;
+
+    /**
+     * Cookies
+     * @type {{}}
+     */
+    this.cookies = {};
+
+    /**
+     * SDK options, do not transmit
+     * @type {{}}
+     */
+    this.options = {};
+
+    this._extend(base);
+    this._extend(options, true);
+}
+
+
+
+/**
+ * Copies and clones properties from the given object
+ * @param extra
+ * @param overrideAll
+ * @private
+ */
+Query.prototype._extend = function(extra, overrideAll) {
+    if (extra) {
+        if (extra.api !== undefined) this.setAPI(extra.api);
+        if (extra.action !== undefined) this.setAction(extra.action);
+        if (extra.method !== undefined) this.setMethod(extra.method);
+        if (extra.path !== undefined) this.setPath(extra.path);
+        if (extra.pathParams !== undefined) this.setPathParams(extra.pathParams);
+        if (extra.query !== undefined) this.where(extra.query);
+        if (extra.payload !== undefined) this.data(extra.payload);
+        if (extra.cookies !== undefined) this.setCookies(extra.cookies);
+        if (extra.options !== undefined) this.setOptions(extra.options);
+
+        if (overrideAll) {
+            if (extra.key !== undefined) this.setKey(extra.key);
+            if (extra.sessionToken !== undefined) this.setSessionToken(extra.sessionToken);
+        }
+    }
+};
+
+
+/**
+ * Returns the real URL path of the request
+ * @return {string|Error}
+ */
+Query.prototype.getRealPath = function() {
+    return sdkUtil.buildPath(this.path, this.pathParams);
+};
+
+
+/**
+ * Returns the full URL path including the querystring
+ * @return {string|Error}
+ */
+Query.prototype.getFullPath = function() {
+    var path = this.getRealPath();
+    if (path && this.query) {
+        return path + '?' + querystring.stringify(this.query);
+    } else {
+        return path;
+    }
+};
+
+/**
+ * Sets the name of the API which handles the query
+ * @param {string} api
+ * @return {Query}
+ */
+Query.prototype.setAPI = function(api) { this.api = api; return this; };
+
+/**
+ * Sets the method action / route id
+ * @param {string} action
+ * @return {Query}
+ */
+Query.prototype.setAction = function(action) { this.action = action; return this; };
+
+/**
+ * Sets the HTTP method on the request
+ * @param {string} method
+ * @return {Query}
+ */
+Query.prototype.setMethod = function(method) { this.method = method; return this; };
+
+
+/**
+ * Sets the URL path template on the request
+ * @param {string} path
+ * @return {Query}
+ */
+Query.prototype.setPath = function(path) { this.path = path; return this; };
+
+/**
+ * Sets the URL path parameters on the request
+ * @param {object} params
+ * @return {Query}
+ */
+Query.prototype.setPathParams = function(params) { this.pathParams = sdkUtil.copy(this.pathParams, params); return this; };
+
+/**
+ * Sets the query parameters on the request
+ * @param {object} params
+ * @return {Query}
+ */
+Query.prototype.where = function(params) { this.query = sdkUtil.copy(this.query, params); return this; };
+
+/**
+ * Sets the payload on the request
+ * @param {object} doc
+ * @return {Query}
+ */
+Query.prototype.data = function(doc) { this.payload = sdkUtil.copy(this.payload, doc); return this; };
+
+/**
+ * Sets the pagination skip count on the request
+ * @param {number} count
+ * @return {Query}
+ */
+Query.prototype.skip = function(count) { this.query = sdkUtil.copy(this.query, { skip: count }); return this; };
+
+/**
+ * Sets the pagination return count on the request
+ * @param {number} count
+ * @return {Query}
+ */
+Query.prototype.take = function(count) { this.query = sdkUtil.copy(this.query, { take: count }); return this; };
+
+/**
+ * Sets the API key to use on the request
+ * @param {string} key
+ * @return {Query}
+ */
+Query.prototype.setKey = function(key) { this.key = key; return this; };
+
+
+/**
+ * Sets the authorization context of the request
+ * @param {string} sessionToken
+ * @return {Query}
+ */
+Query.prototype.setSessionToken = function(sessionToken) { this.sessionToken = sessionToken; return this; };
+
+/**
+ * Sets cookies on the request
+ * @param {*} cookies
+ * @returns {Query}
+ */
+Query.prototype.setCookies = function(cookies) { this.cookies = cookies; return this; };
+
+/**
+ * Sets sdk options for the request
+ * @param {*} options
+ * @returns {Query}
+ */
+Query.prototype.setOptions = function(options) { this.options = options; return this; };
+
+module.exports = Query;
+},{"./util":13,"querystring":6}],13:[function(require,module,exports){
+/*
+ * Date: 1/26/16 12:01 PM
+ *
+ * ----
+ *
+ * (c) Okanjo Partners Inc
+ * https://okanjo.com
+ * support@okanjo.com
+ *
+ * https://github.com/okanjo/okanjo-nodejs
+ *
+ * ----
+ *
+ * TL;DR? see: http://www.tldrlegal.com/license/mit-license
+ *
+ * The MIT License (MIT)
+ * Copyright (c) 2013 Okanjo Partners Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+/**
+ * Simple, deep, key-value copier
+ * @param {*} destination – Target object or empty to make brand new copy
+ * @param {*} source – Object to make a duplicate of
+ * @return {*} – The resulting object, which might be the same as dest unless source was a value not a reference
+ * @author Kevin Fitzgerald
+ */
+function copy(destination, source) {
+    if (source !== null && typeof source === "object") {
+        if (Array.isArray(source)) {
+            destination = destination || [];
+            source.forEach(function(val, index) {
+                destination[index] = copy(destination[index], val);
+            });
+        } else {
+            destination = destination || {};
+            Object.keys(source).forEach(function(key) {
+                destination[key] = copy(destination[key], source[key]);
+            });
+        }
+    } else {
+        destination = source;
+    }
+
+    return destination;
+}
+
+
+/**
+ * Builds the final URL path given replaceable param names
+ * @param {string} path - Route path
+ * @param {object} params - Parameter key value pairs
+ * @return {string|Error} Final path or Error if missing a parameter
+ */
+function buildPath(path, params) {
+
+    var extractParams = /\{([a-zA-Z_]+)}/g,
+        resultPath = path,
+        p, token, name;
+
+    // Pull out the expected parameters
+    while ((p = extractParams.exec(path)) !== null) {
+
+        token = p[0];
+        name = p[1];
+
+        // Make sure the param was given
+        if (params[name]) {
+            resultPath = resultPath.replace(token, encodeURIComponent(params[name]));
+        } else {
+            return new Error('Path parameter ' + token + ' required to call ' + path);
+        }
+    }
+
+    return resultPath;
+}
+
+
+/**
+ *
+ * @type {{copy: copy}}
+ */
+module.exports = {
+    copy: copy,
+    buildPath: buildPath
+};
+},{}],"okanjo-sdk":[function(require,module,exports){
 (function (process){
 /*
  * Date: 1/26/16 11:59 AM
@@ -1695,8 +1857,8 @@ function hasOwnProperty(obj, prop) {
  * SOFTWARE.
  */
 
-var Provider = require('../lib/provider'),
-    Query = require('../lib/query');
+var Provider = require('../src/provider'),
+    Query = require('../src/query');
 
 /**
  * SDK Base
@@ -1725,11 +1887,11 @@ function Client(config) {
         // Detect context
         if (process.browser) {
             // Running in browser - default to proxy mode
-            //this.provider = new (require('../lib/providers/jquery_provider'))(this);
-            this.provider = new (require('../lib/providers/fetch_provider'))(this);
+            //this.provider = new (require('../src/providers/jquery_provider'))(this);
+            this.provider = new (require('../src/providers/fetch_provider'))(this);
         } else {
             // Running in Node - Use the HTTP provider by default to make real requests
-            this.provider = new (require('../lib/providers/http_provider'))(this);
+            this.provider = new (require('../src/providers/http_provider'))(this);
         }
     }
 
@@ -1742,7 +1904,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '2.6.0';
+Client.Version = '3.0.0';
 
 /**
  * Expose the Provider base class
@@ -4406,4 +4568,4 @@ Client.resourceBinders.push(function(Client) {
 
 });
 }).call(this,require('_process'))
-},{"../lib/provider":1,"../lib/providers/fetch_provider":2,"../lib/providers/http_provider":5,"../lib/query":3,"_process":7}]},{},[]);
+},{"../src/provider":10,"../src/providers/fetch_provider":11,"../src/providers/http_provider":1,"../src/query":12,"_process":3}]},{},[]);

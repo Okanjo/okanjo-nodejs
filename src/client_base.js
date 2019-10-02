@@ -35,8 +35,8 @@
  * SOFTWARE.
  */
 
-var Provider = require('../lib/provider'),
-    Query = require('../lib/query');
+var Provider = require('../src/provider'),
+    Query = require('../src/query');
 
 /**
  * SDK Base
@@ -65,11 +65,11 @@ function Client(config) {
         // Detect context
         if (process.browser) {
             // Running in browser - default to proxy mode
-            //this.provider = new (require('../lib/providers/jquery_provider'))(this);
-            this.provider = new (require('../lib/providers/fetch_provider'))(this);
+            //this.provider = new (require('../src/providers/jquery_provider'))(this);
+            this.provider = new (require('../src/providers/fetch_provider'))(this);
         } else {
             // Running in Node - Use the HTTP provider by default to make real requests
-            this.provider = new (require('../lib/providers/http_provider'))(this);
+            this.provider = new (require('../src/providers/http_provider'))(this);
         }
     }
 

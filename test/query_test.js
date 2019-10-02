@@ -36,12 +36,10 @@
  */
 const should = require('should');
 
-
 describe('Query', function() {
 
-
     const Client = require('../dist/client'),
-        Query = require('../lib/query');
+        Query = require('../src/query');
 
     it('can initialize with no extensions', function() {
 
@@ -110,6 +108,10 @@ describe('Query', function() {
         should(q.sessionToken).not.be.ok();
         q.setSessionToken("stok_12345");
         q.sessionToken.should.be.equal("stok_12345");
+
+        q.options.should.be.empty();
+        q.setOptions({ hello: 'world' });
+        q.options.should.deepEqual({ hello: 'world' });
     });
 
     it('should handle full path edge cases', function() {

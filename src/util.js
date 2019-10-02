@@ -71,7 +71,7 @@ function copy(destination, source) {
  */
 function buildPath(path, params) {
 
-    var extractParams = /\{([a-zA-Z_]+)}/g,
+    var extractParams = /{([a-zA-Z_]+)}/g,
         resultPath = path,
         p, token, name;
 
