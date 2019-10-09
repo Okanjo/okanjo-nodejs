@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.0.0';
+Client.Version = '3.1.0';
 
 /**
  * Expose the Provider base class
@@ -1104,6 +1104,46 @@ Client.resourceBinders.push(function(Client) {
         },
         
         /**
+         * Updates a role
+         * @param {string} role_id – Object identifier.
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.roles#
+         */
+        update: function(role_id, payload, callback) {
+            return Client._makeRequest({
+                api: 'api',
+                action: 'role.update',
+                method: 'PUT',
+                path: '/roles/{role_id}',
+                pathParams: {
+                    role_id: role_id
+                },
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Deletes a role
+         * @param {string} role_id – Object identifier.
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.roles#
+         */
+        delete: function(role_id, callback) {
+            return Client._makeRequest({
+                api: 'api',
+                action: 'role.delete',
+                method: 'DELETE',
+                path: '/roles/{role_id}',
+                pathParams: {
+                    role_id: role_id
+                }
+            }, callback);
+        },
+        
+        /**
          * Adds an account to a role.
          * @param {string} role_id – Object identifier.
          * @param {object} payload - Resource or parameters
@@ -1557,6 +1597,35 @@ Client.resourceBinders.push(function(Client) {
                 pathParams: {
                     instance_id: instance_id,
                     vendor_id: vendor_id
+                },
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Tracks an image impression for the given Amazon link
+         * @param {string} instance_id – Instance Id
+         * @param {string} vendor_id_asin – Unique amazon product id, using combined vendor_id:asin pair
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.amazon_links#
+         */
+        track_impression: function(instance_id, vendor_id_asin, query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'amazon_link.track_impression',
+                method: 'GET',
+                path: '/images/{instance_id}/links/amazon/{vendor_id_asin}',
+                pathParams: {
+                    instance_id: instance_id,
+                    vendor_id_asin: vendor_id_asin
                 },
                 query: query
             }, callback);
@@ -2091,6 +2160,35 @@ Client.resourceBinders.push(function(Client) {
                     instance_id: instance_id,
                     vendor_offer_id: vendor_offer_id
                 }
+            }, callback);
+        },
+        
+        /**
+         * Tracks an image impression for the given offer
+         * @param {string} instance_id – Instance Id
+         * @param {string} vendor_offer_id – Unique offer id, using combined vendor_id:offer_id pair
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.direct_links#
+         */
+        track_impression: function(instance_id, vendor_offer_id, query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'direct_link.track_impression',
+                method: 'GET',
+                path: '/images/{instance_id}/links/{vendor_offer_id}',
+                pathParams: {
+                    instance_id: instance_id,
+                    vendor_offer_id: vendor_offer_id
+                },
+                query: query
             }, callback);
         }
         
