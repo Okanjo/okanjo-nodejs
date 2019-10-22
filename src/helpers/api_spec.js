@@ -100,7 +100,8 @@ class ApiSpecification {
 
 
 ApiSpecification.ignorePluralizedResources = [
-    'sso'
+    'sso',
+    'reporting'
 ];
 
 module.exports = ApiSpecification;

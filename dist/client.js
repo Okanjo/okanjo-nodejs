@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.1.0';
+Client.Version = '3.2.0';
 
 /**
  * Expose the Provider base class
@@ -926,6 +926,83 @@ Client.resourceBinders.push(function(Client) {
                     property_id: property_id
                 },
                 payload: payload
+            }, callback);
+        }
+        
+    };
+    
+    /**
+     * Reporting
+     * @namespace Client.reporting
+     */
+    Client.reporting = {
+        
+        /**
+         * Returns a histogram of page metrics in timescale
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        page_date_histogram: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'reporting.page_date_histogram',
+                method: 'GET',
+                path: '/reporting/pages/date-histogram',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Returns a histogram of resource metrics in timescale
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        resource_date_histogram: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'reporting.resource_date_histogram',
+                method: 'GET',
+                path: '/reporting/resources/date-histogram',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Returns a histogram of widget metrics in timescale
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        widget_date_histogram: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'reporting.widget_date_histogram',
+                method: 'GET',
+                path: '/reporting/widgets/date-histogram',
+                query: query
             }, callback);
         }
         
