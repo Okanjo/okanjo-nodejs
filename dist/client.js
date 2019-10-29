@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.2.0';
+Client.Version = '3.3.0';
 
 /**
  * Expose the Provider base class
@@ -961,6 +961,29 @@ Client.resourceBinders.push(function(Client) {
         },
         
         /**
+         * Returns the top N results per aggregation group
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        page_top_n: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'reporting.page_top_n',
+                method: 'GET',
+                path: '/reporting/pages/top-n',
+                query: query
+            }, callback);
+        },
+        
+        /**
          * Returns a histogram of resource metrics in timescale
          * @param {object} [query] - Filter arguments
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
@@ -984,6 +1007,29 @@ Client.resourceBinders.push(function(Client) {
         },
         
         /**
+         * Returns the top N results per aggregation group
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        resource_top_n: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'reporting.resource_top_n',
+                method: 'GET',
+                path: '/reporting/resources/top-n',
+                query: query
+            }, callback);
+        },
+        
+        /**
          * Returns a histogram of widget metrics in timescale
          * @param {object} [query] - Filter arguments
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
@@ -1002,6 +1048,29 @@ Client.resourceBinders.push(function(Client) {
                 action: 'reporting.widget_date_histogram',
                 method: 'GET',
                 path: '/reporting/widgets/date-histogram',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Returns the top N results per aggregation group
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        widget_top_n: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'reporting.widget_top_n',
+                method: 'GET',
+                path: '/reporting/widgets/top-n',
                 query: query
             }, callback);
         }
