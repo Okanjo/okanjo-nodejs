@@ -7,4 +7,3 @@ dist/partials
 .DS_Store
 *.tgz
 .nyc_output
-package-lock.json
