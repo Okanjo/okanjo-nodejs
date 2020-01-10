@@ -1904,7 +1904,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.3.0';
+Client.Version = '3.4.0';
 
 /**
  * Expose the Provider base class
@@ -3524,11 +3524,18 @@ Client.resourceBinders.push(function(Client) {
          * Follows the Amazon link to the offer page, or finds a replacement if no longer available.
          * @param {string} instance_id – Instance Id
          * @param {string} vendor_id_asin – Unique amazon product id, using combined vendor_id:asin pair
+         * @param {object} [query] - Filter arguments
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.amazon_links#
          */
-        follow: function(instance_id, vendor_id_asin, callback) {
+        follow: function(instance_id, vendor_id_asin, query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
             return Client._makeRequest({
                 api: 'farm',
                 action: 'amazon_link.follow',
@@ -3537,7 +3544,8 @@ Client.resourceBinders.push(function(Client) {
                 pathParams: {
                     instance_id: instance_id,
                     vendor_id_asin: vendor_id_asin
-                }
+                },
+                query: query
             }, callback);
         },
         
@@ -4114,11 +4122,18 @@ Client.resourceBinders.push(function(Client) {
          * Follows the direct offer link to the offer page, or finds a replacement if no longer available.
          * @param {string} instance_id – Instance Id
          * @param {string} vendor_offer_id – Unique offer id, using combined vendor_id:offer_id pair
+         * @param {object} [query] - Filter arguments
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.direct_links#
          */
-        follow: function(instance_id, vendor_offer_id, callback) {
+        follow: function(instance_id, vendor_offer_id, query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
             return Client._makeRequest({
                 api: 'farm',
                 action: 'direct_link.follow',
@@ -4127,7 +4142,8 @@ Client.resourceBinders.push(function(Client) {
                 pathParams: {
                     instance_id: instance_id,
                     vendor_offer_id: vendor_offer_id
-                }
+                },
+                query: query
             }, callback);
         },
         
@@ -4479,6 +4495,60 @@ Client.resourceBinders.push(function(Client) {
     
     
     /**
+     * Reporting
+     * @namespace Client.shortcodes.reporting
+     */
+    Client.shortcodes.reporting = {
+        
+        /**
+         * Returns a histogram of link metrics for time-series visualizations
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        date_histogram: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'shortcodes',
+                action: 'reporting.date_histogram',
+                method: 'GET',
+                path: '/api/reporting/clicks/date-histogram',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Returns the top N results per aggregation group
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        top_n: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'shortcodes',
+                action: 'reporting.top_n',
+                method: 'GET',
+                path: '/api/reporting/clicks/top-n',
+                query: query
+            }, callback);
+        }
+        
+    };
+    
+    /**
      * Shortcodes
      * @namespace Client.shortcodes.shortcodes
      */
@@ -4503,7 +4573,7 @@ Client.resourceBinders.push(function(Client) {
         
         /**
          * Retrieves a shortcode.
-         * @param {string} shortcode – Short code identifier.
+         * @param {string} shortcode – Shortcode identifier.
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.shortcodes#
@@ -4545,7 +4615,7 @@ Client.resourceBinders.push(function(Client) {
         
         /**
          * Updates a shortcode.
-         * @param {string} shortcode – Short code identifier.
+         * @param {string} shortcode – Shortcode identifier.
          * @param {object} payload - Resource or parameters
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
@@ -4566,7 +4636,7 @@ Client.resourceBinders.push(function(Client) {
         
         /**
          * Deletes a shortcode.
-         * @param {string} shortcode – Short code identifier.
+         * @param {string} shortcode – Shortcode identifier.
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.shortcodes#
@@ -4585,7 +4655,7 @@ Client.resourceBinders.push(function(Client) {
         
         /**
          * Follows the shortcode URL link.
-         * @param {string} shortcode – Short code identifier.
+         * @param {string} shortcode – Shortcode identifier.
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.shortcodes#
