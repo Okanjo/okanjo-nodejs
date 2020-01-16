@@ -1904,7 +1904,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.4.0';
+Client.Version = '3.5.0';
 
 /**
  * Expose the Provider base class
@@ -4380,6 +4380,60 @@ Client.resourceBinders.push(function(Client) {
                 pathParams: {
                     instance_id: instance_id
                 },
+                query: query
+            }, callback);
+        }
+        
+    };
+    
+    /**
+     * Reporting
+     * @namespace Client.farm.reporting
+     */
+    Client.farm.reporting = {
+        
+        /**
+         * Returns a histogram of link metrics for time-series visualizations
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        link_date_histogram: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'reporting.link_date_histogram',
+                method: 'GET',
+                path: '/api/reporting/links/date-histogram',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Returns the top N results per aggregation group
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        link_top_n: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'reporting.link_top_n',
+                method: 'GET',
+                path: '/api/reporting/links/top-n',
                 query: query
             }, callback);
         }
