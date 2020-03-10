@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.5.0';
+Client.Version = '3.6.0';
 
 /**
  * Expose the Provider base class
@@ -2569,6 +2569,52 @@ Client.resourceBinders.push(function(Client) {
      * @namespace Client.farm.reporting
      */
     Client.farm.reporting = {
+        
+        /**
+         * Returns a histogram of commission metrics for time-series visualizations
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        commission_date_histogram: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'reporting.commission_date_histogram',
+                method: 'GET',
+                path: '/api/reporting/commissions/date-histogram',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Returns the top N results per aggregation group
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        commission_top_n: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'reporting.commission_top_n',
+                method: 'GET',
+                path: '/api/reporting/commissions/top-n',
+                query: query
+            }, callback);
+        },
         
         /**
          * Returns a histogram of link metrics for time-series visualizations
