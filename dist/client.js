@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.6.0';
+Client.Version = '3.7.0';
 
 /**
  * Expose the Provider base class
@@ -1048,6 +1048,29 @@ Client.resourceBinders.push(function(Client) {
                 action: 'reporting.widget_date_histogram',
                 method: 'GET',
                 path: '/reporting/widgets/date-histogram',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Returns the complete placement performance report for the given time range
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        widget_report: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'reporting.widget_report',
+                method: 'GET',
+                path: '/reporting/widgets/report',
                 query: query
             }, callback);
         },
