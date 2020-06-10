@@ -208,12 +208,23 @@ HttpProvider.prototype._handleRequestResponse = function(req, callback, query, r
                     }
                 };
             }
+        } else if (headers['content-type'] && headers['content-type'].indexOf('text/csv') === 0) {
+
+            // API will not return CSV content with non-200 status code
+
+            // Wrap the output for consistency with all other routes
+            data = {
+                statusCode: res.statusCode,
+                error: null,
+                data: payload,
+            };
+
         } else {
             // No idea what to do with this so wrap it up
             err = {
                 statusCode: res.statusCode,
                 error: res.statusMessage /* istanbul ignore next: super edge case */ || "Invalid Response Received",
-                message: "Response content type was expected to be `application/json` but was actually `" + headers['content-type'] + "`",
+                message: "Response content type was expected to be `application/json` or `text/csv` but was actually `" + headers['content-type'] + "`",
                 data: payload,
                 attributes: {
                     source: new Error('Invalid response received')

@@ -1904,7 +1904,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.7.0';
+Client.Version = '3.8.0';
 
 /**
  * Expose the Provider base class
@@ -2783,6 +2783,29 @@ Client.resourceBinders.push(function(Client) {
         },
         
         /**
+         * Returns the complete placement performance report for the given time range
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        page_report: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'reporting.page_report',
+                method: 'GET',
+                path: '/reporting/pages/report',
+                query: query
+            }, callback);
+        },
+        
+        /**
          * Returns the top N results per aggregation group
          * @param {object} [query] - Filter arguments
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
@@ -2824,6 +2847,29 @@ Client.resourceBinders.push(function(Client) {
                 action: 'reporting.resource_date_histogram',
                 method: 'GET',
                 path: '/reporting/resources/date-histogram',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Returns the complete resource performance report for the given time range
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        resource_report: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'reporting.resource_report',
+                method: 'GET',
+                path: '/reporting/resources/report',
                 query: query
             }, callback);
         },

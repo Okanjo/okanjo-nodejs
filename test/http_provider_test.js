@@ -301,6 +301,39 @@ describe('HTTP Provider', function() {
         });
     });
 
+    it('handles csv data', function(done) {
+
+        // Fake proxy page (e.g. gist's fun unicorn)
+        server.routes.push({
+            method: 'GET',
+            path: '/csv',
+            handler: function(req, reply) {
+                reply(200, '"col1","col2"\n"a","b"\n', {
+                    raw: true,
+                    contentType: "text/csv; charset=utf8"
+                })
+            }
+        });
+
+        api._makeRequest({
+            api: 'api',
+            method: 'GET',
+            path: '/csv'
+        }, function(err, res) {
+
+            should(err).not.be.ok();
+            should(res).be.ok();
+
+            res.statusCode.should.be.equal(200);
+            res.data.should.match(/col1/i);
+
+            //com.log('err', err)
+            //com.log('res', res)
+
+            done();
+        });
+    });
+
     it('handles deals with network errors', function(done) {
 
         const port = api.provider.apis.api.port;
