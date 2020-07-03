@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.10.0';
+Client.Version = '3.11.0';
 
 /**
  * Expose the Provider base class
@@ -1582,6 +1582,25 @@ Client.resourceBinders.push(function(Client) {
                 pathParams: {
                     account_id: account_id,
                     session_id: session_id
+                }
+            }, callback);
+        },
+        
+        /**
+         * Returns the OAuth authorization URL for the client
+         * @param {string} provider – OAuth provider
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.sessions#
+         */
+        oauth_authorize: function(provider, callback) {
+            return Client._makeRequest({
+                api: 'api',
+                action: 'session.oauth_authorize',
+                method: 'GET',
+                path: '/accounts/sessions/oauth/{provider}',
+                pathParams: {
+                    provider: provider
                 }
             }, callback);
         }
