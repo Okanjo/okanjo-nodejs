@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.9.0';
+Client.Version = '3.10.0';
 
 /**
  * Expose the Provider base class
@@ -219,6 +219,27 @@ Client.resourceBinders.push(function(Client) {
         },
         
         /**
+         * Deregister an account with an OAuth provider
+         * @param {string} account_id – Object identifier.
+         * @param {string} provider – OAuth provider
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.accounts#
+         */
+        deregister_oauth: function(account_id, provider, callback) {
+            return Client._makeRequest({
+                api: 'api',
+                action: 'account.deregister_oauth',
+                method: 'DELETE',
+                path: '/accounts/{account_id}/oauth/{provider}',
+                pathParams: {
+                    account_id: account_id,
+                    provider: provider
+                }
+            }, callback);
+        },
+        
+        /**
          * Requests a password reset for an account with the given email address
          * @param {object} payload - Resource or parameters
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
@@ -231,6 +252,27 @@ Client.resourceBinders.push(function(Client) {
                 action: 'account.recover',
                 method: 'POST',
                 path: '/accounts/recover',
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Register an account with an OAuth provider
+         * @param {string} account_id – Object identifier.
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.accounts#
+         */
+        register_oauth: function(account_id, payload, callback) {
+            return Client._makeRequest({
+                api: 'api',
+                action: 'account.register_oauth',
+                method: 'POST',
+                path: '/accounts/{account_id}/oauth',
+                pathParams: {
+                    account_id: account_id
+                },
                 payload: payload
             }, callback);
         },
