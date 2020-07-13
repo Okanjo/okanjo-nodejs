@@ -122,6 +122,39 @@ describe('HTTP Provider', function() {
         });
     });
 
+    it('should set headers', (done) => {
+        server.routes.push({
+            method: 'GET',
+            path: '/custom-headers',
+            handler: function(req, reply) {
+                req.headers['x-custom'].should.be.exactly('Set!');
+                reply(200, { error: null, data: 'all good' })
+            }
+        });
+
+
+        api._makeRequest({
+            api: 'api',
+            method: 'GET',
+            path: '/custom-headers',
+            headers: {
+                "X-Custom": 'Set!'
+            }
+        }, function(err, res) {
+
+            should(err).not.be.ok();
+            should(res).be.ok();
+
+            res.statusCode.should.be.equal(200);
+            res.data.should.match(/all good/i);
+
+            //com.log('err', err)
+            //com.log('res', res)
+
+            done();
+        });
+    });
+
     it('should set options', (done) => {
 
         server.routes.push({

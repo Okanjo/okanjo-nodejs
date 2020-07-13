@@ -286,9 +286,8 @@ HttpProvider.prototype.execute = function(query, callback) {
         };
 
         // Initialize headers
-        var headers = {
-            'User-Agent': this.userAgent
-        };
+        var headers = Object.assign({}, query.headers);
+        headers['User-Agent'] = this.userAgent;
 
         // Set cookies
         var cookies = Object.keys(query.cookies).map(key => {

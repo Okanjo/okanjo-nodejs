@@ -1375,14 +1375,15 @@ FetchProvider.prototype._handleRequest = function(queuedRequest) {
     var options = payload.options;
     delete payload.options;
 
+    var headers = assign({}, queuedRequest.query.headers);
+    headers['Accept'] = 'application/json';
+    headers['Content-Type'] = 'application/json; charset=utf-8';
+
     var req = {
         method: this.rpcMethod,
         body: JSON.stringify(queuedRequest.query),
         credentials: 'same-origin', // preserve authentication
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json; charset=utf-8'
-        }
+        headers: headers
     };
 
     // Hook for making fetch abortable, see: https://developers.google.com/web/updates/2017/09/abortable-fetch
@@ -1561,6 +1562,12 @@ function Query(base, options) {
     this.cookies = {};
 
     /**
+     * Custom headers
+     * @type {{}}
+     */
+    this.headers = {};
+
+    /**
      * SDK options, do not transmit
      * @type {{}}
      */
@@ -1588,6 +1595,7 @@ Query.prototype._extend = function(extra, overrideAll) {
         if (extra.query !== undefined) this.where(extra.query);
         if (extra.payload !== undefined) this.data(extra.payload);
         if (extra.cookies !== undefined) this.setCookies(extra.cookies);
+        if (extra.headers !== undefined) this.setHeaders(extra.headers);
         if (extra.options !== undefined) this.setOptions(extra.options);
 
         if (overrideAll) {
@@ -1705,6 +1713,13 @@ Query.prototype.setSessionToken = function(sessionToken) { this.sessionToken = s
  * @returns {Query}
  */
 Query.prototype.setCookies = function(cookies) { this.cookies = cookies; return this; };
+
+/**
+ * Sets additional headers on the request
+ * @param {*} headers
+ * @returns {Query}
+ */
+Query.prototype.setHeaders = function(headers) { this.headers = headers; return this; };
 
 /**
  * Sets sdk options for the request
@@ -1904,7 +1919,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.11.0';
+Client.Version = '3.12.0';
 
 /**
  * Expose the Provider base class
@@ -5141,6 +5156,35 @@ Client.resourceBinders.push(function(Client) {
                     prefix: prefix,
                     sid: sid
                 }
+            }, callback);
+        },
+        
+        /**
+         * Returns the OAuth authorization URL for the client
+         * @param {string} prefix – Environment login path
+         * @param {string} provider – OAuth provider name
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.ssos#
+         */
+        oauth_authorize: function(prefix, provider, query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'sso',
+                action: 'sso.oauth_authorize',
+                method: 'GET',
+                path: '/{prefix}/api/sessions/oauth/{provider}',
+                pathParams: {
+                    prefix: prefix,
+                    provider: provider
+                },
+                query: query
             }, callback);
         },
         

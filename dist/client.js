@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.11.0';
+Client.Version = '3.12.0';
 
 /**
  * Expose the Provider base class
@@ -3319,6 +3319,35 @@ Client.resourceBinders.push(function(Client) {
                     prefix: prefix,
                     sid: sid
                 }
+            }, callback);
+        },
+        
+        /**
+         * Returns the OAuth authorization URL for the client
+         * @param {string} prefix – Environment login path
+         * @param {string} provider – OAuth provider name
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.ssos#
+         */
+        oauth_authorize: function(prefix, provider, query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'sso',
+                action: 'sso.oauth_authorize',
+                method: 'GET',
+                path: '/{prefix}/api/sessions/oauth/{provider}',
+                pathParams: {
+                    prefix: prefix,
+                    provider: provider
+                },
+                query: query
             }, callback);
         },
         

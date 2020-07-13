@@ -209,14 +209,15 @@ FetchProvider.prototype._handleRequest = function(queuedRequest) {
     var options = payload.options;
     delete payload.options;
 
+    var headers = assign({}, queuedRequest.query.headers);
+    headers['Accept'] = 'application/json';
+    headers['Content-Type'] = 'application/json; charset=utf-8';
+
     var req = {
         method: this.rpcMethod,
         body: JSON.stringify(queuedRequest.query),
         credentials: 'same-origin', // preserve authentication
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json; charset=utf-8'
-        }
+        headers: headers
     };
 
     // Hook for making fetch abortable, see: https://developers.google.com/web/updates/2017/09/abortable-fetch

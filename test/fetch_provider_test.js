@@ -501,4 +501,47 @@ describe('Fetch Provider', function() {
 
     });
 
+    it('should send custom headers', function(done) {
+
+        let received;
+
+        // Fake proxy page (e.g. gist's fun unicorn)
+        server.routes.push({
+            method: 'POST',
+            path: '/rpc',
+            handler: function(req, reply) {
+                if (received) received();
+                const payload = JSON.parse(req.payload);
+                if (req.headers['x-custom'] === 'Set!' && payload.headers['X-Custom'] === 'Set!') {
+                    reply(200, {statusCode: 200, data: "all good!"});
+                } else {
+                    reply(400, {statusCode: 400, error: "did not receive custom header"});
+                }
+            }
+        });
+
+        let q = api.sessions
+            .create({ email: "bogus@unit.test", password: "password" })
+            .setHeaders({ "X-Custom": "Set!"})
+        ;
+
+        let p = q.execute();
+
+        p.then(res => {
+            // Strip the route off
+            server.routes.splice(0, 1);
+
+            should(res).be.ok();
+
+            res.statusCode.should.be.equal(200);
+            res.data.should.match(/all good/);
+
+            done();
+        })
+            .catch(err => {
+                server.routes.splice(0, 1);
+                done(err);
+            });
+    });
+
 });

@@ -112,6 +112,10 @@ describe('Query', function() {
         q.options.should.be.empty();
         q.setOptions({ hello: 'world' });
         q.options.should.deepEqual({ hello: 'world' });
+
+        q.headers.should.be.empty();
+        q.setHeaders({ "X-Hello": "World"});
+        q.headers.should.deepEqual({ "X-Hello": "World" });
     });
 
     it('should handle full path edge cases', function() {
