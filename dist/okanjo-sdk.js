@@ -1919,7 +1919,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.12.0';
+Client.Version = '3.13.0';
 
 /**
  * Expose the Provider base class
@@ -2609,6 +2609,46 @@ Client.resourceBinders.push(function(Client) {
                     placement_id: placement_id,
                     placement_test_id: placement_test_id
                 },
+                payload: payload
+            }, callback);
+        }
+        
+    };
+    
+    /**
+     * Platforms
+     * @namespace Client.platforms
+     */
+    Client.platforms = {
+        
+        /**
+         * Retrieves a platform
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.platforms#
+         */
+        retrieve: function(callback) {
+            return Client._makeRequest({
+                api: 'api',
+                action: 'platform.retrieve',
+                method: 'GET',
+                path: '/platform',
+            }, callback);
+        },
+        
+        /**
+         * Modifies a platform
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.platforms#
+         */
+        update: function(payload, callback) {
+            return Client._makeRequest({
+                api: 'api',
+                action: 'platform.update',
+                method: 'PUT',
+                path: '/platform',
                 payload: payload
             }, callback);
         }
