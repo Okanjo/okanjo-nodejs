@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.13.0';
+Client.Version = '3.14.0';
 
 /**
  * Expose the Provider base class
@@ -213,6 +213,29 @@ Client.resourceBinders.push(function(Client) {
                 path: '/accounts/{account_id}',
                 pathParams: {
                     account_id: account_id
+                },
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Sets the oauth binding on behalf of an account by platform administrators
+         * @param {string} account_id – Object identifier.
+         * @param {string} provider – OAuth provider
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.accounts#
+         */
+        bind_oauth: function(account_id, provider, payload, callback) {
+            return Client._makeRequest({
+                api: 'api',
+                action: 'account.bind_oauth',
+                method: 'PUT',
+                path: '/accounts/{account_id}/oauth/{provider}',
+                pathParams: {
+                    account_id: account_id,
+                    provider: provider
                 },
                 payload: payload
             }, callback);
@@ -1642,6 +1665,21 @@ Client.resourceBinders.push(function(Client) {
                 pathParams: {
                     provider: provider
                 }
+            }, callback);
+        },
+        
+        /**
+         * Retrieves the current session context
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.sessions#
+         */
+        retrieve_current: function(callback) {
+            return Client._makeRequest({
+                api: 'api',
+                action: 'session.retrieve_current',
+                method: 'GET',
+                path: '/accounts/sessions/current',
             }, callback);
         }
         
