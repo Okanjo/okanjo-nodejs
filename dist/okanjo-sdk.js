@@ -1919,7 +1919,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.14.0';
+Client.Version = '3.15.0';
 
 /**
  * Expose the Provider base class
@@ -4727,6 +4727,33 @@ Client.resourceBinders.push(function(Client) {
                 method: 'GET',
                 path: '/api/reporting/vendor-syncs/date-histogram',
                 query: query
+            }, callback);
+        }
+        
+    };
+    
+    /**
+     * Web Sockets
+     * @namespace Client.farm.sockets
+     */
+    Client.farm.sockets = {
+        
+        /**
+         * Creates a web socket access token
+         * @param {string} instance_id – Instance Id
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.sockets#
+         */
+        create_token: function(instance_id, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'socket.create_token',
+                method: 'POST',
+                path: '/api/{instance_id}/sockets',
+                pathParams: {
+                    instance_id: instance_id
+                }
             }, callback);
         }
         
