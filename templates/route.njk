@@ -1,5 +1,6 @@
 {% set paramList = [] -%}
 {% set hasPayload = route.arguments.payload|length > 0 -%}
+{% set hasEmptyPayload = route.arguments.payload|length === 0 and route.endpoint.method === 'post' -%}
 {% set hasQuery = route.arguments.query|length > 0 -%}
 {% set methodParams = [] -%}
 
@@ -43,10 +44,12 @@
         {%- for param in paramList %}
                     {{ param }}: {{ param }}{{ "" if loop.last else "," }}
         {%- endfor %}
-                }{{ "," if hasPayload or hasQuery else "" }}
+                }{{ "," if hasPayload or hasQuery or hasEmptyPayload else "" }}
     {%- endif %}
     {%- if hasPayload %}
                 payload: payload{{ "," if hasQuery else "" }}
+    {%- elif hasEmptyPayload %}
+                payload: {}{{ "," if hasQuery else "" }}
     {%- endif %}
     {%- if hasQuery %}
                 query: query

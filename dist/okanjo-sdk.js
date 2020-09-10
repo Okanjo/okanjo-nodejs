@@ -1919,7 +1919,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.16.0';
+Client.Version = '3.17.0';
 
 /**
  * Expose the Provider base class
@@ -3989,7 +3989,8 @@ Client.resourceBinders.push(function(Client) {
                 pathParams: {
                     instance_id: instance_id,
                     bucket_id: bucket_id
-                }
+                },
+                payload: {}
             }, callback);
         },
         
@@ -4031,7 +4032,8 @@ Client.resourceBinders.push(function(Client) {
                 pathParams: {
                     instance_id: instance_id,
                     bucket_id: bucket_id
-                }
+                },
+                payload: {}
             }, callback);
         },
         
@@ -4052,7 +4054,8 @@ Client.resourceBinders.push(function(Client) {
                 pathParams: {
                     instance_id: instance_id,
                     bucket_id: bucket_id
-                }
+                },
+                payload: {}
             }, callback);
         },
         
@@ -4073,7 +4076,8 @@ Client.resourceBinders.push(function(Client) {
                 pathParams: {
                     instance_id: instance_id,
                     bucket_id: bucket_id
-                }
+                },
+                payload: {}
             }, callback);
         }
         
@@ -4750,6 +4754,7 @@ Client.resourceBinders.push(function(Client) {
                 action: 'socket.create_token',
                 method: 'POST',
                 path: '/api/sockets',
+                payload: {}
             }, callback);
         }
         
@@ -4849,7 +4854,8 @@ Client.resourceBinders.push(function(Client) {
                 pathParams: {
                     instance_id: instance_id,
                     vendor_id: vendor_id
-                }
+                },
+                payload: {}
             }, callback);
         }
         
