@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.15.0';
+Client.Version = '3.16.0';
 
 /**
  * Expose the Provider base class
@@ -2903,20 +2903,16 @@ Client.resourceBinders.push(function(Client) {
         
         /**
          * Creates a web socket access token
-         * @param {string} instance_id – Instance Id
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.sockets#
          */
-        create_token: function(instance_id, callback) {
+        create_token: function(callback) {
             return Client._makeRequest({
                 api: 'farm',
                 action: 'socket.create_token',
                 method: 'POST',
-                path: '/api/{instance_id}/sockets',
-                pathParams: {
-                    instance_id: instance_id
-                }
+                path: '/api/sockets',
             }, callback);
         }
         
