@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '3.17.0';
+Client.Version = '4.0.0';
 
 /**
  * Expose the Provider base class
@@ -1907,6 +1907,27 @@ Client.resourceBinders.push(function(Client) {
         },
         
         /**
+         * Deletes an Amazon link.
+         * @param {string} instance_id – Instance Id
+         * @param {string} vendor_id_asin – Unique amazon product id, using combined vendor_id:asin pair
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.amazon_links#
+         */
+        delete: function(instance_id, vendor_id_asin, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'amazon_link.delete',
+                method: 'DELETE',
+                path: '/api/{instance_id}/links/amazon/{vendor_id_asin}',
+                pathParams: {
+                    instance_id: instance_id,
+                    vendor_id_asin: vendor_id_asin
+                }
+            }, callback);
+        },
+        
+        /**
          * Follows the Amazon link to the offer page, or finds a replacement if no longer available.
          * @param {string} instance_id – Instance Id
          * @param {string} vendor_id_asin – Unique amazon product id, using combined vendor_id:asin pair
@@ -1990,27 +2011,6 @@ Client.resourceBinders.push(function(Client) {
                     vendor_id_asin: vendor_id_asin
                 },
                 query: query
-            }, callback);
-        },
-        
-        /**
-         * Deletes an Amazon link.
-         * @param {string} instance_id – Instance Id
-         * @param {string} vendor_id_asin – Unique amazon product id, using combined vendor_id:asin pair
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.amazon_links#
-         */
-        delete: function(instance_id, vendor_id_asin, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'amazon_link.delete',
-                method: 'DELETE',
-                path: '/api/{instance_id}/links/amazon/{vendor_id_asin}',
-                pathParams: {
-                    instance_id: instance_id,
-                    vendor_id_asin: vendor_id_asin
-                }
             }, callback);
         }
         
@@ -2563,6 +2563,131 @@ Client.resourceBinders.push(function(Client) {
                     vendor_offer_id: vendor_offer_id
                 },
                 query: query
+            }, callback);
+        }
+        
+    };
+    
+    /**
+     * Domains
+     * @namespace Client.farm.domain_mappings
+     */
+    Client.farm.domain_mappings = {
+        
+        /**
+         * Retrieves a domain-vendor mapping
+         * @param {string} instance_id – Instance Id
+         * @param {string} fqdn – Fully qualified domain or host name
+         * @param {string} vendor_id – Vendor Id
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.domain_mappings#
+         */
+        retrieve: function(instance_id, fqdn, vendor_id, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'domain_mapping.retrieve',
+                method: 'GET',
+                path: '/api/{instance_id}/domain_mappings/domains/{fqdn}/vendors/{vendor_id}',
+                pathParams: {
+                    instance_id: instance_id,
+                    fqdn: fqdn,
+                    vendor_id: vendor_id
+                }
+            }, callback);
+        },
+        
+        /**
+         * Returns a list of domain-vendor mappings.
+         * @param {string} instance_id – Instance Id
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.domain_mappings#
+         */
+        list: function(instance_id, query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'domain_mapping.list',
+                method: 'GET',
+                path: '/api/{instance_id}/domain_mappings',
+                pathParams: {
+                    instance_id: instance_id
+                },
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Returns all vendor mappings aggregated by domain
+         * @param {string} instance_id – Instance Id
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.domain_mappings#
+         */
+        summary: function(instance_id, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'domain_mapping.summary',
+                method: 'GET',
+                path: '/api/{instance_id}/domain_mappings/summary',
+                pathParams: {
+                    instance_id: instance_id
+                }
+            }, callback);
+        },
+        
+        /**
+         * Sets the a domain-vendor mapping
+         * @param {string} instance_id – Instance Id
+         * @param {string} fqdn – Fully qualified domain or host name
+         * @param {string} vendor_id – Vendor Id
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.domain_mappings#
+         */
+        upsert: function(instance_id, fqdn, vendor_id, payload, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'domain_mapping.upsert',
+                method: 'PUT',
+                path: '/api/{instance_id}/domain_mappings/domains/{fqdn}/vendors/{vendor_id}',
+                pathParams: {
+                    instance_id: instance_id,
+                    fqdn: fqdn,
+                    vendor_id: vendor_id
+                },
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Removes a domain-vendor mapping
+         * @param {string} instance_id – Instance Id
+         * @param {string} fqdn – Fully qualified domain or host name
+         * @param {string} vendor_id – Vendor Id
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.domain_mappings#
+         */
+        delete: function(instance_id, fqdn, vendor_id, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'domain_mapping.delete',
+                method: 'DELETE',
+                path: '/api/{instance_id}/domain_mappings/domains/{fqdn}/vendors/{vendor_id}',
+                pathParams: {
+                    instance_id: instance_id,
+                    fqdn: fqdn,
+                    vendor_id: vendor_id
+                }
             }, callback);
         }
         
@@ -3369,133 +3494,6 @@ Client.resourceBinders.push(function(Client) {
                 path: '/api/workspaces/{workspace_id}',
                 pathParams: {
                     workspace_id: workspace_id
-                }
-            }, callback);
-        }
-        
-    };
-    
-
-});
-/* istanbul ignore next: generated code */
-Client.resourceBinders.push(function(Client) {
-    
-    
-    /**
-     * Session
-     * @namespace Client.sso
-     */
-    Client.sso = {
-        
-        /**
-         * Authenticates a user session
-         * @param {string} prefix – Environment login path
-         * @param {object} payload - Resource or parameters
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.ssos#
-         */
-        login: function(prefix, payload, callback) {
-            return Client._makeRequest({
-                api: 'sso',
-                action: 'sso.login',
-                method: 'POST',
-                path: '/{prefix}/api/sessions',
-                pathParams: {
-                    prefix: prefix
-                },
-                payload: payload
-            }, callback);
-        },
-        
-        /**
-         * Terminates the given session
-         * @param {string} prefix – Environment login path
-         * @param {string} sid – Session identifier
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.ssos#
-         */
-        logout: function(prefix, sid, callback) {
-            return Client._makeRequest({
-                api: 'sso',
-                action: 'sso.logout',
-                method: 'DELETE',
-                path: '/{prefix}/api/sessions/{sid}',
-                pathParams: {
-                    prefix: prefix,
-                    sid: sid
-                }
-            }, callback);
-        },
-        
-        /**
-         * Returns the OAuth authorization URL for the client
-         * @param {string} prefix – Environment login path
-         * @param {string} provider – OAuth provider name
-         * @param {object} [query] - Filter arguments
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.ssos#
-         */
-        oauth_authorize: function(prefix, provider, query, callback) {
-            // Shift optional arguments, if necessary
-            if (typeof query === "function") {
-                callback = query;
-                query = undefined;
-            }
-    
-            return Client._makeRequest({
-                api: 'sso',
-                action: 'sso.oauth_authorize',
-                method: 'GET',
-                path: '/{prefix}/api/sessions/oauth/{provider}',
-                pathParams: {
-                    prefix: prefix,
-                    provider: provider
-                },
-                query: query
-            }, callback);
-        },
-        
-        /**
-         * Starts the account recovery process
-         * @param {string} prefix – Environment login path
-         * @param {object} payload - Resource or parameters
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.ssos#
-         */
-        recover: function(prefix, payload, callback) {
-            return Client._makeRequest({
-                api: 'sso',
-                action: 'sso.recover',
-                method: 'POST',
-                path: '/{prefix}/api/recover',
-                pathParams: {
-                    prefix: prefix
-                },
-                payload: payload
-            }, callback);
-        },
-        
-        /**
-         * Gets the session state if still valid
-         * @param {string} prefix – Environment login path
-         * @param {string} sso_token – Session identifier
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.ssos#
-         */
-        validate: function(prefix, sso_token, callback) {
-            return Client._makeRequest({
-                api: 'sso',
-                action: 'sso.validate',
-                method: 'GET',
-                path: '/{prefix}/api/sessions/{sso_token}',
-                pathParams: {
-                    prefix: prefix,
-                    sso_token: sso_token
                 }
             }, callback);
         }
