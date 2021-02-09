@@ -1919,7 +1919,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '4.0.0';
+Client.Version = '4.1.0';
 
 /**
  * Expose the Provider base class
@@ -2208,19 +2208,19 @@ Client.resourceBinders.push(function(Client) {
         
         /**
          * Retrieves an article
-         * @param {string} url – URL of the article
+         * @param {alternatives} url_or_id – URL or ID of the article
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.articles#
          */
-        retrieve: function(url, callback) {
+        retrieve: function(url_or_id, callback) {
             return Client._makeRequest({
                 api: 'api',
                 action: 'article.retrieve',
                 method: 'GET',
-                path: '/articles/{url}',
+                path: '/articles/{url_or_id}',
                 pathParams: {
-                    url: url
+                    url_or_id: url_or_id
                 }
             }, callback);
         },
@@ -2250,22 +2250,41 @@ Client.resourceBinders.push(function(Client) {
         
         /**
          * Modifies an article
-         * @param {string} url – URL of the article
+         * @param {alternatives} url_or_id – URL or ID of the article
          * @param {object} payload - Resource or parameters
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.articles#
          */
-        update: function(url, payload, callback) {
+        update: function(url_or_id, payload, callback) {
             return Client._makeRequest({
                 api: 'api',
                 action: 'article.update',
                 method: 'PUT',
-                path: '/articles/{url}',
+                path: '/articles/{url_or_id}',
                 pathParams: {
-                    url: url
+                    url_or_id: url_or_id
                 },
                 payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Retrieves an article's content
+         * @param {alternatives} url_or_id – URL or ID of the article
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.articles#
+         */
+        retrieve_content: function(url_or_id, callback) {
+            return Client._makeRequest({
+                api: 'api',
+                action: 'article.retrieve_content',
+                method: 'GET',
+                path: '/articles/{url_or_id}/content',
+                pathParams: {
+                    url_or_id: url_or_id
+                }
             }, callback);
         }
         
