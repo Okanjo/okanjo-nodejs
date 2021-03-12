@@ -1919,7 +1919,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '4.1.0';
+Client.Version = '4.2.0';
 
 /**
  * Expose the Provider base class
@@ -4782,6 +4782,29 @@ Client.resourceBinders.push(function(Client) {
                 action: 'reporting.commission_date_histogram',
                 method: 'GET',
                 path: '/api/reporting/commissions/date-histogram',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Returns all results per aggregation group
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        commission_report: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'reporting.commission_report',
+                method: 'GET',
+                path: '/api/reporting/commissions/report',
                 query: query
             }, callback);
         },

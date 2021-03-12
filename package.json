@@ -1,6 +1,6 @@
 {
   "name": "okanjo",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "Integrate your application with the Okanjo API.",
   "main": "dist/client.js",
   "scripts": {
