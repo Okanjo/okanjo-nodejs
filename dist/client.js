@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '4.2.0';
+Client.Version = '4.3.0';
 
 /**
  * Expose the Provider base class
@@ -2927,6 +2927,29 @@ Client.resourceBinders.push(function(Client) {
     Client.farm.reporting = {
         
         /**
+         * Returns all results by aggregation group
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        commission_by_group: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'reporting.commission_by_group',
+                method: 'GET',
+                path: '/api/reporting/commissions/by-group',
+                query: query
+            }, callback);
+        },
+        
+        /**
          * Returns a histogram of commission metrics for time-series visualizations
          * @param {object} [query] - Filter arguments
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
@@ -2950,7 +2973,7 @@ Client.resourceBinders.push(function(Client) {
         },
         
         /**
-         * Returns all results per aggregation group
+         * Returns complete transaction records for the given time range
          * @param {object} [query] - Filter arguments
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
