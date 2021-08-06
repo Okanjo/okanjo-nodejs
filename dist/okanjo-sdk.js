@@ -1919,7 +1919,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '4.3.0';
+Client.Version = '4.4.0';
 
 /**
  * Expose the Provider base class
@@ -3659,6 +3659,164 @@ Client.resourceBinders.push(function(Client) {
                 pathParams: {
                     instance_id: instance_id
                 }
+            }, callback);
+        }
+        
+    };
+    
+    /**
+     * Advertisers
+     * @namespace Client.farm.advertisers
+     */
+    Client.farm.advertisers = {
+        
+        /**
+         * Create a new advertiser.
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.advertisers#
+         */
+        create: function(payload, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'advertiser.create',
+                method: 'POST',
+                path: '/api/advertisers',
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Returns a given advertiser.
+         * @param {string} advertiser_id – Advertiser Id
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.advertisers#
+         */
+        retrieve: function(advertiser_id, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'advertiser.retrieve',
+                method: 'GET',
+                path: '/api/advertisers/{advertiser_id}',
+                pathParams: {
+                    advertiser_id: advertiser_id
+                }
+            }, callback);
+        },
+        
+        /**
+         * Returns a list advertisers
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.advertisers#
+         */
+        list: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'advertiser.list',
+                method: 'GET',
+                path: '/api/advertisers',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Updates a given advertiser.
+         * @param {string} advertiser_id – Advertiser Id
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.advertisers#
+         */
+        update: function(advertiser_id, payload, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'advertiser.update',
+                method: 'PUT',
+                path: '/api/advertisers/{advertiser_id}',
+                pathParams: {
+                    advertiser_id: advertiser_id
+                },
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Generates a new unique webhook url for the provider
+         * @param {string} advertiser_id – Advertiser Id
+         * @param {string} webhook_type – Webhook provider type
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.advertisers#
+         */
+        regenerate_webhook: function(advertiser_id, webhook_type, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'advertiser.regenerate_webhook',
+                method: 'POST',
+                path: '/api/advertisers/{advertiser_id}/webhooks/{webhook_type}/regenerate',
+                pathParams: {
+                    advertiser_id: advertiser_id,
+                    webhook_type: webhook_type
+                },
+                payload: {}
+            }, callback);
+        },
+        
+        /**
+         * Returns the webhook URLs for the advertiser
+         * @param {string} advertiser_id – Advertiser Id
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.advertisers#
+         */
+        retrieve_webhooks: function(advertiser_id, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'advertiser.retrieve_webhooks',
+                method: 'GET',
+                path: '/api/advertisers/{advertiser_id}/webhooks',
+                pathParams: {
+                    advertiser_id: advertiser_id
+                }
+            }, callback);
+        }
+        
+    };
+    
+    /**
+     * Advertiser Events
+     * @namespace Client.farm.advertiser_events
+     */
+    Client.farm.advertiser_events = {
+        
+        /**
+         * Advertiser acknowledgement of publisher click-through
+         * @param {string} advertiser_id – Advertiser Id
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.advertiser_events#
+         */
+        acknowledge: function(advertiser_id, payload, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'advertiser_event.acknowledge',
+                method: 'POST',
+                path: '/api/advertisers/{advertiser_id}/events/acknowledge',
+                pathParams: {
+                    advertiser_id: advertiser_id
+                },
+                payload: payload
             }, callback);
         }
         
