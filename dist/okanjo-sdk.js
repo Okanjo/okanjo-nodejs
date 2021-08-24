@@ -1919,7 +1919,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '4.4.0';
+Client.Version = '4.5.0';
 
 /**
  * Expose the Provider base class
@@ -4361,6 +4361,33 @@ Client.resourceBinders.push(function(Client) {
                     merchant_id: merchant_id
                 },
                 payload: payload
+            }, callback);
+        }
+        
+    };
+    
+    /**
+     * Commissions
+     * @namespace Client.farm.commissions
+     */
+    Client.farm.commissions = {
+        
+        /**
+         * Returns a given advertiser.
+         * @param {string} commission_id – Commission Id
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.commissions#
+         */
+        retrieve: function(commission_id, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'commission.retrieve',
+                method: 'GET',
+                path: '/api/commissions/{commission_id}',
+                pathParams: {
+                    commission_id: commission_id
+                }
             }, callback);
         }
         
