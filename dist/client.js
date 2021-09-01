@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '4.5.0';
+Client.Version = '4.6.0';
 
 /**
  * Expose the Provider base class
@@ -2551,6 +2551,29 @@ Client.resourceBinders.push(function(Client) {
                 pathParams: {
                     commission_id: commission_id
                 }
+            }, callback);
+        },
+        
+        /**
+         * Returns a list of commissions.
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.commissions#
+         */
+        list: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'commission.list',
+                method: 'GET',
+                path: '/api/commissions',
+                query: query
             }, callback);
         }
         
