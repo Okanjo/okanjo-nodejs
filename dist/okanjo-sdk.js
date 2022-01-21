@@ -1919,7 +1919,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '4.6.0';
+Client.Version = '4.7.0';
 
 /**
  * Expose the Provider base class
@@ -3707,7 +3707,7 @@ Client.resourceBinders.push(function(Client) {
         },
         
         /**
-         * Returns a list advertisers
+         * Returns a list of advertisers
          * @param {object} [query] - Filter arguments
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
@@ -4925,6 +4925,182 @@ Client.resourceBinders.push(function(Client) {
                     instance_id: instance_id
                 },
                 query: query
+            }, callback);
+        }
+        
+    };
+    
+    /**
+     * Programs
+     * @namespace Client.farm.programs
+     */
+    Client.farm.programs = {
+        
+        /**
+         * Create a new advertiser program.
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.programs#
+         */
+        create: function(payload, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'program.create',
+                method: 'POST',
+                path: '/api/programs',
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Returns a given advertiser program.
+         * @param {string} program_id – Program Id
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.programs#
+         */
+        retrieve: function(program_id, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'program.retrieve',
+                method: 'GET',
+                path: '/api/programs/{program_id}',
+                pathParams: {
+                    program_id: program_id
+                }
+            }, callback);
+        },
+        
+        /**
+         * Returns a list of advertiser programs
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.programs#
+         */
+        list: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'program.list',
+                method: 'GET',
+                path: '/api/programs',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Updates a given advertiser program.
+         * @param {string} program_id – Program Id
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.programs#
+         */
+        update: function(program_id, payload, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'program.update',
+                method: 'PUT',
+                path: '/api/programs/{program_id}',
+                pathParams: {
+                    program_id: program_id
+                },
+                payload: payload
+            }, callback);
+        }
+        
+    };
+    
+    /**
+     * Program Actions
+     * @namespace Client.farm.program_actions
+     */
+    Client.farm.program_actions = {
+        
+        /**
+         * Create a new advertiser program action.
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.program_actions#
+         */
+        create: function(payload, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'program_action.create',
+                method: 'POST',
+                path: '/api/program-actions',
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Returns a given advertiser program action.
+         * @param {string} program_action_id – Action Id
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.program_actions#
+         */
+        retrieve: function(program_action_id, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'program_action.retrieve',
+                method: 'GET',
+                path: '/api/program-actions/{program_action_id}',
+                pathParams: {
+                    program_action_id: program_action_id
+                }
+            }, callback);
+        },
+        
+        /**
+         * Returns a list of advertiser program actions
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.program_actions#
+         */
+        list: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'program_action.list',
+                method: 'GET',
+                path: '/api/program-actions',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Updates a given advertiser program action.
+         * @param {string} program_action_id – Action Id
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.program_actions#
+         */
+        update: function(program_action_id, payload, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'program_action.update',
+                method: 'PUT',
+                path: '/api/program-actions/{program_action_id}',
+                pathParams: {
+                    program_action_id: program_action_id
+                },
+                payload: payload
             }, callback);
         }
         
