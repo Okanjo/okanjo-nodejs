@@ -1919,7 +1919,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '4.9.0';
+Client.Version = '4.9.2';
 
 /**
  * Expose the Provider base class
