@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '4.8.0';
+Client.Version = '4.9.0';
 
 /**
  * Expose the Provider base class
@@ -1116,13 +1116,13 @@ Client.resourceBinders.push(function(Client) {
     Client.reporting = {
         
         /**
-         * Returns a histogram of article clicks in timescale
+         * Returns a histogram of clicks in timescale
          * @param {object} [query] - Filter arguments
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.reportings#
          */
-        article_click_date_histogram: function(query, callback) {
+        click_date_histogram: function(query, callback) {
             // Shift optional arguments, if necessary
             if (typeof query === "function") {
                 callback = query;
@@ -1131,9 +1131,9 @@ Client.resourceBinders.push(function(Client) {
     
             return Client._makeRequest({
                 api: 'api',
-                action: 'reporting.article_click_date_histogram',
+                action: 'reporting.click_date_histogram',
                 method: 'GET',
-                path: '/reporting/articles/clicks/date-histogram',
+                path: '/reporting/clicks/date-histogram',
                 query: query
             }, callback);
         },
@@ -1145,7 +1145,7 @@ Client.resourceBinders.push(function(Client) {
          * @return {Query} - Compiled query ready for execution
          * @memberof Client.reportings#
          */
-        article_click_top_n: function(query, callback) {
+        click_top_n: function(query, callback) {
             // Shift optional arguments, if necessary
             if (typeof query === "function") {
                 callback = query;
@@ -1154,9 +1154,9 @@ Client.resourceBinders.push(function(Client) {
     
             return Client._makeRequest({
                 api: 'api',
-                action: 'reporting.article_click_top_n',
+                action: 'reporting.click_top_n',
                 method: 'GET',
-                path: '/reporting/articles/clicks/top-n',
+                path: '/reporting/clicks/top-n',
                 query: query
             }, callback);
         },
@@ -1226,52 +1226,6 @@ Client.resourceBinders.push(function(Client) {
                 action: 'reporting.page_top_n',
                 method: 'GET',
                 path: '/reporting/pages/top-n',
-                query: query
-            }, callback);
-        },
-        
-        /**
-         * Returns a histogram of product clicks in timescale
-         * @param {object} [query] - Filter arguments
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.reportings#
-         */
-        product_click_date_histogram: function(query, callback) {
-            // Shift optional arguments, if necessary
-            if (typeof query === "function") {
-                callback = query;
-                query = undefined;
-            }
-    
-            return Client._makeRequest({
-                api: 'api',
-                action: 'reporting.product_click_date_histogram',
-                method: 'GET',
-                path: '/reporting/products/clicks/date-histogram',
-                query: query
-            }, callback);
-        },
-        
-        /**
-         * Returns the top N results per aggregation group
-         * @param {object} [query] - Filter arguments
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.reportings#
-         */
-        product_click_top_n: function(query, callback) {
-            // Shift optional arguments, if necessary
-            if (typeof query === "function") {
-                callback = query;
-                query = undefined;
-            }
-    
-            return Client._makeRequest({
-                api: 'api',
-                action: 'reporting.product_click_top_n',
-                method: 'GET',
-                path: '/reporting/products/clicks/top-n',
                 query: query
             }, callback);
         },
