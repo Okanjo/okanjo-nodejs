@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '4.7.0';
+Client.Version = '4.8.0';
 
 /**
  * Expose the Provider base class
@@ -429,6 +429,33 @@ Client.resourceBinders.push(function(Client) {
                     url_or_id: url_or_id
                 },
                 payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Follows the article URL.
+         * @param {string} article_id – ID of the article
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.articles#
+         */
+        follow: function(article_id, query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'article.follow',
+                method: 'GET',
+                path: '/articles/{article_id}/follow',
+                pathParams: {
+                    article_id: article_id
+                },
+                query: query
             }, callback);
         },
         
@@ -963,6 +990,33 @@ Client.resourceBinders.push(function(Client) {
                     product_id: product_id
                 }
             }, callback);
+        },
+        
+        /**
+         * Follows the purchase URL.
+         * @param {string} product_id – Object identifier.
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.products#
+         */
+        follow: function(product_id, query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'product.follow',
+                method: 'GET',
+                path: '/products/{product_id}/follow',
+                pathParams: {
+                    product_id: product_id
+                },
+                query: query
+            }, callback);
         }
         
     };
@@ -1062,6 +1116,52 @@ Client.resourceBinders.push(function(Client) {
     Client.reporting = {
         
         /**
+         * Returns a histogram of article clicks in timescale
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        article_click_date_histogram: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'reporting.article_click_date_histogram',
+                method: 'GET',
+                path: '/reporting/articles/clicks/date-histogram',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Returns the top N results per aggregation group
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        article_click_top_n: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'reporting.article_click_top_n',
+                method: 'GET',
+                path: '/reporting/articles/clicks/top-n',
+                query: query
+            }, callback);
+        },
+        
+        /**
          * Returns a histogram of page metrics in timescale
          * @param {object} [query] - Filter arguments
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
@@ -1126,6 +1226,52 @@ Client.resourceBinders.push(function(Client) {
                 action: 'reporting.page_top_n',
                 method: 'GET',
                 path: '/reporting/pages/top-n',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Returns a histogram of product clicks in timescale
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        product_click_date_histogram: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'reporting.product_click_date_histogram',
+                method: 'GET',
+                path: '/reporting/products/clicks/date-histogram',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Returns the top N results per aggregation group
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.reportings#
+         */
+        product_click_top_n: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'reporting.product_click_top_n',
+                method: 'GET',
+                path: '/reporting/products/clicks/top-n',
                 query: query
             }, callback);
         },
