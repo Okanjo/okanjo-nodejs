@@ -37,7 +37,7 @@
 
 var util = require('util'),
     timers = require('timers'),
-    setImmediate = global.setImmediate /* istanbul ignore next */ || timers.setImmediate,
+    setImmediate = global.setImmediate || /* istanbul ignore next */ timers.setImmediate,
     Provider = require('../provider');
 
 /**
@@ -170,10 +170,9 @@ FetchProvider.prototype.execute = function(query, callback) {
 /**
  * Object.assign polyfill from MDN
  * @param target
- * @param varArgs
  * @return {any}
  */
-function assign(target, varArgs) { // .length of function is 2
+function assign(target/*, varArgs*/) { // .length of function is 2
     'use strict';
     if (target === null || target === undefined) {
         throw new TypeError('Cannot convert undefined or null to object');

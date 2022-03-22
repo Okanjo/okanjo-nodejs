@@ -1,6 +1,6 @@
 # Okanjo API – JavaScript SDK
 
-[![Build Status](https://travis-ci.org/Okanjo/okanjo-nodejs.svg?branch=master)](https://travis-ci.org/Okanjo/okanjo-nodejs) [![Coverage Status](https://coveralls.io/repos/github/Okanjo/okanjo-nodejs/badge.svg?branch=master)](https://coveralls.io/github/Okanjo/okanjo-nodejs?branch=master)
+[![Node.js CI](https://github.com/Okanjo/okanjo-nodejs/actions/workflows/node.js.yml/badge.svg)](https://github.com/Okanjo/okanjo-nodejs/actions/workflows/node.js.yml) [![Coverage Status](https://coveralls.io/repos/github/Okanjo/okanjo-nodejs/badge.svg?branch=master)](https://coveralls.io/github/Okanjo/okanjo-nodejs?branch=master)
 
 This library provides easy integration with the Okanjo platform.
 
@@ -16,6 +16,11 @@ Note: this module requires:
 
 * an API key in order to access the Okanjo platform
 * an Okanjo Platform Account in order to access some API routes 
+
+## Breaking Changes
+
+### v5.0.0
+- Supports Node.js v12+
 
 ## Usage
 

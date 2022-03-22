@@ -1,6 +1,6 @@
 "use strict";
 
-const Gulp = require('gulp');
+const { src, dest, series, watch } = require('gulp');
 const Concat = require('gulp-concat');
 const Rename = require('gulp-rename');
 const Replace = require('gulp-replace');
@@ -40,133 +40,121 @@ const clientSources = [
 ];
 
 // Clean up everything
-Gulp.task('clean', function() {
-    return Del([
+exports.clean = async function clean() {
+    await Del([
         'dist/**/*'
     ]);
-});
+};
 
 
 // Gets the latest API spec
-Gulp.task('get_spec', [], (done) => {
-    apiSpec.getSpecification((err) => {
-        if (err) {
-            console.error('failed to fetch api spec');
-            done(err);
-        } else {
-            // console.log(api);
-            //console.log(api.getResourceMapArray());
-            done();
-        }
-    });
-});
+exports.get_api_spec = async function get_api_spec() {
+    return await apiSpec.getSpecification();
+};
 
-Gulp.task('get_farm_spec', [], (done) => {
-    farmSpec.getSpecification((err) => {
-        if (err) {
-            console.error('failed to fetch farm spec');
-            done(err);
-        } else {
-            // console.log(api);
-            //console.log(api.getResourceMapArray());
-            done();
-        }
-    });
-});
+exports.get_farm_spec = async function get_farm_spec() {
+    return await farmSpec.getSpecification();
+};
 
-Gulp.task('get_shortcodes_spec', [], (done) => {
-    shortcodesSpec.getSpecification((err) => {
-        if (err) {
-            console.error('failed to fetch shortcode spec');
-            done(err);
-        } else {
-            // console.log(api);
-            //console.log(api.getResourceMapArray());
-            done();
-        }
-    });
-});
+exports.get_shortcodes_spec = async function get_shortcodes_spec() {
+    return await shortcodesSpec.getSpecification();
+};
 
-// Generate resources from API spec
-Gulp.task('gen_resources', ['get_spec'], () => {
-    return Gulp
-        .src(resourcesTemplateSrc)
-        .pipe(NunjucksRender({
-            path: resourceTemplateDir,
-            data: {
-                api: apiSpec.name,
-                namespace: apiSpec.namespace,
-                resources: apiSpec.getResourceMapArray()
-            }
-        }))
-        .pipe(Rename('resources.js'))
-        .pipe(Gulp.dest('dist/partials'))
-});
+exports.gen_api_resources = series(
+    exports.get_api_spec,
+    function gen_api_resources_builder() {
+        return src(resourcesTemplateSrc)
+            .pipe(NunjucksRender({
+                path: resourceTemplateDir,
+                data: {
+                    api: apiSpec.name,
+                    namespace: apiSpec.namespace,
+                    resources: apiSpec.getResourceMapArray()
+                }
+            }))
+            .pipe(Rename('resources.js'))
+            .pipe(dest('dist/partials'))
+        ;
+    }
+);
 
-Gulp.task('gen_farm_resources', ['get_farm_spec'], () => {
-    return Gulp
-        .src(resourcesTemplateSrc)
-        .pipe(NunjucksRender({
-            path: resourceTemplateDir,
-            data: {
-                api: farmSpec.name,
-                namespace: farmSpec.namespace,
-                resources: farmSpec.getResourceMapArray()
-            }
-        }))
-        .pipe(Rename('farm_resources.js'))
-        .pipe(Gulp.dest('dist/partials'))
-});
+exports.gen_farm_resources = series(
+    exports.get_farm_spec,
+    function gen_farm_resources_builder() {
+        return src(resourcesTemplateSrc)
+            .pipe(NunjucksRender({
+                path: resourceTemplateDir,
+                data: {
+                    api: farmSpec.name,
+                    namespace: farmSpec.namespace,
+                    resources: farmSpec.getResourceMapArray()
+                }
+            }))
+            .pipe(Rename('farm_resources.js'))
+            .pipe(dest('dist/partials'))
+        ;
+    }
+);
 
-Gulp.task('gen_shortcodes_resources', ['get_shortcodes_spec'], () => {
-    return Gulp
-        .src(resourcesTemplateSrc)
-        .pipe(NunjucksRender({
-            path: resourceTemplateDir,
-            data: {
-                api: shortcodesSpec.name,
-                namespace: shortcodesSpec.namespace,
-                resources: shortcodesSpec.getResourceMapArray()
-            }
-        }))
-        .pipe(Rename('shortcodes_resources.js'))
-        .pipe(Gulp.dest('dist/partials'))
-});
+exports.gen_shortcodes_resources = series(
+    exports.get_shortcodes_spec,
+    function gen_shortcodes_resources_builder() {
+        return src(resourcesTemplateSrc)
+            .pipe(NunjucksRender({
+                path: resourceTemplateDir,
+                data: {
+                    api: shortcodesSpec.name,
+                    namespace: shortcodesSpec.namespace,
+                    resources: shortcodesSpec.getResourceMapArray()
+                }
+            }))
+            .pipe(Rename('shortcodes_resources.js'))
+            .pipe(dest('dist/partials'))
+        ;
+    }
+);
 
 // Marries the resource spec and client together, and includes current version
-Gulp.task('build_client', ['gen_resources','gen_farm_resources','gen_shortcodes_resources'], () => {
-    return Gulp
-        .src(clientSources)
-        .pipe(Concat('client.js'))
-        .pipe(Replace(/%%OKANJO_VERSION%%/, require('./package.json').version))
-        .pipe(Gulp.dest('dist'))
-});
+exports.build_client = series(
+    exports.gen_api_resources,
+    exports.gen_farm_resources,
+    exports.gen_shortcodes_resources,
+    function build_client_builder() {
+        return src(clientSources)
+            .pipe(Concat('client.js'))
+            .pipe(Replace(/%%OKANJO_VERSION%%/, require('./package.json').version))
+            .pipe(dest('dist'))
+    }
+);
 
 // Builds the browser version of the client
-Gulp.task('build_browser_client', ['build_client'], () => {
-    const bundler = Browserify();
+exports.build_browser_client = series(
+    exports.build_client,
+    function build_browser_client_builder() {
+        const bundler = Browserify();
 
-    bundler.ignore('./src/providers/http_provider.js');
-    bundler.require('./dist/client.js', { expose: 'okanjo-sdk' });
+        bundler.ignore('./src/providers/http_provider.js');
+        bundler.require('./dist/client.js', { expose: 'okanjo-sdk' });
 
-    return bundler.bundle()
-        .pipe(VinylSource('okanjo-sdk.js'))
-        .pipe(Gulp.dest('dist'))
-        .pipe(VinylBuffer())
-        .pipe(Rename('okanjo-sdk.min.js'))
-        .pipe(SourceMaps.init())
-        .pipe(Uglify())
+        return bundler.bundle()
+            .pipe(VinylSource('okanjo-sdk.js'))
+            .pipe(dest('dist'))
+            .pipe(VinylBuffer())
+            .pipe(Rename('okanjo-sdk.min.js'))
+            .pipe(SourceMaps.init())
+            .pipe(Uglify())
             .on('error', (err) => { console.error('Blew up uglifying sources!', err.stack, err); })
-        .pipe(SourceMaps.write('./'))
-        .pipe(Gulp.dest('dist'))
-});
-
-// Watches for changes for active development
-Gulp.task('watch_templates', () => {
-    Gulp.watch(resourceTemplateDir+'/*.njk', ['build']);
-});
+            .pipe(SourceMaps.write('./'))
+            .pipe(dest('dist'))
+    }
+);
 
 // Default entry point (development)
-Gulp.task('build', ['build_browser_client']);
+exports.build = series(exports.build_browser_client);
 
-Gulp.task('default', ['build', 'watch_templates']);
+// Watches for changes for active development
+exports.watch_templates = function watch_templates() {
+    watch(resourceTemplateDir+'/*.njk', series(exports.build));
+};
+
+exports.default = series(exports.build, exports.watch_templates);

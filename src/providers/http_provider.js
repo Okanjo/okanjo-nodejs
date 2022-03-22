@@ -223,7 +223,7 @@ HttpProvider.prototype._handleRequestResponse = function(req, callback, query, r
             // No idea what to do with this so wrap it up
             err = {
                 statusCode: res.statusCode,
-                error: res.statusMessage /* istanbul ignore next: super edge case */ || "Invalid Response Received",
+                error: res.statusMessage || /* istanbul ignore next: super edge case */ "Invalid Response Received",
                 message: "Response content type was expected to be `application/json` or `text/csv` but was actually `" + headers['content-type'] + "`",
                 data: payload,
                 attributes: {

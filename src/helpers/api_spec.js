@@ -35,19 +35,12 @@ class ApiSpecification {
 
     /**
      * Gets the latest API specification and processes it
-     * @param callback
      */
-    getSpecification(callback) {
-        Needle.get(this.endpoint+this.specPath, (err, res) => {
-            if (err) {
-                callback(err);
-            } else {
-                // noinspection JSUnusedGlobalSymbols
-                this.rawSpec = res.body;
-                this._processSpecification();
-                callback(null);
-            }
-        });
+    async getSpecification() {
+        const { body } = await Needle('get', this.endpoint+this.specPath);
+        // noinspection JSUnusedGlobalSymbols
+        this.rawSpec = body;
+        this._processSpecification();
     }
 
     /**
