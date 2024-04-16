@@ -82,7 +82,7 @@ function Client(config) {
 /**
  * SDK Version
  */
-Client.Version = '5.0.0';
+Client.Version = '5.1.0';
 
 /**
  * Expose the Provider base class
@@ -475,6 +475,140 @@ Client.resourceBinders.push(function(Client) {
                 pathParams: {
                     url_or_id: url_or_id
                 }
+            }, callback);
+        }
+        
+    };
+    
+    /**
+     * Creatives
+     * @namespace Client.creatives
+     */
+    Client.creatives = {
+        
+        /**
+         * Creates a creative
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.creatives#
+         */
+        create: function(payload, callback) {
+            return Client._makeRequest({
+                api: 'api',
+                action: 'creative.create',
+                method: 'POST',
+                path: '/creatives',
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Retrieves a creative
+         * @param {string} creative_id – Object identifier.
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.creatives#
+         */
+        retrieve: function(creative_id, callback) {
+            return Client._makeRequest({
+                api: 'api',
+                action: 'creative.retrieve',
+                method: 'GET',
+                path: '/creatives/{creative_id}',
+                pathParams: {
+                    creative_id: creative_id
+                }
+            }, callback);
+        },
+        
+        /**
+         * Lists creatives
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.creatives#
+         */
+        list: function(query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'creative.list',
+                method: 'GET',
+                path: '/creatives',
+                query: query
+            }, callback);
+        },
+        
+        /**
+         * Updates a creative
+         * @param {string} creative_id – Object identifier.
+         * @param {object} payload - Resource or parameters
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.creatives#
+         */
+        update: function(creative_id, payload, callback) {
+            return Client._makeRequest({
+                api: 'api',
+                action: 'creative.update',
+                method: 'PUT',
+                path: '/creatives/{creative_id}',
+                pathParams: {
+                    creative_id: creative_id
+                },
+                payload: payload
+            }, callback);
+        },
+        
+        /**
+         * Deletes a creative
+         * @param {string} creative_id – Object identifier.
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.creatives#
+         */
+        delete: function(creative_id, callback) {
+            return Client._makeRequest({
+                api: 'api',
+                action: 'creative.delete',
+                method: 'DELETE',
+                path: '/creatives/{creative_id}',
+                pathParams: {
+                    creative_id: creative_id
+                }
+            }, callback);
+        },
+        
+        /**
+         * Follows the click-through URL.
+         * @param {string} creative_id – Object identifier.
+         * @param {object} [query] - Filter arguments
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.creatives#
+         */
+        follow: function(creative_id, query, callback) {
+            // Shift optional arguments, if necessary
+            if (typeof query === "function") {
+                callback = query;
+                query = undefined;
+            }
+    
+            return Client._makeRequest({
+                api: 'api',
+                action: 'creative.follow',
+                method: 'GET',
+                path: '/creatives/{creative_id}/follow',
+                pathParams: {
+                    creative_id: creative_id
+                },
+                query: query
             }, callback);
         }
         
@@ -2952,6 +3086,29 @@ Client.resourceBinders.push(function(Client) {
         },
         
         /**
+         * Removes a domain-vendor mapping
+         * @param {string} instance_id – Instance Id
+         * @param {string} fqdn – Fully qualified domain or host name
+         * @param {string} vendor_id – Vendor Id
+         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
+         * @return {Query} - Compiled query ready for execution
+         * @memberof Client.domain_mappings#
+         */
+        delete: function(instance_id, fqdn, vendor_id, callback) {
+            return Client._makeRequest({
+                api: 'farm',
+                action: 'domain_mapping.delete',
+                method: 'DELETE',
+                path: '/api/{instance_id}/domain_mappings/domains/{fqdn}/vendors/{vendor_id}',
+                pathParams: {
+                    instance_id: instance_id,
+                    fqdn: fqdn,
+                    vendor_id: vendor_id
+                }
+            }, callback);
+        },
+        
+        /**
          * Returns all vendor mappings aggregated by domain
          * @param {string} instance_id – Instance Id
          * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
@@ -2992,29 +3149,6 @@ Client.resourceBinders.push(function(Client) {
                     vendor_id: vendor_id
                 },
                 payload: payload
-            }, callback);
-        },
-        
-        /**
-         * Removes a domain-vendor mapping
-         * @param {string} instance_id – Instance Id
-         * @param {string} fqdn – Fully qualified domain or host name
-         * @param {string} vendor_id – Vendor Id
-         * @param {requestCallback} [callback] – Optional callback. When present, the request is executed
-         * @return {Query} - Compiled query ready for execution
-         * @memberof Client.domain_mappings#
-         */
-        delete: function(instance_id, fqdn, vendor_id, callback) {
-            return Client._makeRequest({
-                api: 'farm',
-                action: 'domain_mapping.delete',
-                method: 'DELETE',
-                path: '/api/{instance_id}/domain_mappings/domains/{fqdn}/vendors/{vendor_id}',
-                pathParams: {
-                    instance_id: instance_id,
-                    fqdn: fqdn,
-                    vendor_id: vendor_id
-                }
             }, callback);
         }
         
